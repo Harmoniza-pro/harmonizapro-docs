@@ -1,0 +1,139 @@
+{
+  "name": "Métricas Diárias",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 7 * * *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0],
+      "id": "schedule-trigger",
+      "name": "Todo dia às 7h"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://{{ $env.SUPABASE_URL }}/rest/v1/rpc/calcular_metricas_dia",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_KEY }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "p_data",
+              "value": "={{ $now.minus({days: 1}).toFormat('yyyy-MM-dd') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [250, 0],
+      "id": "calcular-metricas",
+      "name": "Calcular métricas de ontem"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "metricas_diarias",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "data",
+              "keyValue": "={{ $now.minus({days: 1}).toFormat('yyyy-MM-dd') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [500, 0],
+      "id": "buscar-resultado",
+      "name": "Buscar resultado calculado",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "msg",
+              "name": "mensagem",
+              "value": "=📊 *MÉTRICAS DE ONTEM* ({{ $now.minus({days: 1}).toFormat('dd/MM') }})\n━━━━━━━━━━━━━━━━━\n\n📥 *Leads novos:* {{ $json.leads_novos }}\n📋 *Leads total:* {{ $json.leads_total }}\n🤝 *Handoffs:* {{ $json.handoffs_realizados }}\n🎯 *Taxa qualificação:* {{ $json.taxa_qualificacao }}%\n\n📤 *Follow-ups enviados:* {{ $json.followups_enviados }}\n🔄 *Reengajamento:* {{ $json.taxa_reengajamento }}%\n\n⚠️ *Rate limits:* {{ $json.rate_limits }}\n❌ *Erros:* {{ $json.erros_execucao }}\n\n💰 *Custo IA (USD):* ${{ $json.custo_total_ia }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [750, 0],
+      "id": "formatar-msg",
+      "name": "Formatar mensagem"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.UAZAPI_URL }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "token", "value": "={{ $env.UAZAPI_TOKEN }}" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "number", "value": "={{ $env.NUMERO_RELATORIO }}" },
+            { "name": "text", "value": "={{ $json.mensagem }}" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1000, 0],
+      "id": "enviar-relatorio",
+      "name": "Enviar relatório WhatsApp"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 200],
+      "id": "manual-trigger",
+      "name": "Teste manual"
+    }
+  ],
+  "connections": {
+    "Todo dia às 7h": { "main": [[{ "node": "Calcular métricas de ontem", "type": "main", "index": 0 }]] },
+    "Calcular métricas de ontem": { "main": [[{ "node": "Buscar resultado calculado", "type": "main", "index": 0 }]] },
+    "Buscar resultado calculado": { "main": [[{ "node": "Formatar mensagem", "type": "main", "index": 0 }]] },
+    "Formatar mensagem": { "main": [[{ "node": "Enviar relatório WhatsApp", "type": "main", "index": 0 }]] },
+    "Teste manual": { "main": [[{ "node": "Calcular métricas de ontem", "type": "main", "index": 0 }]] }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "meta": { "templateCredsSetupCompleted": true }
+}

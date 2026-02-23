@@ -1,0 +1,244 @@
+{
+  "name": "Monitoramento de Custos Semanal",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * 1"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0],
+      "id": "cron-segunda",
+      "name": "Toda segunda às 8h"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 200],
+      "id": "manual",
+      "name": "Teste manual"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "inicio",
+              "name": "periodo_inicio",
+              "value": "={{ $now.minus({days: 7}).toFormat('yyyy-MM-dd') }}",
+              "type": "string"
+            },
+            {
+              "id": "fim",
+              "name": "periodo_fim",
+              "value": "={{ $now.minus({days: 1}).toFormat('yyyy-MM-dd') }}",
+              "type": "string"
+            },
+            {
+              "id": "start_ts",
+              "name": "start_timestamp",
+              "value": "={{ Math.floor($now.minus({days: 7}).toMillis() / 1000) }}",
+              "type": "number"
+            },
+            {
+              "id": "end_ts",
+              "name": "end_timestamp",
+              "value": "={{ Math.floor($now.minus({days: 1}).toMillis() / 1000) }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [250, 100],
+      "id": "datas",
+      "name": "Calcular datas"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.openai.com/v1/organization/usage/completions?start_time={{ $json.start_timestamp }}&end_time={{ $json.end_timestamp }}&bucket_width=1d&group_by=model",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.OPENAI_ADMIN_KEY }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [500, 0],
+      "id": "openai-usage",
+      "name": "OpenAI Usage API",
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.anthropic.com/v1/messages/count_tokens",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{ $env.ANTHROPIC_API_KEY }}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [500, 200],
+      "id": "anthropic-usage",
+      "name": "Anthropic Usage",
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://jauunacntwpztmzgpeft.supabase.co/rest/v1/rpc/calcular_custos_semana",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SECRET_KEY }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SECRET_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "p_inicio",
+              "value": "={{ $('Calcular datas').first().json.periodo_inicio }}"
+            },
+            {
+              "name": "p_fim",
+              "value": "={{ $('Calcular datas').first().json.periodo_fim }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [500, 400],
+      "id": "supabase-leads",
+      "name": "Calcular leads/handoffs"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega dados dos nós anteriores\nconst openaiData = $('OpenAI Usage API').first().json;\nconst datas = $('Calcular datas').first().json;\nconst supabaseData = $('Calcular leads/handoffs').first().json;\n\n// Tentar extrair custos da OpenAI\nlet openai_input = 0;\nlet openai_output = 0;\nlet openai_requests = 0;\nlet openai_custo = 0;\n\ntry {\n  if (openaiData && openaiData.data) {\n    for (const bucket of openaiData.data) {\n      for (const result of (bucket.results || [])) {\n        openai_input += result.input_tokens || 0;\n        openai_output += result.output_tokens || 0;\n        openai_requests += result.num_model_requests || 0;\n      }\n    }\n    // Estimativa de custo (média ponderada dos modelos)\n    // GPT-5: $2/1M input, $8/1M output\n    // GPT-4o: $2.50/1M input, $10/1M output  \n    // GPT-4o-mini: $0.15/1M input, $0.60/1M output\n    // Whisper: ~$0.006/min\n    openai_custo = (openai_input / 1000000 * 2.0) + (openai_output / 1000000 * 8.0);\n  }\n} catch(e) {\n  // Se falhou, estima baseado no número de leads\n  const leads = supabaseData?.leads || 0;\n  openai_custo = leads * 0.03; // ~$0.03 por lead (estimativa)\n}\n\n// Estimativa Anthropic baseada em volume\n// Claude Sonnet 4: $3/1M input, $15/1M output\n// Média: ~2000 input + ~500 output tokens por interação\n// ~5 interações por lead\nconst leads = supabaseData?.leads || 0;\nconst anthropic_input_est = leads * 5 * 2000;\nconst anthropic_output_est = leads * 5 * 500;\nconst anthropic_custo = (anthropic_input_est / 1000000 * 3.0) + (anthropic_output_est / 1000000 * 15.0);\n\n// Google Gemini (estimativa)\nconst google_custo = leads * 0.002; // muito barato\n\n// Totais\nconst custo_total_usd = openai_custo + anthropic_custo + google_custo;\nconst cotacao = 5.80;\nconst custo_total_brl = custo_total_usd * cotacao;\nconst handoffs = supabaseData?.handoffs || 0;\n\nconst threshold = 50.00; // USD por semana\n\nreturn [{\n  json: {\n    periodo_inicio: datas.periodo_inicio,\n    periodo_fim: datas.periodo_fim,\n    openai_tokens_input: openai_input,\n    openai_tokens_output: openai_output,\n    openai_custo_usd: Math.round(openai_custo * 10000) / 10000,\n    openai_requests: openai_requests,\n    anthropic_tokens_input: anthropic_input_est,\n    anthropic_tokens_output: anthropic_output_est,\n    anthropic_custo_usd: Math.round(anthropic_custo * 10000) / 10000,\n    google_custo_usd: Math.round(google_custo * 10000) / 10000,\n    custo_total_usd: Math.round(custo_total_usd * 100) / 100,\n    custo_total_brl: Math.round(custo_total_brl * 100) / 100,\n    cotacao_usd_brl: cotacao,\n    leads_no_periodo: leads,\n    handoffs_no_periodo: handoffs,\n    custo_por_lead: leads > 0 ? Math.round((custo_total_brl / leads) * 100) / 100 : 0,\n    custo_por_handoff: handoffs > 0 ? Math.round((custo_total_brl / handoffs) * 100) / 100 : 0,\n    acima_do_threshold: custo_total_usd > threshold,\n    threshold_usd: threshold\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [800, 100],
+      "id": "calcular-custos",
+      "name": "Calcular custos"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://jauunacntwpztmzgpeft.supabase.co/rest/v1/custos_semanais",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SECRET_KEY }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SECRET_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "resolution=merge-duplicates" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1050, 100],
+      "id": "salvar-custos",
+      "name": "Salvar no Supabase"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "relatorio",
+              "name": "mensagem",
+              "value": "=💰 *RELATÓRIO DE CUSTOS SEMANAL*\n{{ $('Calcular custos').first().json.periodo_inicio }} → {{ $('Calcular custos').first().json.periodo_fim }}\n━━━━━━━━━━━━━━━━━━━━━━━\n\n📊 *Volume:*\n   📥 Leads: {{ $('Calcular custos').first().json.leads_no_periodo }}\n   🤝 Handoffs: {{ $('Calcular custos').first().json.handoffs_no_periodo }}\n\n🤖 *Custos por API:*\n   🟣 Anthropic: ${{ $('Calcular custos').first().json.anthropic_custo_usd }}\n   🟢 OpenAI: ${{ $('Calcular custos').first().json.openai_custo_usd }}\n   🔵 Google: ${{ $('Calcular custos').first().json.google_custo_usd }}\n\n💵 *Total:*\n   USD: ${{ $('Calcular custos').first().json.custo_total_usd }}\n   BRL: R$ {{ $('Calcular custos').first().json.custo_total_brl }}\n\n📈 *Custo unitário:*\n   Por lead: R$ {{ $('Calcular custos').first().json.custo_por_lead }}\n   Por handoff: R$ {{ $('Calcular custos').first().json.custo_por_handoff }}\n\n{{ $('Calcular custos').first().json.acima_do_threshold ? '🚨 *ALERTA: Custo acima do threshold de $' + $('Calcular custos').first().json.threshold_usd + '/semana!*' : '✅ Custos dentro do esperado' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1300, 100],
+      "id": "montar-msg",
+      "name": "Montar mensagem"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.UAZAPI_URL }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "token", "value": "={{ $env.UAZAPI_TOKEN }}" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "number", "value": "={{ $env.NUMERO_RELATORIO }}" },
+            { "name": "text", "value": "={{ $json.mensagem }}" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1550, 100],
+      "id": "enviar-whatsapp",
+      "name": "Enviar WhatsApp"
+    }
+  ],
+  "connections": {
+    "Toda segunda às 8h": { "main": [[{ "node": "Calcular datas", "type": "main", "index": 0 }]] },
+    "Teste manual": { "main": [[{ "node": "Calcular datas", "type": "main", "index": 0 }]] },
+    "Calcular datas": { "main": [[
+      { "node": "OpenAI Usage API", "type": "main", "index": 0 },
+      { "node": "Anthropic Usage", "type": "main", "index": 0 },
+      { "node": "Calcular leads/handoffs", "type": "main", "index": 0 }
+    ]] },
+    "OpenAI Usage API": { "main": [[{ "node": "Calcular custos", "type": "main", "index": 0 }]] },
+    "Calcular custos": { "main": [[{ "node": "Salvar no Supabase", "type": "main", "index": 0 }]] },
+    "Salvar no Supabase": { "main": [[{ "node": "Montar mensagem", "type": "main", "index": 0 }]] },
+    "Montar mensagem": { "main": [[{ "node": "Enviar WhatsApp", "type": "main", "index": 0 }]] }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "meta": { "templateCredsSetupCompleted": true }
+}

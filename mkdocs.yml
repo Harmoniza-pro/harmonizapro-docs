@@ -6,7 +6,9 @@ theme:
   name: material
   language: pt
   logo: assets/logo.png
-  favicon: assets/logo-square.png
+  favicon: assets/fav.png
+  icon:
+    logo: material/book-open-variant
 
   palette:
     - scheme: slate
@@ -40,6 +42,7 @@ theme:
     - content.tabs.link
     - toc.follow
 
+
 nav:
   - Início: index.md
   - PRD:
@@ -60,7 +63,13 @@ nav:
       - "Handoff Falhando": runbooks/handoff-falhando.md
   - Base de Conhecimento:
       - "Clínicas e Protocolos": base-conhecimento-clinicas.md
+  - Operação:
+      - "📊 Dashboard de Métricas":  operacao/dashboard.md
+      - "💰 Custos por Workflow": operacao/custos.md
+      - "🔗 Mapa de Dependências": operacao/dependencias.md
+      - "📋 Changelog": operacao/changelog.md
   - Equipe: equipe.md
+
 
 extra_css:
   - stylesheets/custom.css
@@ -86,6 +95,13 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - md_in_html
+
 
 plugins:
   - search:
