@@ -1,6 +1,7 @@
 site_name: HarmonizaPRO — Documentação
-site_description: Central de documentação do sistema de qualificação de leads via WhatsApp com IA
-site_author: HarmonizaPRO
+site_description: Central de documentação do sistema de qualificação de leads com IA
+site_author: Pedro Vinicius
+site_url: https://docs.harmoniza.pro
 
 theme:
   name: material
