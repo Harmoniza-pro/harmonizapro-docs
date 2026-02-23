@@ -1,0 +1,979 @@
+{
+  "name": "001.004 - Typeform - Envio de mensagem Parcial",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -416,
+        752
+      ],
+      "id": "5d160bbf-ed26-4b0d-8a45-8a8ae4f1ec6c",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega os dados da entrada do node\nconst items = $input.all();\n\n// Processa cada item\nconst results = items.map(item => {\n  const labels = item.json.label.split(','); // Divide a string de labels em um array\n  \n  if (labels.includes('108')) {\n    return {\n      json: {\n        id: item.json.id,\n        followup: 'sim'\n      }\n    };\n  } else {\n    return {\n      json: {\n        id: item.json.id,\n        followup: 'não'\n      }\n    };\n  }\n});\n\nreturn results;\n"
+      },
+      "id": "70d35d29-ef84-431b-a885-8f8527408f9e",
+      "name": "filtro2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        64,
+        -704
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "5dee5429-fa6e-4815-91f5-f1acf929f620",
+              "leftValue": "={{ $json.followup }}",
+              "rightValue": "sim",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "4be8f99c-f79c-45ed-8735-f52e5c57c1ce",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        288,
+        -704
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.z-api.io/instances/3D8D763C8F6D80780DEFAAB9B3CB7944/token/133454FA196621A9D2181F1E/send-text",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"phone\": \"{{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"Telefone\"].replace(/[^0-9]/g,'') }}\",\n  \"message\": \"Olá! Tudo bem{{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"Nome\"].includes(\" \") \n    ? \", \" + $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"Nome\"].split(\" \")[0].toLowerCase().replace(/^./, c => c.toUpperCase()) \n    : \", \" + $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"Nome\"].toLowerCase().replace(/^./, c => c.toUpperCase()) }}? Aqui é a Louise, consultora da HarmonizaPRO🔥\"\n}",
+        "options": {}
+      },
+      "id": "bf24a90d-c058-4013-bf69-d2f8f9aac88a",
+      "name": "message1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1168,
+        -656
+      ],
+      "retryOnFail": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "vYpu7XBWSmz0dhDh",
+          "name": "Z Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.z-api.io/instances/3D8D763C8F6D80780DEFAAB9B3CB7944/token/133454FA196621A9D2181F1E/send-text",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"phone\": \"{{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"Telefone\"].replace(/[^0-9]/g,'') }}\",\n  \"message\": \"Vi que preencheu nosso formulário, mas por algum motivo não agendou o horário com nossos especialistas... Houve algum erro ou você não encontrou algum horário que encaixasse na sua agenda ?\"\n}\n",
+        "options": {}
+      },
+      "id": "81ecc1bc-a63b-4272-a6e8-6c4d1653910b",
+      "name": "message5",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        784,
+        -720
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "vYpu7XBWSmz0dhDh",
+          "name": "Z Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "get",
+        "dealId": "={{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"id_negocio\"] }}"
+      },
+      "id": "dead166f-7668-415f-9071-36b115af14d3",
+      "name": "getDeal2",
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -704
+      ],
+      "credentials": {
+        "pipedriveOAuth2Api": {
+          "id": "y8O0rqLgOCkuE8hK",
+          "name": "Pipedrive - evoluamidia@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 15,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -480,
+        -704
+      ],
+      "id": "e49b66fe-a8a3-4919-878b-094e0e97ce7d",
+      "name": "Wait",
+      "webhookId": "7afd6f3f-c311-4ffd-88ea-8491f1108739"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.z-api.io/instances/3D8D763C8F6D80780DEFAAB9B3CB7944/token/133454FA196621A9D2181F1E/send-text",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"phone\": \"{{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"Telefone\"].replace(/[^0-9]/g,'') }}\",\n  \"message\": \"Vi que preencheu nosso formulário, mas por algum motivo não agendou um horário com nossos especialistas.\"\n}",
+        "options": {}
+      },
+      "id": "9e3f6268-7df9-4f8f-9291-9fd205d24f57",
+      "name": "message",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1520,
+        -656
+      ],
+      "retryOnFail": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "vYpu7XBWSmz0dhDh",
+          "name": "Z Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.z-api.io/instances/3D8D763C8F6D80780DEFAAB9B3CB7944/token/133454FA196621A9D2181F1E/send-text",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"phone\": \"{{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"Telefone\"].replace(/[^0-9]/g,'') }}\",\n  \"message\": \"Só para eu entender, houve algum erro ou você não encontrou algum horário que encaixasse na sua agenda?\"\n}",
+        "options": {}
+      },
+      "id": "99e49bc4-c92d-4f5d-9522-a57a332e2883",
+      "name": "message2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1872,
+        -656
+      ],
+      "retryOnFail": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "vYpu7XBWSmz0dhDh",
+          "name": "Z Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1344,
+        -656
+      ],
+      "id": "daf4b407-7ecb-43eb-bf6e-dbefcabe7614",
+      "name": "Wait1",
+      "webhookId": "8e3c3990-5769-4f63-8613-f82dc25a6be7"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1712,
+        -656
+      ],
+      "id": "d643c260-d5bd-4c76-ad22-cf30722dadfd",
+      "name": "Wait2",
+      "webhookId": "8e3c3990-5769-4f63-8613-f82dc25a6be7"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        288,
+        -464
+      ],
+      "id": "d45290bb-c6eb-4dc2-b117-b33a15dafc85",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "events": [
+          "update"
+        ]
+      },
+      "type": "n8n-nodes-base.n8nTrigger",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        -1184
+      ],
+      "id": "90a142ce-5bf8-4feb-ba47-b2d6c3e4e224",
+      "name": "Dados Cadastro Workflow",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e3c3eb3-253b-4434-9f68-f12806e90433",
+              "name": "Pasta Cliente",
+              "value": "901312698708",
+              "type": "string"
+            },
+            {
+              "id": "f5017427-6e91-4ce3-adfb-1f26db53104e",
+              "name": "Fluxos com Erro",
+              "value": "901319151056",
+              "type": "string"
+            },
+            {
+              "id": "69e95a88-9ca8-46ae-8016-ca15db383fd7",
+              "name": "Fluxos Cadastrados",
+              "value": "901319151049",
+              "type": "string"
+            },
+            {
+              "id": "d1a157b0-9836-4758-92bf-6fa81eff1a26",
+              "name": "Link N8N",
+              "value": "={{ \"https://workflows.\" + $execution.resumeUrl.split('/')[2].split('.').slice(1).join('.') + \"/workflow/\" + $workflow.id }}",
+              "type": "string"
+            },
+            {
+              "id": "a8a396de-7e97-4833-8520-dd5af4bb0baf",
+              "name": "Tarefa Cliente ID",
+              "value": "86ac2h7bc",
+              "type": "string"
+            },
+            {
+              "id": "1bca2025-d73c-4f0d-abee-0abf3d328f2a",
+              "name": "Campo Relacionamento Fluxo Cadastrado",
+              "value": "de89a9e9-7831-4b3e-90f4-0114797d4e6b",
+              "type": "string"
+            },
+            {
+              "id": "bc48d677-8f44-45a4-b66a-e5a671a74128",
+              "name": "Campo Relacionamento Reportar Erro",
+              "value": "6d2dbdb6-40dd-4c2a-a42b-f6e4b5536261",
+              "type": "string"
+            },
+            {
+              "id": "90c1b11d-2707-4db7-b02f-3ca053887764",
+              "name": "Nome do Fluxo",
+              "value": "={{ $workflow.name }}",
+              "type": "string"
+            },
+            {
+              "id": "c4f8fea6-e31a-4023-b56c-58e217565f7c",
+              "name": "ID Página Fluxos",
+              "value": "c9pay-8513",
+              "type": "string"
+            },
+            {
+              "id": "8e2f5c9a-6b3d-4e7f-a1c8-9d4e6f2b7a5c",
+              "name": "ID Documento",
+              "value": "c9pay-15913",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -112,
+        -1184
+      ],
+      "id": "40336000-0c3c-4d97-bcff-a4ce40fcc6e5",
+      "name": "Variaveis do Cliente1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $workflow.id }}",
+          "mode": "id"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        160,
+        -1184
+      ],
+      "id": "e1f1b6da-c701-4337-85ad-39556d0a4115",
+      "name": "Get a workflow",
+      "credentials": {
+        "n8nApi": {
+          "id": "F1ykyghOg9lLGBLd",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://webhooks.autotrackable.com.br/webhook/receber_cadastro_dos_clientes",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n(() => {\n  const err = $item(\"0\").$node[\"Dados Cadastro Workflow\"].json;\n  const cli = $item(\"0\").$node[\"Variaveis do Cliente1\"].json;\n  const workflow = $item(\"0\").$node[\"Get a workflow\"].json;\n  return { ...err, info_cliente: cli, workflow: workflow };\n})()\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        432,
+        -1184
+      ],
+      "id": "5281a692-ad1d-4ea1-8e21-8254a749bebe",
+      "name": "Encaminhar Erro para TrackAble1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "92efc9ac-aeb8-4687-851a-2abf2ee32631",
+              "name": "host",
+              "value": "https://harmonizapro.uazapi.com",
+              "type": "string"
+            },
+            {
+              "id": "198f6743-fcae-4ad4-b3e4-aa5b5b2ae0e3",
+              "name": "token",
+              "value": "={{ $item(\"0\").$node[\"Select rows from a table\"].json[\"token\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "67186f5d-164a-4078-b236-5493ef0613f3",
+              "name": "nome_atendente",
+              "value": "={{ $item(\"0\").$node[\"Select rows from a table\"].json[\"nome\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        752
+      ],
+      "id": "a95dd5eb-5434-40cd-bbb3-1d52ecbb8e55",
+      "name": "SDR 1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $item(\"0\").$node[\"SDR 1\"].json[\"host\"] }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $item(\"0\").$node[\"SDR 1\"].json[\"token\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"842e0381bd316ebe2ef1141093b15e97310da42b\"].replace(/[^0-9]/g,'') }}\",\n  \"text\": \"Olá!{{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"title\"].includes(\" \") \n    ? \", \" + $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"title\"].split(\" \")[0].toLowerCase().replace(/^./, c => c.toUpperCase()) \n    : \", \" + $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"title\"].toLowerCase().replace(/^./, c => c.toUpperCase()) }} Tudo bem? Aqui é {{ $item(\"0\").$node[\"SDR 1\"].json[\"nome_atendente\"] == 'Andrew' ? 'o' : 'a' }} {{ $item(\"0\").$node[\"SDR 1\"].json[\"nome_atendente\"] }}, {{ $item(\"0\").$node[\"SDR 1\"].json[\"nome_atendente\"] == 'Andrew' ? 'consultor' : 'consultoraa' }} da HarmonizaPRO🔥\"\n}",
+        "options": {}
+      },
+      "id": "2f45eb8b-47f7-47a2-b6a9-4c23f111b3e8",
+      "name": "Mensagem",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        352,
+        752
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $item(\"0\").$node[\"SDR 1\"].json[\"host\"] }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $item(\"0\").$node[\"SDR 1\"].json[\"token\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"842e0381bd316ebe2ef1141093b15e97310da42b\"].replace(/[^0-9]/g,'') }}\",\n  \"text\": \"Vi que preencheu nosso formulário, mas por algum motivo não agendou um horário com nossos especialistas.\"\n}",
+        "options": {}
+      },
+      "id": "20b80579-ef1a-45bf-b35f-cb4e77f89bd3",
+      "name": "Mensagem1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        832,
+        736
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $item(\"0\").$node[\"SDR 1\"].json[\"host\"] }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $item(\"0\").$node[\"SDR 1\"].json[\"token\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"842e0381bd316ebe2ef1141093b15e97310da42b\"].replace(/[^0-9]/g,'') }}\",\n  \"text\": \"Só para eu entender, houve algum erro ou você não encontrou algum horário que encaixasse na sua agenda?\"\n}",
+        "options": {}
+      },
+      "id": "cc2c1e5c-789c-43de-be9f-68173403f349",
+      "name": "Mensagem2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1312,
+        720
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        592,
+        736
+      ],
+      "id": "7c0026a2-cf36-49dc-bd79-6a808b346a94",
+      "name": "Wait7",
+      "webhookId": "8e3c3990-5769-4f63-8613-f82dc25a6be7"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1072,
+        720
+      ],
+      "id": "6ff1a78a-0010-4d72-9f53-19205098bfdf",
+      "name": "Wait8",
+      "webhookId": "8e3c3990-5769-4f63-8613-f82dc25a6be7"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "leads_colaboradores",
+          "mode": "list",
+          "cachedResultName": "leads_colaboradores"
+        },
+        "limit": 1,
+        "where": {
+          "values": [
+            {
+              "column": "email",
+              "value": "={{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"user_id\"][\"email\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -128,
+        752
+      ],
+      "id": "ba2cd09c-1ac9-42b6-9dea-fd5dc8f9968e",
+      "name": "Select rows from a table",
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "id": 10700,
+          "creator_user_id": {
+            "id": 20851756,
+            "name": "HarmonizaPRO",
+            "email": "evoluamidia@gmail.com",
+            "has_pic": 1,
+            "pic_hash": "d1277e7d845531b7ef16c9aca2cb565e",
+            "active_flag": true,
+            "value": 20851756
+          },
+          "user_id": {
+            "id": 25298429,
+            "name": "Andrew Rodrigues Cardoso",
+            "email": "andrew@harmoniza.pro",
+            "has_pic": 0,
+            "pic_hash": null,
+            "active_flag": true,
+            "value": 25298429
+          },
+          "person_id": {
+            "active_flag": true,
+            "name": "Michelle",
+            "email": [
+              {
+                "label": "work",
+                "value": "michellebrys@gmail.com",
+                "primary": true
+              }
+            ],
+            "phone": [
+              {
+                "label": "",
+                "value": "+5551984123800",
+                "primary": true
+              }
+            ],
+            "owner_id": 20851756,
+            "company_id": 13401220,
+            "value": 11353
+          },
+          "org_id": null,
+          "stage_id": 81,
+          "title": "Michelle",
+          "value": 0,
+          "acv": null,
+          "mrr": null,
+          "arr": null,
+          "currency": "BRL",
+          "add_time": "2026-02-23 10:13:23",
+          "update_time": "2026-02-23 10:33:02",
+          "stage_change_time": "2026-02-23 10:33:02",
+          "active": true,
+          "deleted": false,
+          "status": "open",
+          "probability": null,
+          "next_activity_date": null,
+          "next_activity_time": null,
+          "next_activity_id": null,
+          "last_activity_id": null,
+          "last_activity_date": null,
+          "lost_reason": null,
+          "visible_to": "3",
+          "close_time": null,
+          "pipeline_id": 12,
+          "won_time": null,
+          "first_won_time": null,
+          "lost_time": null,
+          "products_count": 0,
+          "files_count": 0,
+          "notes_count": 0,
+          "followers_count": 1,
+          "email_messages_count": 0,
+          "activities_count": 0,
+          "done_activities_count": 0,
+          "undone_activities_count": 0,
+          "participants_count": 1,
+          "expected_close_date": null,
+          "last_incoming_mail_time": null,
+          "last_outgoing_mail_time": null,
+          "label": "108",
+          "local_won_date": null,
+          "local_lost_date": null,
+          "local_close_date": null,
+          "origin": "Marketplace",
+          "origin_id": "c7e5d1c72619645e",
+          "channel": 38,
+          "channel_id": "HarmonizaPRO",
+          "is_archived": false,
+          "archive_time": null,
+          "score": null,
+          "sequence_enrollment": null,
+          "source_lead_id": null,
+          "stage_order_nr": 1,
+          "person_name": "Michelle",
+          "org_name": null,
+          "next_activity_subject": null,
+          "next_activity_type": null,
+          "next_activity_duration": null,
+          "next_activity_note": null,
+          "formatted_value": "R$ 0",
+          "weighted_value": 0,
+          "formatted_weighted_value": "R$ 0",
+          "weighted_value_currency": "BRL",
+          "rotten_time": null,
+          "acv_currency": null,
+          "mrr_currency": null,
+          "arr_currency": null,
+          "owner_name": "Andrew Rodrigues Cardoso",
+          "cc_email": "harmonizapro2+deal10700@pipedrivemail.com",
+          "b9e645c6460d1b0c210f47f8dc326933ac6b8f18": null,
+          "12be8f91d54d5f5719d813e026947fa5b1123fa1": null,
+          "5d9d4fc087b7efca5496d57025372d9e46fba215": null,
+          "0c0d3428eb7ff8f903c32b6957735775be3dc55c": "127",
+          "bacf6b9ab400c991b29fe275641c50fba8472817": null,
+          "f475fd5c0b6d98e4d0b7c8f21936a0a689ff0cb7": null,
+          "695916a9baffe8f2c7e2c90c00ead5dbe07b0448": null,
+          "4177cb3cab5d0eea8c7f94f7ef145126cebfe6a5": null,
+          "71191bc0d10d21b8213604ea00c52bb771cd05fb": null,
+          "87dc85a0ca5e5af5b64cefc3d2bde86d0309c258": null,
+          "ea94cc20f046a478c65f1f162b386e56d3fee7ca": null,
+          "a4fb9cf6d7d3f450d3c620e9d432642145d728f5": "81",
+          "83a2907425bd02810f3541a1da13970fb4cad28a": "83",
+          "28ee073609b17fd1f8b337721e40442435eb0792": "85",
+          "601a5412a8553515d5da895a5b00cdc02c681b6f": "91",
+          "d540737cfbd1ff9ff2185e46e5ac9abae70a7f92": "101",
+          "27b0161724fac21d46132e9d327222c0c5563fd4": "Michelle",
+          "842e0381bd316ebe2ef1141093b15e97310da42b": "+5551984123800",
+          "7202d18e20ba4c0b03441ac9ec028ab4491990a9": "@dramichellebrys",
+          "13c9cd4cb4ffa5312edfda20039bed37337e0941": "https://instagram.com/dramichellebrys",
+          "b6ce2593ce42ab171496deeb7ee6c4a65c8b3934": null,
+          "2afb629678ee7fbe687e6cf7c88b529f090c7f28": null,
+          "81b0d9efdce5f2776dfd6c3d3cb180ecb8a372d2": null,
+          "9d279e9c5f3f047c191100b7dd3ce645623068fb": null,
+          "9313043eb15c882d138a0136d61d29674305cd33": null,
+          "499d66a95d8a944ac9091e2ba1238cb0b41d6585": null,
+          "f41ec8c6ccea9deaf81d7b0e83ad7d5a6dbd8c32": null,
+          "7af7e2c9ac65ac7f34f39d8f277695d57c52c9e6": null,
+          "fa4385adfdf0db42cec5e9b9ba91d85325810db9": null,
+          "e3424c16643b0e4ea0a97d658eb8cfacf7de0d30": null,
+          "f411adfb5c1ccd6968627615551f614fe248c254": "link_in_bio",
+          "c17646917ef46d09e21e5523d02ec8506861f0e8": null,
+          "84790c2f40e7c276ed45d00ed1e00f873cd74bea": null,
+          "98c23f53854a205bb9e1b9f1d17a5459e0dc7d16": "bio",
+          "e5ae032d7fda4523edaf73cae9dbff166e1861fe": "social",
+          "1154d85b97ab799ecb95476c040eef165f8eca98": null,
+          "378430a5c3e70492a2e705aa5818052a6504407a": "link_in_bio",
+          "c83c89258b135c08b44d80a76eb69cf56fe41f99": null,
+          "a3a4cd5a4cdeff61454f4b72aa0796d0fcb62cb7": null,
+          "078fcc70bc995121efc1e1c3beffedd4dbb44cf7": null,
+          "51247e250a5d89bfcf7bde4cdd8d586dc5ea834d": null,
+          "1584834c45d23cb5e1a2543161fca7a2791c9ddd": null,
+          "6628a36a4b8b8518f37ba8763b5e744bbc5599a9": null,
+          "9e9209cbfa64563cb60b8a442e3c3a62fa9b284b": null,
+          "2a7bd62853a7e25c9e176cc242cfe43945a70ad2": null,
+          "c31cbe8f54216e54c9f6d7e6421cdb6d00da7fa7": null,
+          "4e9b242788f1076d1846f42a7a6fcb404d7ed523": null,
+          "2a62ed5510592c231e2e2d7632e31bea4a88e426": null,
+          "org_hidden": false,
+          "person_hidden": false,
+          "round_user": 25298429
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "filtro2": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        []
+      ]
+    },
+    "message1": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getDeal2": {
+      "main": [
+        [
+          {
+            "node": "filtro2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "getDeal2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "message2": {
+      "main": [
+        []
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "message": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        []
+      ]
+    },
+    "Dados Cadastro Workflow": {
+      "main": [
+        [
+          {
+            "node": "Variaveis do Cliente1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Variaveis do Cliente1": {
+      "main": [
+        [
+          {
+            "node": "Get a workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a workflow": {
+      "main": [
+        [
+          {
+            "node": "Encaminhar Erro para TrackAble1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SDR 1": {
+      "main": [
+        [
+          {
+            "node": "Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensagem": {
+      "main": [
+        [
+          {
+            "node": "Wait7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Mensagem1": {
+      "main": [
+        [
+          {
+            "node": "Wait8",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Wait7": {
+      "main": [
+        [
+          {
+            "node": "Mensagem1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait8": {
+      "main": [
+        [
+          {
+            "node": "Mensagem2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensagem2": {
+      "main": [
+        [],
+        []
+      ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "SDR 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "ByxX1TqYfyvlgp2T"
+  },
+  "versionId": "8d205696-7ecc-4ed1-acba-279659340124",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "iW5VeKzMhlHTiLTF",
+  "tags": [
+    {
+      "updatedAt": "2025-10-03T18:16:37.959Z",
+      "createdAt": "2025-10-03T18:16:37.959Z",
+      "id": "olakFEXRFPPNeevi",
+      "name": "Cadastrado"
+    },
+    {
+      "updatedAt": "2025-11-17T13:43:22.843Z",
+      "createdAt": "2025-11-17T13:43:22.843Z",
+      "id": "xDu8TyrW6g7HiKXS",
+      "name": "Documentado"
+    }
+  ]
+}

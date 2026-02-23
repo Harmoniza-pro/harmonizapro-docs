@@ -1,0 +1,1099 @@
+{
+  "name": "002.001 - Typeform - Clientes",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mensagem_dras",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -5040,
+        912
+      ],
+      "id": "e02b25fd-68f9-4245-9214-597944ce8595",
+      "name": "Webhook",
+      "webhookId": "4b1298be-8653-469b-9064-a8ecc000efe5"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "VjXrQZZPivqrbNZM",
+          "mode": "list",
+          "cachedResultName": "Envio de Mensagem - Clientes"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -3040,
+        896
+      ],
+      "id": "e6617637-6495-457d-b782-26958ba4932a",
+      "name": "Call 'Envio de Mensagem - Clientes'",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b88548fa-3a4b-4a75-a696-24472860b2d7",
+              "name": "Campo Telefone",
+              "value": "=a52a8a5a-17dd-4fd4-a037-4b59b31bd642",
+              "type": "string"
+            },
+            {
+              "id": "c32dffd5-34d8-4653-92d5-60a01d9690fb",
+              "name": "Campo Data Entrada",
+              "value": "a31ac8f3-4792-4126-ad14-207c5634b4b0",
+              "type": "string"
+            },
+            {
+              "id": "8833114a-d708-43b6-8e84-3b64f76f7f41",
+              "name": "Campo Link Wpp",
+              "value": "01ace05a-2aed-4a8f-a606-1baf7bd732b1",
+              "type": "string"
+            },
+            {
+              "id": "0a987225-ed8d-4635-a2e4-1956baed3c66",
+              "name": "Campo Clínica",
+              "value": "e2a18d27-8adc-4112-b9d4-8c3685b78a23",
+              "type": "string"
+            },
+            {
+              "id": "67080fa3-767a-4192-888b-bfcae55691db",
+              "name": "Campo Protocolo",
+              "value": "3eb4520a-4115-4edb-9024-b730ded72f1c",
+              "type": "string"
+            },
+            {
+              "id": "2075553b-2f8a-47b0-9073-972cebd85f16",
+              "name": "Campo Canal",
+              "value": "7022191f-ae0b-40dd-9966-4fb6705e57a0",
+              "type": "string"
+            },
+            {
+              "id": "fa35f5d1-2933-4669-9ddb-f5b363553934",
+              "name": "Data",
+              "value": "={{ new Date($item(\"0\").$node[\"Webhook\"].json[\"body\"][\"form_response\"][\"submitted_at\"]).getTime() }}",
+              "type": "string"
+            },
+            {
+              "id": "d2ce2bd4-f10b-4646-8e9c-d8b0f5f6c9b8",
+              "name": "Nome Completo",
+              "value": "={{ $item(\"0\").$node[\"Code\"].json[\"nome\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "1207da35-868f-4c2c-9989-a31d5cd5b834",
+              "name": "Telefone",
+              "value": "={{\n  (() => {\n    let phone = $item(\"0\").$node[\"Code\"].json[\"telefone\"]\n      .replace(/[^0-9]/g, '');\n  \n    // Garante código do país\n    if (!phone.startsWith('55')) {\n      phone = '55' + phone;\n    }\n  \n    // Remove 55 para validar número nacional\n    let national = phone.slice(2);\n  \n    // Se tiver DDD + 8 dígitos → adiciona 9\n    if (national.length === 10) {\n      national = national.slice(0, 2) + '9' + national.slice(2);\n    }\n  \n    phone = '55' + national;\n  \n    // Formato aceito pelo Phone Custom Field\n    const ddd = phone.slice(2, 4);\n    const first = phone.slice(4, 9);\n    const last = phone.slice(9, 13);\n  \n    return `+55 ${ddd} ${first} ${last}`;\n  })()\n}}",
+              "type": "string"
+            },
+            {
+              "id": "1e836a88-6169-4b64-adb1-a65bca68d54f",
+              "name": "Clínica",
+              "value": "={{ $item(\"0\").$node[\"Code\"].json[\"formulario\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "27287100-b44e-4008-a422-12097117e0d9",
+              "name": "Protocolo",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "21055e03-2e09-421c-95ac-c53dabda991b",
+              "name": "Campo Contexto",
+              "value": "9523971a-ba09-4465-8b9c-69d57c05a188",
+              "type": "string"
+            },
+            {
+              "id": "8987c464-14d1-4f28-a1b4-058c24722b22",
+              "name": "Campo Relacionamento Cliente",
+              "value": "e87f9cee-8d4e-440b-9d97-c362aadd7419",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4400,
+        912
+      ],
+      "id": "cd4df4ad-b98e-467f-83f8-a3967cf51cac",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "team": "90132992412",
+        "space": "901313001557",
+        "folder": "901316722258",
+        "list": "901324875324",
+        "filters": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "fieldId": "={{ $item(\"0\").$node[\"Edit Fields\"].json[\"Campo Telefone\"] }}",
+                "value": "={{ $item(\"0\").$node[\"Edit Fields\"].json[\"Telefone\"] }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -2720,
+        896
+      ],
+      "id": "dd9de821-dd46-42bd-b0fb-6b40b51b081a",
+      "name": "Get many tasks",
+      "alwaysOutputData": true,
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "20000ffc-ae05-4dc2-8f7c-1173d5f97c05",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2336,
+        896
+      ],
+      "id": "74bd9207-729a-437a-a9cb-54ad2541281a",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "team": "90132992412",
+        "space": "901313001557",
+        "folder": "901316722258",
+        "list": "901324875324",
+        "name": "={{ $item(\"0\").$node[\"Edit Fields\"].json[\"Nome Completo\"] }}",
+        "additionalFields": {
+          "assignees": "={{ [$item(\"0\").$node[\"OrganizarClickUp\"].json[\"3c3c0d40-a8c3-4f3c-b517-edd7136de137\"][\"value\"][\"geral\"]] }}",
+          "customFieldsJson": "=[\n  {\n    \"id\": \"{{ $item(\"0\").$node[\"Edit Fields\"].json[\"Campo Telefone\"] }}\",\n    \"value\": \"{{ $item(\"0\").$node[\"Edit Fields\"].json[\"Telefone\"] }}\"\n  },\n  {\n    \"id\": \"{{ $item(\"0\").$node[\"Edit Fields\"].json[\"Campo Data Entrada\"] }}\",\n    \"value\": \"{{ $item(\"0\").$node[\"Edit Fields\"].json[\"Data\"] }}\"\n  },\n  {\n    \"id\": \"{{ $item(\"0\").$node[\"Edit Fields\"].json[\"Campo Link Wpp\"] }}\",\n    \"value\": \"{{ \"https://wa.me/\" + $item(\"0\").$node[\"Edit Fields\"].json[\"Telefone\"].replace(/[^0-9]/g,\"\") }}\"\n  },\n  {\n    \"id\": \"{{ $item(\"0\").$node[\"Edit Fields\"].json[\"Campo Clínica\"] }}\",\n    \"value\": \"{{ $item(\"0\").$node[\"Edit Fields\"].json[\"Clínica\"] }}\"\n  },\n  {\n    \"id\": \"{{ $item(\"0\").$node[\"Edit Fields\"].json[\"Campo Canal\"] }}\",\n    \"value\": \"e29e476d-8cc3-4bdc-9153-98623c40fc27\"\n  },\n  {\n    \"id\": \"{{ $item(\"0\").$node[\"Edit Fields\"].json[\"Campo Protocolo\"] }}\",\n    \"value\": \"{{ $item(\"0\").$node[\"Edit Fields\"].json[\"Protocolo\"] }}\"\n  },\n  {\n    \"id\": \"{{ $item(\"0\").$node[\"Edit Fields\"].json[\"Campo Contexto\"] }}\",\n    \"value\": {{ JSON.stringify($item(\"0\").$node[\"Code\"].json[\"respostas_formatadas\"]) }}\n  },\n  {\n    \"id\": \"e87f9cee-8d4e-440b-9d97-c362aadd7419\",\n    \"value\": {\n      \"add\": [\n        \"{{ $item(\"0\").$node[\"OrganizarClickUp\"].json[\"task_id\"] }}\"\n      ]\n    }\n  }\n]",
+          "markdownContent": true,
+          "status": "entrada do lead"
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -2016,
+        656
+      ],
+      "id": "9024c86c-9358-43ed-96b8-203bb3d995bf",
+      "name": "Create a task",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const custom_fields = [\n  {\n    \"id\": $item(\"0\").$node[\"Edit Fields\"].json[\"Campo Telefone\"],\n    \"value\": $item(\"0\").$node[\"Edit Fields\"].json[\"Telefone\"]\n  },\n  {\n    \"id\": $item(\"0\").$node[\"Edit Fields\"].json[\"Campo Data Entrada\"],\n    \"value\": $item(\"0\").$node[\"Edit Fields\"].json[\"Data\"]\n  },\n  {\n    \"id\": $item(\"0\").$node[\"Edit Fields\"].json[\"Campo Link Wpp\"],\n    \"value\": \"https://wa.me/\" + $item(\"0\").$node[\"Edit Fields\"].json[\"Telefone\"].replace(/[^0-9]/g,\"\")\n  },\n  {\n    \"id\": $item(\"0\").$node[\"Edit Fields\"].json[\"Campo Clínica\"],\n    \"value\": $item(\"0\").$node[\"Edit Fields\"].json[\"Clínica\"]\n  },\n  {\n    \"id\": $item(\"0\").$node[\"Edit Fields\"].json[\"Campo Canal\"],\n    \"value\": \"e29e476d-8cc3-4bdc-9153-98623c40fc27\"\n  },\n  {\n    \"id\": $item(\"0\").$node[\"Edit Fields\"].json[\"Campo Protocolo\"],\n    \"value\": $item(\"0\").$node[\"Edit Fields\"].json[\"Protocolo\"]\n  },\n  {\n    \"id\": $item(\"0\").$node[\"Edit Fields\"].json[\"Campo Contexto\"],\n    \"value\": $item(\"0\").$node[\"Code\"].json[\"respostas_formatadas\"]\n  }\n]\n\nreturn custom_fields"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2000,
+        1152
+      ],
+      "id": "060fbca5-6b12-469d-a484-082e31570d3b",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1712,
+        1152
+      ],
+      "id": "59bb177f-c30a-42c8-8a0e-22b3bbe9cba7",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "setCustomField",
+        "task": "={{ $item(\"0\").$node[\"Get many tasks\"].json[\"id\"] }}",
+        "field": "={{ $item(\"0\").$node[\"Loop Over Items\"].json[\"id\"] }}",
+        "value": "={{ $item(\"0\").$node[\"Loop Over Items\"].json[\"value\"] }}"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -1456,
+        1344
+      ],
+      "id": "90fb25f8-8324-4268-ac8c-a1e649d5d7e5",
+      "name": "Set a custom Field on a task",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const itemsInput = $input.all();\n\nfunction sanitizeText(value) {\n  if (!value || typeof value !== 'string') return value;\n\n  return value\n    .replace(/[\\p{Emoji_Presentation}\\p{Extended_Pictographic}]/gu, '') // remove emojis\n    .replace(/[{}]/g, '')\n    .replace(/\\s+\\?/g, '?')\n    .replace(/\\s+/g, ' ')\n    .trim();\n}\n\nfunction sentenceCase(str) {\n  if (!str) return str;\n  const cleaned = str.toLowerCase().trim();\n  return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);\n}\n\nfunction cleanFormularioTitle(title) {\n  if (!title) return null;\n  return title.replace(/\\s*\\[.*?\\]\\s*/g, '').trim();\n}\n\nfunction getAnswerValue(answer) {\n  switch (answer.type) {\n    case 'text':\n      return answer.text;\n\n    case 'phone_number':\n      return answer.phone_number;\n\n    case 'choice':\n      return answer.choice?.label;\n\n    case 'choices':\n      return answer.choices?.labels?.join(', ');\n\n    case 'number':\n      return String(answer.number);\n\n    case 'email':\n      return answer.email;\n\n    default:\n      return null;\n  }\n}\n\n/**\n * Limpa e extrai a \"pergunta real\" do título do Typeform\n */\nfunction extractQuestion(fieldTitle) {\n  if (!fieldTitle) return null;\n\n  let t = String(fieldTitle);\n\n  // remove {{field}}\n  t = t.replace(/\\{\\{.*?\\}\\}/g, '');\n\n  // remove markdown do typeform\n  t = t.replace(/\\*/g, '');\n\n  // normaliza linhas\n  t = t.replace(/\\n+/g, ' ');\n\n  t = sanitizeText(t);\n\n  // remove textos de copy iniciais\n  const prefixes = [\n    'aqui no consultório',\n    'aqui na clínica',\n    'ótimo',\n    'entendi',\n    'agora me conta',\n    'agora uma pergunta importante',\n    'mais uma pergunta importante',\n    'para finalizarmos',\n    'para prepararmos sua consulta'\n  ];\n\n  const lower = t.toLowerCase();\n\n  for (const p of prefixes) {\n    const idx = lower.indexOf(p);\n    if (idx !== -1) {\n      t = t.slice(idx + p.length).trim();\n      break;\n    }\n  }\n\n  // remove vírgula ou dois pontos no começo\n  t = t.replace(/^[,:\\-\\s]+/, '');\n\n  // se tiver vírgula, pega trecho após a última\n  if (t.includes(',')) {\n    const parts = t.split(',').map(p => p.trim()).filter(Boolean);\n    if (parts.length >= 2) t = parts[parts.length - 1];\n  }\n\n  // sentence case\n  return sentenceCase(sanitizeText(t));\n}\n\nconst output = [];\n\nfor (const item of itemsInput) {\n  const formResponse = item.json?.body?.form_response;\n\n  if (!formResponse?.answers || !formResponse?.definition?.fields) {\n    output.push({ json: { error: 'Resposta não encontrada' }});\n    continue;\n  }\n\n  const { answers, definition, form_id } = formResponse;\n\n  const fieldById = Object.fromEntries(\n    definition.fields.map(f => [f.id, f])\n  );\n\n  const responsesByFieldId = {};\n  const respostas = [];\n\n  let nome = null;\n  let telefone = null;\n\n  for (const answer of answers) {\n    const field = fieldById[answer.field.id];\n    if (!field) continue;\n\n    const rawValue = getAnswerValue(answer);\n    const value = sanitizeText(rawValue);\n    const pergunta = extractQuestion(field.title);\n\n    if (field.id && value) {\n      responsesByFieldId[field.id] = value;\n    }\n\n    // Nome\n    if (pergunta === 'First name') {\n      nome = value;\n      continue;\n    }\n\n    // Telefone\n    if (answer.type === 'phone_number') {\n      telefone = value;\n      continue;\n    }\n\n    // ignora vazios\n    if (!pergunta || !value) continue;\n\n    // Se a \"pergunta\" ainda ficar como copy sem interrogação e muito curta/ruim, ignora\n    // (mantém as que fazem sentido)\n    if (pergunta.toLowerCase().includes('protocolo') && pergunta.length > 80 && !pergunta.includes('?')) {\n      continue;\n    }\n\n    respostas.push(`${pergunta}: ${value}`);\n  }\n\n  output.push({\n    json: {\n      nome,\n      telefone,\n      dra: cleanFormularioTitle(definition.title),\n      formulario: cleanFormularioTitle(definition.title),\n      form_id: form_id || null,\n      respostas_por_campo: responsesByFieldId,\n      respostas_formatadas: respostas.join('\\n\\n')\n    }\n  });\n}\n\nreturn output;\n"
+      },
+      "id": "50b10fee-fd85-4dd4-b7f4-bcc2ad113b53",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4704,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "team": "90132992412",
+        "space": "901313274302",
+        "folder": "901317138563",
+        "list": "901325472193",
+        "filters": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "fieldId": "e2a18d27-8adc-4112-b9d4-8c3685b78a23",
+                "value": "={{ $item(\"0\").$node[\"Edit Fields\"].json[\"Clínica\"] }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -3696,
+        896
+      ],
+      "id": "6b718822-5ad5-4f9b-9866-078afe6f15b1",
+      "name": "Get many tasks1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonData = items[0].json;\nconst customFields = jsonData.custom_fields;\nconst result = {\n  task_id: jsonData.id,\n  name: jsonData.name,\n  status: jsonData.status.status\n};\n\ncustomFields.forEach(field => {\n  const fieldId = field.id;\n  let fieldValue;\n  let fieldObject = {\n    id: fieldId,\n    name: field.name\n  };\n\n  // Tratamento do valor do campo\n  if (field.type === 'users' && Array.isArray(field.value)) {\n    const allIds = field.value.map(user => user.id).join(',');\n    const userDetails = {};\n    field.value.forEach(user => {\n      userDetails[user.id] = {\n        id: user.id,\n        name: user.username,\n        email: user.email\n      };\n    });\n    fieldValue = {\n      geral: allIds,\n      ...userDetails\n    };\n  } else if (field.type === 'drop_down' && field.value !== undefined && field.value !== null) {\n    const selectedOption = field.type_config.options.find(opt => opt.orderindex === field.value);\n    if (selectedOption) {\n      fieldValue = {\n        id: selectedOption.id,\n        name: selectedOption.name,\n        value: selectedOption.orderindex\n      };\n    } else {\n      fieldValue = '';\n    }\n  } else if (field.type === 'labels' && Array.isArray(field.value)) {\n    fieldValue = field.value.map(optionId => {\n      const option = field.type_config.options.find(opt => opt.id === optionId);\n      if (option) {\n        return {\n          id: option.id,\n          name: option.label,\n          color: option.color\n        };\n      }\n      return null;\n    }).filter(Boolean);\n  } else if (field.type === 'tasks' && Array.isArray(field.value)) {\n    fieldValue = field.value.map(task => ({\n      id: task.id,\n      name: task.name,\n      status: task.status\n    }));\n  } else if (field.type === 'emoji') {\n    fieldValue = field.value || '';\n  } else {\n    fieldValue = field.value !== undefined && field.value !== null ? field.value : '';\n  }\n\n  fieldObject.value = fieldValue;\n\n  // Apenas adiciona options se o campo tiver opções configuradas\n  if (field.type_config && field.type_config.options) {\n    const options = {};\n    field.type_config.options.forEach(opt => {\n      options[opt.id] = {\n        id: opt.id,\n        name: opt.label || opt.name\n      };\n    });\n    if (Object.keys(options).length > 0) {\n      fieldObject.options = options;\n    }\n  }\n\n  result[fieldId] = fieldObject;\n});\n\nreturn [{ json: result }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3360,
+        896
+      ],
+      "id": "517e82b7-1a0e-4050-83cb-4bde4248ba83",
+      "name": "OrganizarClickUp",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -3808,
+        1120
+      ],
+      "id": "4ccf8f5c-8ed8-4a15-af55-0b95d535ead4",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4b4b9750-5192-4f36-b841-ea48cc5a0db6",
+              "leftValue": "={{ $item(\"0\").$node[\"Edit Fields\"].json[\"Telefone\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -4080,
+        912
+      ],
+      "id": "d23e2dcf-80e1-45e9-ae4d-fb68b2f5c54d",
+      "name": "If1"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhooks.goldeletra.pro",
+            "user-agent": "Typeform Webhooks",
+            "content-length": "5904",
+            "accept-encoding": "gzip",
+            "content-type": "application/json",
+            "traceparent": "00-69fe866e0967e858c0023c205a33833f-85f565bee6916471-01",
+            "x-forwarded-for": "34.230.177.131",
+            "x-forwarded-host": "webhooks.goldeletra.pro",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik_traefik.1",
+            "x-real-ip": "34.230.177.131"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "event_id": "01KJ0KKDPYMQ8EX2P3JGAASGFR",
+            "event_type": "form_response",
+            "form_response": {
+              "form_id": "Q9bMPb11",
+              "token": "qqk7yj27h0as4253j7unchpqqk7yj80u",
+              "response_url": "https://admin.typeform.com/form/Q9bMPb11/results?responseId=qqk7yj27h0as4253j7unchpqqk7yj80u#responses",
+              "landed_at": "2026-02-21T17:16:06Z",
+              "submitted_at": "2026-02-21T17:22:49Z",
+              "hidden": {
+                "utm_content": "xxxxx",
+                "utm_term": "101"
+              },
+              "calculated": {
+                "score": 0
+              },
+              "variables": [
+                {
+                  "key": "counter_014be624_ce77_4cd9_beb6_be33a011d262",
+                  "type": "number",
+                  "number": 0
+                },
+                {
+                  "key": "score",
+                  "type": "number",
+                  "number": 0
+                },
+                {
+                  "key": "winning_outcome_id",
+                  "type": "outcome_id",
+                  "outcome_id": "M5EBZzyGdMgY"
+                }
+              ],
+              "outcome": {
+                "id": "M5EBZzyGdMgY",
+                "title": "Clique no botão abaixo e receba um presente na sua consulta. 😊"
+              },
+              "definition": {
+                "id": "Q9bMPb11",
+                "title": "Dra. Renata Rezende",
+                "fields": [
+                  {
+                    "id": "yvW6xFXYLDN9",
+                    "ref": "fa335b9e-ecc3-48c6-90d8-4a75abbb9b75",
+                    "type": "short_text",
+                    "title": "First name",
+                    "properties": {}
+                  },
+                  {
+                    "id": "IqM72RDSJINP",
+                    "ref": "f5b8e621-751a-487f-9200-aceb4ca98a74",
+                    "type": "multiple_choice",
+                    "title": "Por que o *Protocolo RR* não é um procedimento qualquer",
+                    "properties": {},
+                    "choices": [
+                      {
+                        "id": "hj1EFBVmgIjm",
+                        "ref": "e6cc6034-bcfc-4e96-a1fa-2cfa03a50bdf",
+                        "label": "Quero resultados como esse!"
+                      },
+                      {
+                        "id": "YVIzeXLuvrA5",
+                        "ref": "59a8c621-4849-4ef2-aabd-5b92b3af63aa",
+                        "label": "É isso que eu preciso!"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "RoXB3HD6h7aN",
+                    "ref": "0f804299-aa4f-41de-89bd-e48bce0950ba",
+                    "type": "long_text",
+                    "title": "{{field:fa335b9e-ecc3-48c6-90d8-4a75abbb9b75}}, o que mais te incomoda no seu rosto?",
+                    "properties": {}
+                  },
+                  {
+                    "id": "TSNb5OuCVBTZ",
+                    "ref": "a504526d-4021-4efe-93b0-31060884645a",
+                    "type": "long_text",
+                    "title": "{{field:fa335b9e-ecc3-48c6-90d8-4a75abbb9b75}}, quais procedimento estético você já fez antes?",
+                    "properties": {}
+                  },
+                  {
+                    "id": "skfB0hiYvk8R",
+                    "ref": "6efdec6c-05b9-4ed7-b1d0-885c2f86888a",
+                    "type": "long_text",
+                    "title": "{{field:fa335b9e-ecc3-48c6-90d8-4a75abbb9b75}}, quantos anos você tem?",
+                    "properties": {}
+                  },
+                  {
+                    "id": "uqo8DLS8Qyns",
+                    "ref": "a8834aa8-3067-44e7-b36f-1010eedf1840",
+                    "type": "phone_number",
+                    "title": "Phone number",
+                    "properties": {}
+                  },
+                  {
+                    "id": "2Cs2iv9b0EST",
+                    "ref": "3df50bd4-3a47-4079-b3fb-bd871adc4efe",
+                    "type": "multiple_choice",
+                    "title": "Para prepararmos sua consulta, o investimento tem o valor único de R$200,00.\n \nPronta para o primeiro passo da sua transformação?",
+                    "properties": {},
+                    "choices": [
+                      {
+                        "id": "totdEjt1V2oe",
+                        "ref": "61c7bfa6-fee9-454b-aa10-b7a34668abed",
+                        "label": "Sim, quero agendar uma consulta!"
+                      },
+                      {
+                        "id": "5nlu1pBGPXHz",
+                        "ref": "7e0a5c44-e2f1-40a5-8dbb-841ae6f19b8e",
+                        "label": "Não! Talvez o tempo me espere..."
+                      }
+                    ]
+                  }
+                ],
+                "outcome": {
+                  "variable": "winning_outcome_id",
+                  "choices": [
+                    {
+                      "id": "M5EBZzyGdMgY",
+                      "ref": "b9328bc1-d288-48db-840f-90017865618e",
+                      "title": "Clique no botão abaixo e receba um presente na sua consulta. 😊",
+                      "counter_variable": "counter_014be624_ce77_4cd9_beb6_be33a011d262",
+                      "thankyou_screen_ref": "439e42e2-71b0-48e2-ab67-dbb18cfedebe"
+                    }
+                  ]
+                },
+                "endings": [
+                  {
+                    "id": "KzBwwsuPdiwP",
+                    "ref": "439e42e2-71b0-48e2-ab67-dbb18cfedebe",
+                    "title": "Clique no botão abaixo e receba um presente na sua consulta. 😊",
+                    "type": "thankyou_screen",
+                    "properties": {
+                      "description": "Assista o vídeo e conheça mais sobre a experiência com a Dra. Renata Rezende!",
+                      "button_text": "Agendar Consulta Paga!",
+                      "show_button": true,
+                      "share_icons": false,
+                      "button_mode": "redirect",
+                      "redirect_url": "https://wa.me/5573998675539?text=Ol%C3%A1!%20Acabei%20de%20preencher%20o%20formul%C3%A1rio%20e%20quero%20prioridade%20no%20atendimento."
+                    },
+                    "attachment": {
+                      "type": "video",
+                      "href": "https://youtube.com/shorts/z01xLz9FxjY?feature=share"
+                    },
+                    "layout": {
+                      "type": "stack",
+                      "attachment": {
+                        "type": "video",
+                        "href": "https://youtube.com/shorts/z01xLz9FxjY?feature=share"
+                      },
+                      "viewport_overrides": {}
+                    }
+                  }
+                ],
+                "settings": {
+                  "partial_responses_to_all_integrations": false
+                }
+              },
+              "answers": [
+                {
+                  "type": "text",
+                  "text": "Elizete",
+                  "answer_url": "https://admin.typeform.com/form/Q9bMPb11/results?responseId=qqk7yj27h0as4253j7unchpqqk7yj80u&fieldId=yvW6xFXYLDN9#responses",
+                  "field": {
+                    "id": "yvW6xFXYLDN9",
+                    "type": "short_text",
+                    "ref": "fa335b9e-ecc3-48c6-90d8-4a75abbb9b75"
+                  }
+                },
+                {
+                  "type": "choice",
+                  "answer_url": "https://admin.typeform.com/form/Q9bMPb11/results?responseId=qqk7yj27h0as4253j7unchpqqk7yj80u&fieldId=IqM72RDSJINP#responses",
+                  "choice": {
+                    "id": "YVIzeXLuvrA5",
+                    "label": "É isso que eu preciso!",
+                    "ref": "59a8c621-4849-4ef2-aabd-5b92b3af63aa"
+                  },
+                  "field": {
+                    "id": "IqM72RDSJINP",
+                    "type": "multiple_choice",
+                    "ref": "f5b8e621-751a-487f-9200-aceb4ca98a74"
+                  }
+                },
+                {
+                  "type": "text",
+                  "text": "Papada, rugas  etc",
+                  "answer_url": "https://admin.typeform.com/form/Q9bMPb11/results?responseId=qqk7yj27h0as4253j7unchpqqk7yj80u&fieldId=RoXB3HD6h7aN#responses",
+                  "field": {
+                    "id": "RoXB3HD6h7aN",
+                    "type": "long_text",
+                    "ref": "0f804299-aa4f-41de-89bd-e48bce0950ba"
+                  }
+                },
+                {
+                  "type": "text",
+                  "text": "Nenhum",
+                  "answer_url": "https://admin.typeform.com/form/Q9bMPb11/results?responseId=qqk7yj27h0as4253j7unchpqqk7yj80u&fieldId=TSNb5OuCVBTZ#responses",
+                  "field": {
+                    "id": "TSNb5OuCVBTZ",
+                    "type": "long_text",
+                    "ref": "a504526d-4021-4efe-93b0-31060884645a"
+                  }
+                },
+                {
+                  "type": "text",
+                  "text": "58",
+                  "answer_url": "https://admin.typeform.com/form/Q9bMPb11/results?responseId=qqk7yj27h0as4253j7unchpqqk7yj80u&fieldId=skfB0hiYvk8R#responses",
+                  "field": {
+                    "id": "skfB0hiYvk8R",
+                    "type": "long_text",
+                    "ref": "6efdec6c-05b9-4ed7-b1d0-885c2f86888a"
+                  }
+                },
+                {
+                  "type": "phone_number",
+                  "answer_url": "https://admin.typeform.com/form/Q9bMPb11/results?responseId=qqk7yj27h0as4253j7unchpqqk7yj80u&fieldId=uqo8DLS8Qyns#responses",
+                  "phone_number": "+5573998010595",
+                  "field": {
+                    "id": "uqo8DLS8Qyns",
+                    "type": "phone_number",
+                    "ref": "a8834aa8-3067-44e7-b36f-1010eedf1840"
+                  }
+                },
+                {
+                  "type": "choice",
+                  "answer_url": "https://admin.typeform.com/form/Q9bMPb11/results?responseId=qqk7yj27h0as4253j7unchpqqk7yj80u&fieldId=2Cs2iv9b0EST#responses",
+                  "choice": {
+                    "id": "5nlu1pBGPXHz",
+                    "label": "Não! Talvez o tempo me espere...",
+                    "ref": "7e0a5c44-e2f1-40a5-8dbb-841ae6f19b8e"
+                  },
+                  "field": {
+                    "id": "2Cs2iv9b0EST",
+                    "type": "multiple_choice",
+                    "ref": "3df50bd4-3a47-4079-b3fb-bd871adc4efe"
+                  }
+                }
+              ],
+              "ending": {
+                "id": "KzBwwsuPdiwP",
+                "ref": "439e42e2-71b0-48e2-ab67-dbb18cfedebe"
+              }
+            }
+          },
+          "webhookUrl": "https://webhooks.goldeletra.pro/webhook/mensagem_dras",
+          "executionMode": "production"
+        }
+      }
+    ],
+    "Call 'Envio de Mensagem - Clientes'": [
+      {
+        "json": {
+          "task_id": "86afe5d2j",
+          "name": "Dra. Renata Rezende",
+          "status": "cliente ativo",
+          "e2a18d27-8adc-4112-b9d4-8c3685b78a23": {
+            "id": "e2a18d27-8adc-4112-b9d4-8c3685b78a23",
+            "name": "Clínica",
+            "value": "Dra. Renata Rezende"
+          },
+          "4be65b4a-3a2e-4689-b885-1e0924e2eef1": {
+            "id": "4be65b4a-3a2e-4689-b885-1e0924e2eef1",
+            "name": "Data Primeira Venda",
+            "value": ""
+          },
+          "a31ac8f3-4792-4126-ad14-207c5634b4b0": {
+            "id": "a31ac8f3-4792-4126-ad14-207c5634b4b0",
+            "name": "Data de Entrada",
+            "value": "1751932800000"
+          },
+          "3c3c0d40-a8c3-4f3c-b517-edd7136de137": {
+            "id": "3c3c0d40-a8c3-4f3c-b517-edd7136de137",
+            "name": "Hunter",
+            "value": {
+              "112100105": {
+                "id": 112100105,
+                "name": "Jéssica de freitas fernandes",
+                "email": "jessica.de.freitas@hotmail.com"
+              },
+              "geral": "112100105"
+            }
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Get many tasks": [
+      {
+        "json": {},
+        "pairedItem": [
+          {
+            "item": 0,
+            "input": 0
+          }
+        ]
+      }
+    ],
+    "Code": [
+      {
+        "json": {
+          "nome": "Elizete",
+          "telefone": "+5573998010595",
+          "dra": "Dra. Renata Rezende",
+          "formulario": "Dra. Renata Rezende",
+          "form_id": "Q9bMPb11",
+          "respostas_por_campo": {
+            "yvW6xFXYLDN9": "Elizete",
+            "IqM72RDSJINP": "É isso que eu preciso!",
+            "RoXB3HD6h7aN": "Papada, rugas etc",
+            "TSNb5OuCVBTZ": "Nenhum",
+            "skfB0hiYvk8R": "58",
+            "uqo8DLS8Qyns": "+5573998010595",
+            "2Cs2iv9b0EST": "Não! Talvez o tempo me espere..."
+          },
+          "respostas_formatadas": "Por que o protocolo rr não é um procedimento qualquer: É isso que eu preciso!\n\nO que mais te incomoda no seu rosto?: Papada, rugas etc\n\nQuais procedimento estético você já fez antes?: Nenhum\n\nQuantos anos você tem?: 58\n\n00. pronta para o primeiro passo da sua transformação?: Não! Talvez o tempo me espere..."
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Get many tasks1": [
+      {
+        "json": {
+          "id": "86afe5d2j",
+          "custom_id": null,
+          "custom_item_id": 0,
+          "name": "Dra. Renata Rezende",
+          "text_content": "",
+          "description": "",
+          "status": {
+            "status": "cliente ativo",
+            "id": "sc901325472193_LmTXvlIw",
+            "color": "#30a46c",
+            "type": "custom",
+            "orderindex": 1
+          },
+          "orderindex": "120491083.00000000000000000000000000000000",
+          "date_created": "1771173445793",
+          "date_updated": "1771343903655",
+          "date_closed": null,
+          "date_done": null,
+          "archived": false,
+          "creator": {
+            "id": 278505381,
+            "username": "Ferramentas Harmoniza",
+            "color": "#595d66",
+            "email": "ferramentas@harmoniza.pro",
+            "profilePicture": null
+          },
+          "assignees": [],
+          "group_assignees": [],
+          "watchers": [
+            {
+              "id": 278505381,
+              "username": "Ferramentas Harmoniza",
+              "color": "#595d66",
+              "initials": "FH",
+              "email": "ferramentas@harmoniza.pro",
+              "profilePicture": null
+            }
+          ],
+          "checklists": [],
+          "tags": [],
+          "parent": null,
+          "top_level_parent": null,
+          "priority": null,
+          "due_date": null,
+          "start_date": null,
+          "points": null,
+          "time_estimate": null,
+          "custom_fields": [
+            {
+              "id": "e2a18d27-8adc-4112-b9d4-8c3685b78a23",
+              "name": "Clínica",
+              "type": "short_text",
+              "type_config": {},
+              "date_created": "1770129175615",
+              "hide_from_guests": true,
+              "value": "Dra. Renata Rezende",
+              "value_richtext": null,
+              "required": false
+            },
+            {
+              "id": "4be65b4a-3a2e-4689-b885-1e0924e2eef1",
+              "name": "Data Primeira Venda",
+              "type": "date",
+              "type_config": {},
+              "date_created": "1771090272449",
+              "hide_from_guests": false,
+              "required": false
+            },
+            {
+              "id": "a31ac8f3-4792-4126-ad14-207c5634b4b0",
+              "name": "Data de Entrada",
+              "type": "date",
+              "type_config": {},
+              "date_created": "1770129279952",
+              "hide_from_guests": false,
+              "value": "1751932800000",
+              "value_richtext": null,
+              "required": false
+            },
+            {
+              "id": "3c3c0d40-a8c3-4f3c-b517-edd7136de137",
+              "name": "Hunter",
+              "type": "users",
+              "type_config": {
+                "single_user": false,
+                "include_guests": true
+              },
+              "date_created": "1771090310950",
+              "hide_from_guests": false,
+              "value": [
+                {
+                  "id": 112100105,
+                  "username": "Jéssica de freitas fernandes",
+                  "email": "jessica.de.freitas@hotmail.com",
+                  "color": null,
+                  "initials": "JF",
+                  "profilePicture": null
+                }
+              ],
+              "value_richtext": "",
+              "required": false
+            }
+          ],
+          "dependencies": [],
+          "linked_tasks": [],
+          "locations": [],
+          "team_id": "90132992412",
+          "url": "https://app.clickup.com/t/86afe5d2j",
+          "sharing": {
+            "public": false,
+            "public_share_expires_on": null,
+            "public_fields": [
+              "assignees",
+              "priority",
+              "due_date",
+              "content",
+              "comments",
+              "attachments",
+              "customFields",
+              "subtasks",
+              "tags",
+              "checklists",
+              "coverimage"
+            ],
+            "token": null,
+            "seo_optimized": false
+          },
+          "permission_level": "create",
+          "list": {
+            "id": "901325472193",
+            "name": "Gestão de Clientes",
+            "access": true
+          },
+          "project": {
+            "id": "901317138563",
+            "name": "Clientes",
+            "hidden": false,
+            "access": true
+          },
+          "folder": {
+            "id": "901317138563",
+            "name": "Clientes",
+            "hidden": false,
+            "access": true
+          },
+          "space": {
+            "id": "901313274302"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "OrganizarClickUp": [
+      {
+        "json": {
+          "task_id": "86afe5d2j",
+          "name": "Dra. Renata Rezende",
+          "status": "cliente ativo",
+          "e2a18d27-8adc-4112-b9d4-8c3685b78a23": {
+            "id": "e2a18d27-8adc-4112-b9d4-8c3685b78a23",
+            "name": "Clínica",
+            "value": "Dra. Renata Rezende"
+          },
+          "4be65b4a-3a2e-4689-b885-1e0924e2eef1": {
+            "id": "4be65b4a-3a2e-4689-b885-1e0924e2eef1",
+            "name": "Data Primeira Venda",
+            "value": ""
+          },
+          "a31ac8f3-4792-4126-ad14-207c5634b4b0": {
+            "id": "a31ac8f3-4792-4126-ad14-207c5634b4b0",
+            "name": "Data de Entrada",
+            "value": "1751932800000"
+          },
+          "3c3c0d40-a8c3-4f3c-b517-edd7136de137": {
+            "id": "3c3c0d40-a8c3-4f3c-b517-edd7136de137",
+            "name": "Hunter",
+            "value": {
+              "112100105": {
+                "id": 112100105,
+                "name": "Jéssica de freitas fernandes",
+                "email": "jessica.de.freitas@hotmail.com"
+              },
+              "geral": "112100105"
+            }
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many tasks": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Create a task",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Set a custom Field on a task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set a custom Field on a task": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'Envio de Mensagem - Clientes'": {
+      "main": [
+        [
+          {
+            "node": "Get many tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many tasks1": {
+      "main": [
+        [
+          {
+            "node": "OrganizarClickUp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OrganizarClickUp": {
+      "main": [
+        [
+          {
+            "node": "Call 'Envio de Mensagem - Clientes'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Get many tasks1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5627a9e6-bbd2-4939-88f9-47ab6e261a21",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "l7D22vQHSuxBcoYQ",
+  "tags": []
+}

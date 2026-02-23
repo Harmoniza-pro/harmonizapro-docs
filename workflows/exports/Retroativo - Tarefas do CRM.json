@@ -1,0 +1,358 @@
+{
+  "name": "Retroativo - Tarefas do CRM",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://api.clickup.com/api/v2/team/90132992412/seats",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "clickUpOAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "397669f3-18db-4b9f-8b40-6afca5bbef4e",
+      "name": "HTTP Request",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "team": "90132992412",
+        "space": "901313001557",
+        "folder": "901316722258",
+        "list": "901324875324",
+        "filters": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "fieldId": "=e87f9cee-8d4e-440b-9d97-c362aadd7419",
+                "operator": "IS NULL"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -1552,
+        80
+      ],
+      "id": "329ac6e9-ee88-4596-b1eb-d08db968e4a7",
+      "name": "Get many tasks2",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1264,
+        80
+      ],
+      "id": "0598bcf1-395e-4d07-9a0b-b24dcc8570be",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "id": "={{ $item(\"0\").$node[\"Loop Over Items\"].json[\"id\"] }}",
+        "updateFields": {
+          "addAssignees": "={{ $item(\"0\").$node[\"OrganizarClickUp1\"].json[\"3c3c0d40-a8c3-4f3c-b517-edd7136de137\"][\"value\"][\"geral\"] }}"
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        416,
+        224
+      ],
+      "id": "36b9a9ec-2b4e-4041-bf11-36fa32c43f71",
+      "name": "Update a task2",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1872,
+        80
+      ],
+      "id": "02059e41-31bb-42bd-884d-f5ee3f543238",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "team": "90132992412",
+        "space": "901313274302",
+        "folder": "901317138563",
+        "list": "901325472193",
+        "filters": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "fieldId": "e2a18d27-8adc-4112-b9d4-8c3685b78a23",
+                "value": "={{ $item(\"0\").$node[\"OrganizarClickUp\"].json[\"e2a18d27-8adc-4112-b9d4-8c3685b78a23\"][\"value\"] }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -704,
+        240
+      ],
+      "id": "e402c70b-a944-4c56-bb31-2a33a8cdd896",
+      "name": "Get many tasks3",
+      "alwaysOutputData": true,
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonData = items[0].json;\nconst customFields = jsonData.custom_fields;\nconst result = {\n  task_id: jsonData.id,\n  name: jsonData.name,\n  status: jsonData.status.status\n};\n\ncustomFields.forEach(field => {\n  const fieldId = field.id;\n  let fieldValue;\n  let fieldObject = {\n    id: fieldId,\n    name: field.name\n  };\n\n  // Tratamento do valor do campo\n  if (field.type === 'users' && Array.isArray(field.value)) {\n    const allIds = field.value.map(user => user.id).join(',');\n    const userDetails = {};\n    field.value.forEach(user => {\n      userDetails[user.id] = {\n        id: user.id,\n        name: user.username,\n        email: user.email\n      };\n    });\n    fieldValue = {\n      geral: allIds,\n      ...userDetails\n    };\n  } else if (field.type === 'drop_down' && field.value !== undefined && field.value !== null) {\n    const selectedOption = field.type_config.options.find(opt => opt.orderindex === field.value);\n    if (selectedOption) {\n      fieldValue = {\n        id: selectedOption.id,\n        name: selectedOption.name,\n        value: selectedOption.orderindex\n      };\n    } else {\n      fieldValue = '';\n    }\n  } else if (field.type === 'labels' && Array.isArray(field.value)) {\n    fieldValue = field.value.map(optionId => {\n      const option = field.type_config.options.find(opt => opt.id === optionId);\n      if (option) {\n        return {\n          id: option.id,\n          name: option.label,\n          color: option.color\n        };\n      }\n      return null;\n    }).filter(Boolean);\n  } else if (field.type === 'tasks' && Array.isArray(field.value)) {\n    fieldValue = field.value.map(task => ({\n      id: task.id,\n      name: task.name,\n      status: task.status\n    }));\n  } else if (field.type === 'emoji') {\n    fieldValue = field.value || '';\n  } else {\n    fieldValue = field.value !== undefined && field.value !== null ? field.value : '';\n  }\n\n  fieldObject.value = fieldValue;\n\n  // Apenas adiciona options se o campo tiver opções configuradas\n  if (field.type_config && field.type_config.options) {\n    const options = {};\n    field.type_config.options.forEach(opt => {\n      options[opt.id] = {\n        id: opt.id,\n        name: opt.label || opt.name\n      };\n    });\n    if (Object.keys(options).length > 0) {\n      fieldObject.options = options;\n    }\n  }\n\n  result[fieldId] = fieldObject;\n});\n\nreturn [{ json: result }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -992,
+        240
+      ],
+      "id": "973ef801-f5d6-41c7-885a-db6181542338",
+      "name": "OrganizarClickUp"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "bf817c33-3e2a-4861-91a1-efe3df05e2df",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -416,
+        240
+      ],
+      "id": "5b6ac637-5fd9-43be-8284-45397dd900a9",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonData = items[0].json;\nconst customFields = jsonData.custom_fields;\nconst result = {\n  task_id: jsonData.id,\n  name: jsonData.name,\n  status: jsonData.status.status\n};\n\ncustomFields.forEach(field => {\n  const fieldId = field.id;\n  let fieldValue;\n  let fieldObject = {\n    id: fieldId,\n    name: field.name\n  };\n\n  // Tratamento do valor do campo\n  if (field.type === 'users' && Array.isArray(field.value)) {\n    const allIds = field.value.map(user => user.id).join(',');\n    const userDetails = {};\n    field.value.forEach(user => {\n      userDetails[user.id] = {\n        id: user.id,\n        name: user.username,\n        email: user.email\n      };\n    });\n    fieldValue = {\n      geral: allIds,\n      ...userDetails\n    };\n  } else if (field.type === 'drop_down' && field.value !== undefined && field.value !== null) {\n    const selectedOption = field.type_config.options.find(opt => opt.orderindex === field.value);\n    if (selectedOption) {\n      fieldValue = {\n        id: selectedOption.id,\n        name: selectedOption.name,\n        value: selectedOption.orderindex\n      };\n    } else {\n      fieldValue = '';\n    }\n  } else if (field.type === 'labels' && Array.isArray(field.value)) {\n    fieldValue = field.value.map(optionId => {\n      const option = field.type_config.options.find(opt => opt.id === optionId);\n      if (option) {\n        return {\n          id: option.id,\n          name: option.label,\n          color: option.color\n        };\n      }\n      return null;\n    }).filter(Boolean);\n  } else if (field.type === 'tasks' && Array.isArray(field.value)) {\n    fieldValue = field.value.map(task => ({\n      id: task.id,\n      name: task.name,\n      status: task.status\n    }));\n  } else if (field.type === 'emoji') {\n    fieldValue = field.value || '';\n  } else {\n    fieldValue = field.value !== undefined && field.value !== null ? field.value : '';\n  }\n\n  fieldObject.value = fieldValue;\n\n  // Apenas adiciona options se o campo tiver opções configuradas\n  if (field.type_config && field.type_config.options) {\n    const options = {};\n    field.type_config.options.forEach(opt => {\n      options[opt.id] = {\n        id: opt.id,\n        name: opt.label || opt.name\n      };\n    });\n    if (Object.keys(options).length > 0) {\n      fieldObject.options = options;\n    }\n  }\n\n  result[fieldId] = fieldObject;\n});\n\nreturn [{ json: result }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -112,
+        224
+      ],
+      "id": "d42db93a-02de-4e5b-bbae-e381f04707da",
+      "name": "OrganizarClickUp1"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "setCustomField",
+        "task": "={{ $item(\"0\").$node[\"Loop Over Items\"].json[\"id\"] }}",
+        "field": "e87f9cee-8d4e-440b-9d97-c362aadd7419",
+        "jsonParse": true,
+        "value": "={\n  \"add\": [\n    \"{{ $item(\"0\").$node[\"OrganizarClickUp1\"].json[\"task_id\"] }}\"\n  ]\n}"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        144,
+        224
+      ],
+      "id": "e3af9938-2531-47bf-b871-4fb1db8d04a4",
+      "name": "Set a custom Field on a task",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get many tasks2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "OrganizarClickUp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a task2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get many tasks2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many tasks3": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OrganizarClickUp": {
+      "main": [
+        [
+          {
+            "node": "Get many tasks3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "OrganizarClickUp1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OrganizarClickUp1": {
+      "main": [
+        [
+          {
+            "node": "Set a custom Field on a task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set a custom Field on a task": {
+      "main": [
+        [
+          {
+            "node": "Update a task2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "247bf0d9-6de2-4088-a921-2abd3449b1f1",
+  "meta": {
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "kXhVhI0XUXw80hnm",
+  "tags": []
+}

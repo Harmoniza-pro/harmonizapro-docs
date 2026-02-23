@@ -1,0 +1,922 @@
+{
+  "name": "001.007 - [3/3] - Envio de Convite para Lead",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "quero_saber_mais",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        320,
+        0
+      ],
+      "id": "23f588c3-e51d-451f-b199-a8ab8944f032",
+      "name": "Webhook",
+      "webhookId": "4a0a9142-b6c9-43b4-8d37-b18242e79e77"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c560b37b-adb2-410c-8abd-b41ddc448d52",
+              "leftValue": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"key\"][\"fromMe\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "63174cf3-c4e5-4758-9151-955cc0bb4a67",
+              "leftValue": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"messageType\"] }}",
+              "rightValue": "listResponseMessage",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        656,
+        0
+      ],
+      "id": "535a3db6-5b2d-439f-91f8-e12c8acbad0e",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        912,
+        -272
+      ],
+      "id": "4dd92736-0bc7-4bae-a49c-171cff393f93",
+      "name": "Nada"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $item(\"0\").$node[\"If\"].json[\"body\"][\"message\"][\"listResponseMessage\"][\"singleSelectReply\"][\"selectedRowId\"] }}",
+                    "rightValue": "quero_saber_mais",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "0537740a-197c-46c3-8dd7-3d7be59b17d9"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Saber Mais"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b3be1726-8075-4172-841d-a03388805209",
+                    "leftValue": "={{ $item(\"0\").$node[\"If\"].json[\"body\"][\"messageType\"] == 'groupParticipantsUpdated' && $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"info\"][\"action\"] == 'add' }}",
+                    "rightValue": "groupParticipantsUpdated",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Entrou no Grupo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1008,
+        16
+      ],
+      "id": "a6c657c5-6be4-49d3-a200-29e4076bb5ef",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $item(\"0\").$node[\"Edit Fields\"].json[\"host_url\"] }}/rest/sendMessage/{{ $item(\"0\").$node[\"Edit Fields\"].json[\"instance\"] }}/mediaUrl",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ $item(\"0\").$node[\"Edit Fields\"].json[\"token\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messageData\": {\n    \"to\": \"{{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"key\"][\"remoteJid\"] }}\",\n    \"url\": \"{{ $item(\"0\").$node[\"Edit Fields\"].json[\"Url Video\"] }}\",\n    \"fileName\": \"convite\",\n    \"type\": \"video\",\n    \"caption\": \"\",\n    \"gifPlayback\": false,\n    \"mimeType\": \"video/mp4\"\n  }\n}",
+        "options": {}
+      },
+      "id": "f479a652-ed31-4ff6-af41-2899a6f87465",
+      "name": "Enviar Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1680,
+        -224
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "70edce15-8629-49e4-a589-e3f64d61cfb6",
+              "name": "nome",
+              "value": "={{ $item(\"0\").$node[\"Switch\"].json[\"body\"][\"pushName\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "a8e3604a-2f2f-4b2c-ab1b-cfcbcecd7bab",
+              "name": "telefone",
+              "value": "={{ $item(\"0\").$node[\"Switch\"].json[\"body\"][\"key\"][\"remoteJid\"].replace(/[^0-9]/g,'') }}",
+              "type": "string"
+            },
+            {
+              "id": "cb39ccde-ddaa-4943-9396-62d31f7d6741",
+              "name": "jid",
+              "value": "={{ $item(\"0\").$node[\"Switch\"].json[\"body\"][\"key\"][\"remoteJid\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "61399fd5-0f88-48eb-b207-6b3c5a33c324",
+              "name": "host_url",
+              "value": "https://evolua.megaapi.com.br",
+              "type": "string"
+            },
+            {
+              "id": "7873826c-50af-47a3-85df-7a6b802b9e23",
+              "name": "instance",
+              "value": "PietroDisparo01",
+              "type": "string"
+            },
+            {
+              "id": "bc39e906-2a33-4d36-a8d7-7bfe46243f58",
+              "name": "token",
+              "value": "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNy8xMS8yMDI0IiwibmFtZSI6IlRlc3RlNiIsImFkbWluIjp0cnVlLCJpYXQiOjE1MTYyMzkwMjJ9.J7vMxf8GMX7nUoolQKFTEuxR4Tsm5F2EWwqqP9nFf8ILiZvax2s8RMqdcnWVeCMQ8sIpqYufkMWgYhMKs858TA",
+              "type": "string"
+            },
+            {
+              "id": "63477d5d-0439-4c45-bc2a-30f982c0e27b",
+              "name": "nome_atendente",
+              "value": "Louise",
+              "type": "string"
+            },
+            {
+              "id": "c431014f-1ca0-42d6-b1ce-7269a85d784e",
+              "name": "Url Video",
+              "value": "https://t12900702.p.clickup-attachments.com/t12900702/2f0d5ff1-f3c3-41a9-9448-46314cdad1b9/V%C3%ADdeo%20HPRO.mp4?view=open",
+              "type": "string"
+            },
+            {
+              "id": "79420146-8787-4cf1-bcc5-ae19c1de574d",
+              "name": "Url Grupo",
+              "value": "https://chat.whatsapp.com/IBZB0QgfM54J0nk2BqH7ke",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1360,
+        -224
+      ],
+      "id": "5467f72b-eec7-4f3a-baa1-978e47e64194",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $item(\"0\").$node[\"Edit Fields\"].json[\"host_url\"] }}/rest/group/{{ $item(\"0\").$node[\"Edit Fields\"].json[\"instance\"] }}/sendLinkInviteGroup",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ $item(\"0\").$node[\"Edit Fields\"].json[\"token\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messageData\": {\n    \"to\": \"{{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"key\"][\"remoteJid\"] }}\",\n    \"textWithLink\": \"Não perca essa chance! Clique no link abaixo para entrar no nosso grupo exclusivo:\\n\\n{{ $item(\"0\").$node[\"Edit Fields\"].json[\"Url Grupo\"] }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "584f8834-5b82-4ee7-9ef4-fc5f87cecd93",
+      "name": "Enviar Link do Grupo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2320,
+        -224
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "amount": "={{ Math.floor(Math.random() * (10 - 5 + 1) + 5) }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1984,
+        -224
+      ],
+      "id": "560f0a3c-d124-4e36-bc1e-521a84f98b61",
+      "name": "Wait",
+      "webhookId": "92b1a4e0-83a3-4d20-ae9e-1f0dcde41dca"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT *\nFROM public.call_vendas_mensal\nWHERE lid = '{{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"info\"][\"participants\"][\"0\"] }}'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1712,
+        32
+      ],
+      "id": "c2656cfc-8e7a-43b1-9f97-3354405d87c9",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "2s4QZreZlr3agnlp",
+          "name": "Evento Vendas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE call_vendas_mensal\nSET status = 'entrou'\nWHERE lid = '{{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"info\"][\"participants\"][\"0\"] }}'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2032,
+        32
+      ],
+      "id": "dcae7cd3-ae4f-4e22-86f6-84deddd4d992",
+      "name": "Execute a SQL query1",
+      "credentials": {
+        "postgres": {
+          "id": "2s4QZreZlr3agnlp",
+          "name": "Evento Vendas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "entrou_grupo"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        32
+      ],
+      "id": "fed7d36f-0b44-4cc8-afb8-a34b2c27d449",
+      "name": "Execution Data"
+    },
+    {
+      "parameters": {
+        "url": "=https://evolua.megaapi.com.br/rest/group/harmonizapro/inviteInfo",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "code",
+              "value": "IBZB0QgfM54J0nk2BqH7ke"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNy8xMS8yMDI0IiwibmFtZSI6IlRlc3RlNiIsImFkbWluIjp0cnVlLCJpYXQiOjE1MTYyMzkwMjJ9.J7vMxf8GMX7nUoolQKFTEuxR4Tsm5F2EWwqqP9nFf8ILiZvax2s8RMqdcnWVeCMQ8sIpqYufkMWgYhMKs858TA"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "580fb29c-a664-4b8d-b91d-a46ca5874517",
+      "name": "Enviar Video1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1248,
+        -768
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 30
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        1024,
+        -768
+      ],
+      "id": "c0333589-5b32-4b21-b603-ab5ffaa17520",
+      "name": "Schedule Trigger",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.myNewField = 1;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1472,
+        -784
+      ],
+      "id": "e5f03182-19a4-4be1-9c6f-f8380c5b0223",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "url": "={{ $item(\"0\").$node[\"Edit Fields1\"].json[\"host_url\"] }}/rest/group/{{ $item(\"0\").$node[\"Edit Fields1\"].json[\"instance\"] }}/group",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "jid",
+              "value": "120363403782413903@g.us"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ $item(\"0\").$node[\"Edit Fields1\"].json[\"token\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "00d512b5-0543-4ca3-995f-e2ea610d01ce",
+      "name": "Enviar Video2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1488,
+        -528
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "61399fd5-0f88-48eb-b207-6b3c5a33c324",
+              "name": "host_url",
+              "value": "https://evolua.megaapi.com.br",
+              "type": "string"
+            },
+            {
+              "id": "7873826c-50af-47a3-85df-7a6b802b9e23",
+              "name": "instance",
+              "value": "PietroDisparo01",
+              "type": "string"
+            },
+            {
+              "id": "bc39e906-2a33-4d36-a8d7-7bfe46243f58",
+              "name": "token",
+              "value": "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNy8xMS8yMDI0IiwibmFtZSI6IlRlc3RlNiIsImFkbWluIjp0cnVlLCJpYXQiOjE1MTYyMzkwMjJ9.J7vMxf8GMX7nUoolQKFTEuxR4Tsm5F2EWwqqP9nFf8ILiZvax2s8RMqdcnWVeCMQ8sIpqYufkMWgYhMKs858TA",
+              "type": "string"
+            },
+            {
+              "id": "63477d5d-0439-4c45-bc2a-30f982c0e27b",
+              "name": "nome_atendente",
+              "value": "Louise",
+              "type": "string"
+            },
+            {
+              "id": "c431014f-1ca0-42d6-b1ce-7269a85d784e",
+              "name": "Url Video",
+              "value": "https://t12900702.p.clickup-attachments.com/t12900702/2f0d5ff1-f3c3-41a9-9448-46314cdad1b9/V%C3%ADdeo%20HPRO.mp4?view=open",
+              "type": "string"
+            },
+            {
+              "id": "79420146-8787-4cf1-bcc5-ae19c1de574d",
+              "name": "Url Grupo",
+              "value": "https://chat.whatsapp.com/IBZB0QgfM54J0nk2BqH7ke",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1216,
+        -528
+      ],
+      "id": "f703f242-0429-464d-8246-6caa42dad9f8",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "events": [
+          "update"
+        ]
+      },
+      "type": "n8n-nodes-base.n8nTrigger",
+      "typeVersion": 1,
+      "position": [
+        288,
+        -1168
+      ],
+      "id": "a35586ce-6ae9-421d-871c-d7238c27b471",
+      "name": "Dados Cadastro Workflow",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e3c3eb3-253b-4434-9f68-f12806e90433",
+              "name": "Pasta Cliente",
+              "value": "901312698708",
+              "type": "string"
+            },
+            {
+              "id": "f5017427-6e91-4ce3-adfb-1f26db53104e",
+              "name": "Fluxos com Erro",
+              "value": "901319151056",
+              "type": "string"
+            },
+            {
+              "id": "69e95a88-9ca8-46ae-8016-ca15db383fd7",
+              "name": "Fluxos Cadastrados",
+              "value": "901319151049",
+              "type": "string"
+            },
+            {
+              "id": "d1a157b0-9836-4758-92bf-6fa81eff1a26",
+              "name": "Link N8N",
+              "value": "={{ \"https://workflows.\" + $execution.resumeUrl.split('/')[2].split('.').slice(1).join('.') + \"/workflow/\" + $workflow.id }}",
+              "type": "string"
+            },
+            {
+              "id": "a8a396de-7e97-4833-8520-dd5af4bb0baf",
+              "name": "Tarefa Cliente ID",
+              "value": "86ac2h7bc",
+              "type": "string"
+            },
+            {
+              "id": "1bca2025-d73c-4f0d-abee-0abf3d328f2a",
+              "name": "Campo Relacionamento Fluxo Cadastrado",
+              "value": "de89a9e9-7831-4b3e-90f4-0114797d4e6b",
+              "type": "string"
+            },
+            {
+              "id": "bc48d677-8f44-45a4-b66a-e5a671a74128",
+              "name": "Campo Relacionamento Reportar Erro",
+              "value": "6d2dbdb6-40dd-4c2a-a42b-f6e4b5536261",
+              "type": "string"
+            },
+            {
+              "id": "90c1b11d-2707-4db7-b02f-3ca053887764",
+              "name": "Nome do Fluxo",
+              "value": "={{ $workflow.name }}",
+              "type": "string"
+            },
+            {
+              "id": "c4f8fea6-e31a-4023-b56c-58e217565f7c",
+              "name": "ID Página Fluxos",
+              "value": "c9pay-8513",
+              "type": "string"
+            },
+            {
+              "id": "8e2f5c9a-6b3d-4e7f-a1c8-9d4e6f2b7a5c",
+              "name": "ID Documento",
+              "value": "c9pay-15913",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        560,
+        -1168
+      ],
+      "id": "8ac5dd9c-8a14-43e6-a25a-8fedf259a315",
+      "name": "Variaveis do Cliente1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $workflow.id }}",
+          "mode": "id"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        832,
+        -1168
+      ],
+      "id": "29926deb-eba7-4771-910e-57bbddb678ca",
+      "name": "Get a workflow",
+      "credentials": {
+        "n8nApi": {
+          "id": "F1ykyghOg9lLGBLd",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://webhooks.autotrackable.com.br/webhook/receber_cadastro_dos_clientes",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n(() => {\n  const err = $item(\"0\").$node[\"Dados Cadastro Workflow\"].json;\n  const cli = $item(\"0\").$node[\"Variaveis do Cliente1\"].json;\n  const workflow = $item(\"0\").$node[\"Get a workflow\"].json;\n  return { ...err, info_cliente: cli, workflow: workflow };\n})()\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1104,
+        -1168
+      ],
+      "id": "e0c1eff7-c97e-46a2-90a4-93c2b63d6be7",
+      "name": "Encaminhar Erro para TrackAble1"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhooks.goldeletra.pro",
+            "user-agent": "axios/1.7.7",
+            "content-length": "1459",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "x-forwarded-for": "49.13.140.210",
+            "x-forwarded-host": "webhooks.goldeletra.pro",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik_traefik.1",
+            "x-real-ip": "49.13.140.210"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "instance_key": "harmonizapro",
+            "jid": "555481265818@s.whatsapp.net",
+            "messageType": "listResponseMessage",
+            "isBusiness": true,
+            "key": {
+              "remoteJid": "47571158454507@lid",
+              "fromMe": false,
+              "id": "2A93B3D93C82BE160A1A"
+            },
+            "messageTimestamp": 1759921827,
+            "pushName": "Dra Ana Alves",
+            "broadcast": false,
+            "verifiedBizName": "Dra Ana Alves",
+            "message": {
+              "messageContextInfo": {
+                "deviceListMetadata": {
+                  "senderKeyHash": "NxseBe/nF8/kLQ==",
+                  "senderTimestamp": "1756507783",
+                  "recipientKeyHash": "kt8b3jjgAglS7A==",
+                  "recipientTimestamp": "1759871416"
+                },
+                "deviceListMetadataVersion": 2,
+                "messageSecret": "y1fQPfBycN3lZ4erBWPVCgQDfvU0Fkdoe6dwbddDNtI="
+              },
+              "listResponseMessage": {
+                "title": "Quero saber mais",
+                "listType": "SINGLE_SELECT",
+                "singleSelectReply": {
+                  "selectedRowId": "quero_saber_mais"
+                },
+                "contextInfo": {
+                  "stanzaId": "3EB02D8D4B734414E82EB0",
+                  "participant": "72727251660811@lid",
+                  "quotedMessage": {
+                    "listMessage": {
+                      "title": "Ana, vi que você já cobra bem pelos seus procedimentos...",
+                      "description": "\nMas sabia que está deixando pelo menos 25k na mesa em CADA consulta?\n\nAqui na HarmonizaPRO desenvolvemos um método que permitiu a Dr Paula sair de fechamentos de R$3000 para R$7500.\n\nVocê aplica hoje e já vê resultado amanhã.\n\nSelecione, “Quero saber mais” que te explico melhor.",
+                      "buttonText": "Quero saber mais",
+                      "listType": "SINGLE_SELECT",
+                      "sections": [
+                        {
+                          "title": "",
+                          "rows": [
+                            {
+                              "title": "Quero saber mais",
+                              "description": "",
+                              "rowId": "quero_saber_mais"
+                            }
+                          ]
+                        }
+                      ],
+                      "footerText": ""
+                    }
+                  }
+                },
+                "description": ""
+              }
+            },
+            "isGroup": false
+          },
+          "webhookUrl": "https://webhooks.goldeletra.pro/webhook/quero_saber_mais",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Nada",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execution Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Enviar Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Video": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Enviar Link do Grupo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execution Data": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Enviar Video1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Video1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Enviar Video2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados Cadastro Workflow": {
+      "main": [
+        [
+          {
+            "node": "Variaveis do Cliente1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Variaveis do Cliente1": {
+      "main": [
+        [
+          {
+            "node": "Get a workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a workflow": {
+      "main": [
+        [
+          {
+            "node": "Encaminhar Erro para TrackAble1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "ByxX1TqYfyvlgp2T"
+  },
+  "versionId": "58634637-ff1c-4b52-91e1-fb18df2bf52c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "Q8fXdJi9qhdmrs3l",
+  "tags": [
+    {
+      "updatedAt": "2025-07-16T01:17:20.453Z",
+      "createdAt": "2025-07-16T01:17:20.453Z",
+      "id": "NaaSNhB5hEdSZaTh",
+      "name": "OK"
+    },
+    {
+      "updatedAt": "2025-10-03T18:16:37.959Z",
+      "createdAt": "2025-10-03T18:16:37.959Z",
+      "id": "olakFEXRFPPNeevi",
+      "name": "Cadastrado"
+    },
+    {
+      "updatedAt": "2025-11-17T13:43:22.843Z",
+      "createdAt": "2025-11-17T13:43:22.843Z",
+      "id": "xDu8TyrW6g7HiKXS",
+      "name": "Documentado"
+    }
+  ]
+}

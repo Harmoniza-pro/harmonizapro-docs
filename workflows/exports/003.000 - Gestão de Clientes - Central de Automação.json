@@ -1,0 +1,257 @@
+{
+  "name": "003.000 - Gestão de Clientes - Central de Automação",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "28ed45bc-6e8c-4c47-a45b-4c1c4e70d9f2",
+              "name": "Campo Hunter",
+              "value": "3c3c0d40-a8c3-4f3c-b517-edd7136de137",
+              "type": "string"
+            },
+            {
+              "id": "1a3613e5-87eb-4ddd-8bb8-52a4ff09f4d5",
+              "name": "Campo Formulário",
+              "value": "5b76bed9-8cf5-4fae-85ed-d1674cd8cdaf",
+              "type": "string"
+            },
+            {
+              "id": "dba070cb-a9bb-44eb-8cdb-da6f9eaafb3d",
+              "name": "task_id",
+              "value": "={{ $item(\"0\").$node[\"ClickUp Trigger\"].json[\"task_id\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        64,
+        -80
+      ],
+      "id": "088db18c-709a-4778-a2e9-6d6927d5a73b",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $item(\"0\").$node[\"ClickUp Trigger\"].json[\"history_items\"][\"0\"][\"custom_field\"][\"id\"] === $item(\"0\").$node[\"Edit Fields\"].json[\"Campo Hunter\"] }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "a3d26f79-0c4c-4cd1-b1e1-2cee35408d19"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Alterar Link"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        -80
+      ],
+      "id": "de516219-35ac-47a4-87dc-1e78f710febe",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "team": "90132992412",
+        "events": [
+          "taskUpdated"
+        ],
+        "filters": {
+          "listId": "901325472193"
+        }
+      },
+      "type": "n8n-nodes-base.clickUpTrigger",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        -80
+      ],
+      "id": "ceca2fe3-166b-4450-b008-ace4370ae636",
+      "name": "ClickUp Trigger",
+      "webhookId": "ecb5c72f-c2c4-4cf8-99ad-f5a534a1df9a",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "queue": "clientes_alterar_link_form",
+        "options": {
+          "arguments": {
+            "argument": [
+              {
+                "key": "x-queue-type",
+                "value": "quorum"
+              }
+            ]
+          },
+          "durable": true
+        }
+      },
+      "id": "4bc6c607-6c13-4066-98c5-5f5024b132fb",
+      "name": "Alterar Link",
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        -256
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "ClickUp Trigger": [
+      {
+        "json": {
+          "event": "taskUpdated",
+          "history_items": [
+            {
+              "id": "4965850571065749098",
+              "type": 1,
+              "date": "1771783898918",
+              "field": "custom_field",
+              "parent_id": "901325472193",
+              "data": {
+                "cf_type": 10,
+                "createTask": false
+              },
+              "source": null,
+              "user": {
+                "id": 278505381,
+                "username": "Ferramentas Harmoniza",
+                "email": "ferramentas@harmoniza.pro",
+                "color": "#595d66",
+                "initials": "FH",
+                "profilePicture": null,
+                "role": 1,
+                "role_subtype": 0
+              },
+              "before": null,
+              "after": [
+                "112083464"
+              ],
+              "custom_field": {
+                "id": "3c3c0d40-a8c3-4f3c-b517-edd7136de137",
+                "name": "Hunter",
+                "type": "users",
+                "type_config": {
+                  "include_team_members": false,
+                  "single_user": false,
+                  "include_guests": true,
+                  "include_groups": false
+                },
+                "values_set": null,
+                "userid": "278505381",
+                "description": "",
+                "date_created": "1771090310950",
+                "hide_from_guests": false,
+                "team_id": "90132992412",
+                "deleted": false,
+                "deleted_by": null,
+                "pinned": false,
+                "required": false,
+                "private": false,
+                "required_on_subtasks": false,
+                "linked_subcategory": null,
+                "permission_level": null,
+                "default_value": null,
+                "type_id": 10,
+                "automation_count": 0
+              }
+            }
+          ],
+          "task_id": "86afmh9pb",
+          "team_id": "90132992412",
+          "webhook_id": "0abb4454-552d-486e-b22e-22b397d694a6"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ClickUp Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Alterar Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8a113653-3cba-4e93-9eeb-96017b659b47",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "fzZOWOWQ7UZgw3oa",
+  "tags": []
+}

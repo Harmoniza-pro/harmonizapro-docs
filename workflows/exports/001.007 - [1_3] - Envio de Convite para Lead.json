@@ -1,0 +1,417 @@
+{
+  "name": "001.007 - [1/3] - Envio de Convite para Lead",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f32785c1-800c-4c43-9169-df59ce376d89",
+              "leftValue": "={{ (new Date(new Date().toLocaleString(\"en-US\", { timeZone: \"America/Sao_Paulo\" })).getHours() >= 7) && (new Date(new Date().toLocaleString(\"en-US\", { timeZone: \"America/Sao_Paulo\" })).getHours() < 21) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        0
+      ],
+      "id": "cb13c668-4eb1-41d1-a604-9291db44b80a",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        640,
+        272
+      ],
+      "id": "e369b92a-c04f-446c-bf0f-495acc08903e",
+      "name": "Nada"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH params AS (\n  -- Ajuste aqui, se quiser mudar o ponto inicial, final ou a quantidade\n  SELECT\n    4.457::numeric AS min_time,\n    28.0::numeric  AS max_time,\n    10::int        AS n\n),\nbase AS (\n  SELECT\n    c.*,\n    ROW_NUMBER() OVER (ORDER BY c.id) AS rn\n  FROM call_vendas_mensal c\n  WHERE c.status = 'convidar'\n    AND c.lid IS NOT NULL\n),\nseq AS (\n  SELECT\n    gs AS rn,\n    ROUND(\n      (SELECT min_time FROM params)\n      + (\n          (SELECT max_time FROM params) - (SELECT min_time FROM params)\n        ) * ((gs - 1)::numeric / ((SELECT n FROM params) - 1)),\n      3\n    ) AS \"time\"\n  FROM generate_series(1, (SELECT n FROM params)) AS gs\n)\nSELECT\n  b.*,\n  s.\"time\"\nFROM base b\nJOIN seq s ON s.rn = b.rn\nORDER BY b.rn\nLIMIT (SELECT n FROM params);\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        640,
+        -16
+      ],
+      "id": "112a508e-f759-4ff8-a71f-3cb745c2ba8d",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "2s4QZreZlr3agnlp",
+          "name": "Evento Vendas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 30
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -16,
+        0
+      ],
+      "id": "3db9cca7-7972-4b45-b2ba-090d379fe20a",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        960,
+        -16
+      ],
+      "id": "5e9ee358-a614-4b50-9155-ec1f0b92e211",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "queue": "acao_vendas_grupo_whatsapp",
+        "options": {
+          "arguments": {
+            "argument": [
+              {
+                "key": "x-queue-type",
+                "value": "quorum"
+              }
+            ]
+          },
+          "durable": true
+        }
+      },
+      "id": "984d2c04-477f-4078-9605-4871a5b23497",
+      "name": "BancoDeDados",
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1.1,
+      "position": [
+        1232,
+        80
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        176
+      ],
+      "id": "fc0d7abf-7792-4772-8215-32dbe54240a1",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "events": [
+          "update"
+        ]
+      },
+      "type": "n8n-nodes-base.n8nTrigger",
+      "typeVersion": 1,
+      "position": [
+        48,
+        -432
+      ],
+      "id": "c7f707d2-2a60-400e-9b3f-63c553463a49",
+      "name": "Dados Cadastro Workflow",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e3c3eb3-253b-4434-9f68-f12806e90433",
+              "name": "Pasta Cliente",
+              "value": "901312698708",
+              "type": "string"
+            },
+            {
+              "id": "f5017427-6e91-4ce3-adfb-1f26db53104e",
+              "name": "Fluxos com Erro",
+              "value": "901319151056",
+              "type": "string"
+            },
+            {
+              "id": "69e95a88-9ca8-46ae-8016-ca15db383fd7",
+              "name": "Fluxos Cadastrados",
+              "value": "901319151049",
+              "type": "string"
+            },
+            {
+              "id": "d1a157b0-9836-4758-92bf-6fa81eff1a26",
+              "name": "Link N8N",
+              "value": "={{ \"https://workflows.\" + $execution.resumeUrl.split('/')[2].split('.').slice(1).join('.') + \"/workflow/\" + $workflow.id }}",
+              "type": "string"
+            },
+            {
+              "id": "a8a396de-7e97-4833-8520-dd5af4bb0baf",
+              "name": "Tarefa Cliente ID",
+              "value": "86ac2h7bc",
+              "type": "string"
+            },
+            {
+              "id": "1bca2025-d73c-4f0d-abee-0abf3d328f2a",
+              "name": "Campo Relacionamento Fluxo Cadastrado",
+              "value": "de89a9e9-7831-4b3e-90f4-0114797d4e6b",
+              "type": "string"
+            },
+            {
+              "id": "bc48d677-8f44-45a4-b66a-e5a671a74128",
+              "name": "Campo Relacionamento Reportar Erro",
+              "value": "6d2dbdb6-40dd-4c2a-a42b-f6e4b5536261",
+              "type": "string"
+            },
+            {
+              "id": "90c1b11d-2707-4db7-b02f-3ca053887764",
+              "name": "Nome do Fluxo",
+              "value": "={{ $workflow.name }}",
+              "type": "string"
+            },
+            {
+              "id": "c4f8fea6-e31a-4023-b56c-58e217565f7c",
+              "name": "ID Página Fluxos",
+              "value": "c9pay-8513",
+              "type": "string"
+            },
+            {
+              "id": "8e2f5c9a-6b3d-4e7f-a1c8-9d4e6f2b7a5c",
+              "name": "ID Documento",
+              "value": "c9pay-15913",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        -432
+      ],
+      "id": "bf89e4bf-90fb-408f-9271-c7e866038f79",
+      "name": "Variaveis do Cliente1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $workflow.id }}",
+          "mode": "id"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        592,
+        -432
+      ],
+      "id": "850a8f2f-2d65-4b81-80fb-8bc477fcf2ec",
+      "name": "Get a workflow",
+      "credentials": {
+        "n8nApi": {
+          "id": "F1ykyghOg9lLGBLd",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://webhooks.autotrackable.com.br/webhook/receber_cadastro_dos_clientes",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n(() => {\n  const err = $item(\"0\").$node[\"Dados Cadastro Workflow\"].json;\n  const cli = $item(\"0\").$node[\"Variaveis do Cliente1\"].json;\n  const workflow = $item(\"0\").$node[\"Get a workflow\"].json;\n  return { ...err, info_cliente: cli, workflow: workflow };\n})()\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        864,
+        -432
+      ],
+      "id": "7912482b-aeb5-4c34-90a1-82af3f49602f",
+      "name": "Encaminhar Erro para TrackAble1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Nada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "BancoDeDados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BancoDeDados": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados Cadastro Workflow": {
+      "main": [
+        [
+          {
+            "node": "Variaveis do Cliente1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Variaveis do Cliente1": {
+      "main": [
+        [
+          {
+            "node": "Get a workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a workflow": {
+      "main": [
+        [
+          {
+            "node": "Encaminhar Erro para TrackAble1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "ByxX1TqYfyvlgp2T"
+  },
+  "versionId": "f79cb25a-690e-42d4-b117-9fb55be41b0a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "EPj4uqLra763cKjD",
+  "tags": [
+    {
+      "updatedAt": "2025-07-16T01:17:20.453Z",
+      "createdAt": "2025-07-16T01:17:20.453Z",
+      "id": "NaaSNhB5hEdSZaTh",
+      "name": "OK"
+    },
+    {
+      "updatedAt": "2025-10-03T18:16:37.959Z",
+      "createdAt": "2025-10-03T18:16:37.959Z",
+      "id": "olakFEXRFPPNeevi",
+      "name": "Cadastrado"
+    }
+  ]
+}

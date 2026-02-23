@@ -1,0 +1,622 @@
+{
+  "name": "004.001 - [2/3] - Google Tag Manager - Typeform",
+  "nodes": [
+    {
+      "parameters": {
+        "queue": "gtm_banco_de_dados_1_2",
+        "options": {
+          "arguments": {
+            "argument": [
+              {
+                "key": "x-queue-type",
+                "value": "quorum"
+              }
+            ]
+          },
+          "acknowledge": "executionFinishesSuccessfully",
+          "jsonParseBody": true,
+          "onlyContent": false,
+          "parallelMessages": 1
+        }
+      },
+      "id": "3b362406-f275-4712-a7a2-1c31dfb23c3b",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.rabbitmqTrigger",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        80
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "061a3450-d817-46e1-8fdd-c04db9d3a310",
+              "leftValue": "={{ $json.fields.redelivered }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b7b30fd8-bd0b-405d-a8ef-4c4cea3e76dc",
+      "name": "checkQueue",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        0,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "deleteMessage"
+      },
+      "id": "2c2f8028-aa07-4a6c-bd6b-808dd4ea0a49",
+      "name": "deleteQueue",
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        -144
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        208
+      ],
+      "id": "c2ebd71e-31d1-44df-b626-8b015ffff0b5",
+      "name": "Wait",
+      "webhookId": "43a658ff-4426-47f3-9efb-72b0c4b77462"
+    },
+    {
+      "parameters": {
+        "queue": "gtm_banco_de_dados_2_2",
+        "options": {
+          "arguments": {
+            "argument": [
+              {
+                "key": "x-queue-type",
+                "value": "quorum"
+              }
+            ]
+          },
+          "durable": true
+        }
+      },
+      "id": "0275b83e-6e73-4fc3-873c-2c23f9e10886",
+      "name": "EventoPixel",
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1.1,
+      "position": [
+        1568,
+        128
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Primeiro, vamos garantir que temos acesso aos dados do Webhook\nconst inputData1 = $node[\"Webhook\"].json.content.body;\n\nconst inputData2 = $node[\"Execute a SQL query\"].json.id;\nconst inputData3 = $node[\"Execute a SQL query\"].json.id_negocio; // Mapeamento de campo das informações\n\n// Criar o array items primeiro\nconst items = [];\nitems[0] = { json: {} };\n\n// Agora podemos adicionar os dados ao items[0].json\nitems[0].json = {\n  ...inputData1,\n  lead_id: inputData2,\n  id_negocio: inputData3\n};\n\nreturn items;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1328,
+        128
+      ],
+      "id": "d5eeae0a-fac0-407a-a7ae-f3fd4bd9037d",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "82f7f54a-3b81-4390-89fc-d84b92e29f46",
+              "leftValue": "={{$json.id}}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        208
+      ],
+      "id": "cf561a26-845e-4a5f-bfa7-04eda1c6649c",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "dealId": "={{ $item(\"0\").$node[\"Execute a SQL query\"].json[\"id_negocio\"] }}",
+        "updateFields": {
+          "customProperties": {
+            "property": [
+              {
+                "name": "98c23f53854a205bb9e1b9f1d17a5459e0dc7d16",
+                "value": "={{$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_source\"]}}"
+              },
+              {
+                "name": "e5ae032d7fda4523edaf73cae9dbff166e1861fe",
+                "value": "={{$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_medium\"]}}"
+              },
+              {
+                "name": "378430a5c3e70492a2e705aa5818052a6504407a",
+                "value": "={{$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_content\"]}}"
+              },
+              {
+                "name": "1154d85b97ab799ecb95476c040eef165f8eca98",
+                "value": "={{$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_campaign\"]}}"
+              },
+              {
+                "name": "c83c89258b135c08b44d80a76eb69cf56fe41f99",
+                "value": "={{$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_term\"]}}"
+              },
+              {
+                "name": "a3a4cd5a4cdeff61454f4b72aa0796d0fcb62cb7",
+                "value": "={{$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_id\"]}}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        128
+      ],
+      "id": "c217a3cf-942a-486b-9778-4398a0c08a7f",
+      "name": "Update a deal",
+      "credentials": {
+        "pipedriveOAuth2Api": {
+          "id": "y8O0rqLgOCkuE8hK",
+          "name": "Pipedrive - evoluamidia@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, id_negocio \n  FROM leads\nWHERE\n  telefone = '{{ '+55' + $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"telefone\"] }}'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        448,
+        208
+      ],
+      "id": "1d01686c-494c-4d07-b1e6-10b1b2699d95",
+      "name": "Execute a SQL query",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO lead_tracking (\n  lead_id,\n  id_negocio,\n  utm_source,\n  utm_medium,\n  utm_campaign,\n  utm_term,\n  utm_id,\n  utm_content,\n  page_url,\n  fbc,\n  fbp,\n  campanha_id,\n  campanha_name,\n  conjunto_id,\n  conjunto_name,\n  anuncio_id,\n  anuncio_name,\n  fonte_origem,\n  ip,\n  user_agent,\n  created_at,\n  updated_at,\n  deleted_at,\n  posicionamento,\n  plataforma\n)\nVALUES (\n  {{ $item(\"0\").$node[\"If\"].json[\"id\"] }},\n  {{ $item(\"0\").$node[\"Execute a SQL query\"].json[\"id_negocio\"] ? `'${$item(\"0\").$node[\"Execute a SQL query\"].json[\"id_negocio\"].toString()}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_source\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_source\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_medium\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_medium\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_campaign\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_campaign\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_term\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_term\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_id\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_id\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_content\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_content\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"url\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"url\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"fbc\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"fbc\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"fbp\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"fbp\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_id\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_id\"].split('|')[0]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_campaign\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_campaign\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_id\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_id\"].split('|')[1]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_medium\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_medium\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_id\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_id\"].split('|')[2]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_content\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_content\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_source\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_source\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"ip\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"ip\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"agent\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"agent\"]}'` : 'NULL' }},\n  (NOW() AT TIME ZONE 'America/Sao_Paulo'),\n  (NOW() AT TIME ZONE 'America/Sao_Paulo'),\n  NULL,\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_term\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_term\"].split('|')[1]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_term\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"body\"][\"utm_term\"].split('|')[0]}'` : 'NULL' }}\n);\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        864,
+        128
+      ],
+      "id": "03b605d2-08fd-4b22-a43c-94164fa236e5",
+      "name": "Execute a SQL query1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "events": [
+          "update"
+        ]
+      },
+      "type": "n8n-nodes-base.n8nTrigger",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -528
+      ],
+      "id": "033c99a6-2fd7-44fa-9844-c9afdf8ea098",
+      "name": "Dados Cadastro Workflow",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e3c3eb3-253b-4434-9f68-f12806e90433",
+              "name": "Pasta Cliente",
+              "value": "901312698708",
+              "type": "string"
+            },
+            {
+              "id": "f5017427-6e91-4ce3-adfb-1f26db53104e",
+              "name": "Fluxos com Erro",
+              "value": "901319151056",
+              "type": "string"
+            },
+            {
+              "id": "69e95a88-9ca8-46ae-8016-ca15db383fd7",
+              "name": "Fluxos Cadastrados",
+              "value": "901319151049",
+              "type": "string"
+            },
+            {
+              "id": "d1a157b0-9836-4758-92bf-6fa81eff1a26",
+              "name": "Link N8N",
+              "value": "={{ \"https://workflows.\" + $execution.resumeUrl.split('/')[2].split('.').slice(1).join('.') + \"/workflow/\" + $workflow.id }}",
+              "type": "string"
+            },
+            {
+              "id": "a8a396de-7e97-4833-8520-dd5af4bb0baf",
+              "name": "Tarefa Cliente ID",
+              "value": "86ac2h7bc",
+              "type": "string"
+            },
+            {
+              "id": "1bca2025-d73c-4f0d-abee-0abf3d328f2a",
+              "name": "Campo Relacionamento Fluxo Cadastrado",
+              "value": "de89a9e9-7831-4b3e-90f4-0114797d4e6b",
+              "type": "string"
+            },
+            {
+              "id": "bc48d677-8f44-45a4-b66a-e5a671a74128",
+              "name": "Campo Relacionamento Reportar Erro",
+              "value": "6d2dbdb6-40dd-4c2a-a42b-f6e4b5536261",
+              "type": "string"
+            },
+            {
+              "id": "90c1b11d-2707-4db7-b02f-3ca053887764",
+              "name": "Nome do Fluxo",
+              "value": "={{ $workflow.name }}",
+              "type": "string"
+            },
+            {
+              "id": "c4f8fea6-e31a-4023-b56c-58e217565f7c",
+              "name": "ID Página Fluxos",
+              "value": "c9pay-8513",
+              "type": "string"
+            },
+            {
+              "id": "8e2f5c9a-6b3d-4e7f-a1c8-9d4e6f2b7a5c",
+              "name": "ID Documento",
+              "value": "c9pay-15913",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        -528
+      ],
+      "id": "fdd96c30-819a-45f9-8794-ceddddef7bda",
+      "name": "Variaveis do Cliente1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $workflow.id }}",
+          "mode": "id"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        384,
+        -528
+      ],
+      "id": "e145e4be-6744-4d26-807e-d16cec79a049",
+      "name": "Get a workflow",
+      "credentials": {
+        "n8nApi": {
+          "id": "F1ykyghOg9lLGBLd",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://webhooks.autotrackable.com.br/webhook/receber_cadastro_dos_clientes",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n(() => {\n  const err = $item(\"0\").$node[\"Dados Cadastro Workflow\"].json;\n  const cli = $item(\"0\").$node[\"Variaveis do Cliente1\"].json;\n  const workflow = $item(\"0\").$node[\"Get a workflow\"].json;\n  return { ...err, info_cliente: cli, workflow: workflow };\n})()\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        656,
+        -528
+      ],
+      "id": "02cda08c-5ffd-4861-9635-72d151f829a2",
+      "name": "Encaminhar Erro para TrackAble1"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "fields": {
+            "consumerTag": "amq.ctag-NvIitFIG-EXaelxluLza9g",
+            "deliveryTag": 132,
+            "redelivered": false,
+            "exchange": "",
+            "routingKey": "gtm_banco_de_dados_1_2"
+          },
+          "properties": {
+            "headers": {}
+          },
+          "content": {
+            "headers": {
+              "host": "webhooks.goldeletra.pro",
+              "content-length": "997",
+              "content-type": "application/json",
+              "x-forwarded-for": "34.95.170.88",
+              "x-forwarded-host": "webhooks.goldeletra.pro",
+              "x-forwarded-port": "443",
+              "x-forwarded-proto": "https",
+              "x-forwarded-server": "traefik_traefik.1",
+              "x-real-ip": "34.95.170.88",
+              "accept-encoding": "gzip"
+            },
+            "params": {},
+            "query": {},
+            "body": {
+              "telefone": "19992908888",
+              "utm_source": "cbo",
+              "utm_medium": "direto",
+              "utm_content": "ad37",
+              "utm_campaign": "faixaA",
+              "utm_term": "Advt",
+              "utm_id": "Advt",
+              "fbp": "fb.1.1753108307557.804644634385592747",
+              "fbc": "fb.1.1753108307555.PAZXh0bgNhZW0BMABhZGlkAasjesKTD-4Bp7AgR7I56ul10BpBjRv9phy7465VCCtELPMWrt0BfTeO5LDUylycY5sz45hT_aem_66WvGdVtiM_bACn36A07aQ",
+              "ip": "186.209.47.193",
+              "agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/22F76 Instagram 389.0.0.20.89 (iPhone17,1; iOS 18_5; pt_BR; pt; scale=3.00; 1206x2622; 761848126; IABMV/1)",
+              "url": "https://harmoniza.typeform.com/to/bxyMbs67?utm_source=cbo&utm_medium=direto&utm_campaign=faixaA&utm_term=Advt&utm_content=ad37&utm_id=120228824793490158&fbclid=PAZXh0bgNhZW0BMABhZGlkAasjesKTD-4Bp7AgR7I56ul10BpBjRv9phy7465VCCtELPMWrt0BfTeO5LDUylycY5sz45hT_aem_66WvGdVtiM_bACn36A07aQ&typeform-source=meta.com",
+              "formulario": "",
+              "_gcl_aw": ""
+            },
+            "webhookUrl": "https://webhooks.goldeletra.pro/webhook/typeform_gtm",
+            "executionMode": "production"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "checkQueue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "checkQueue": {
+      "main": [
+        [
+          {
+            "node": "deleteQueue",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "EventoPixel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Update a deal": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query1": {
+      "main": [
+        [
+          {
+            "node": "Update a deal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados Cadastro Workflow": {
+      "main": [
+        [
+          {
+            "node": "Variaveis do Cliente1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Variaveis do Cliente1": {
+      "main": [
+        [
+          {
+            "node": "Get a workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a workflow": {
+      "main": [
+        [
+          {
+            "node": "Encaminhar Erro para TrackAble1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "ByxX1TqYfyvlgp2T"
+  },
+  "versionId": "bac43057-1b6a-4780-9be1-9708309766ce",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "0E0NW4uGtYBeRwHF",
+  "tags": [
+    {
+      "updatedAt": "2025-07-16T01:17:20.453Z",
+      "createdAt": "2025-07-16T01:17:20.453Z",
+      "id": "NaaSNhB5hEdSZaTh",
+      "name": "OK"
+    },
+    {
+      "updatedAt": "2025-10-03T18:16:37.959Z",
+      "createdAt": "2025-10-03T18:16:37.959Z",
+      "id": "olakFEXRFPPNeevi",
+      "name": "Cadastrado"
+    }
+  ]
+}

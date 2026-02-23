@@ -1,0 +1,38 @@
+{
+  "name": "005.001 - Template - Node Organizar Clickup",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "const jsonData = items[0].json;\nconst customFields = jsonData.custom_fields;\nconst result = {\n  task_id: jsonData.id,\n  name: jsonData.name,\n  status: jsonData.status.status\n};\n\ncustomFields.forEach(field => {\n  const fieldId = field.id;\n  let fieldValue;\n  let fieldObject = {\n    id: fieldId,\n    name: field.name\n  };\n\n  // Tratamento do valor do campo\n  if (field.type === 'users' && Array.isArray(field.value)) {\n    const allIds = field.value.map(user => user.id).join(',');\n    const userDetails = {};\n    field.value.forEach(user => {\n      userDetails[user.id] = {\n        id: user.id,\n        name: user.username,\n        email: user.email\n      };\n    });\n    fieldValue = {\n      geral: allIds,\n      ...userDetails\n    };\n  } else if (field.type === 'drop_down' && field.value !== undefined && field.value !== null) {\n    const selectedOption = field.type_config.options.find(opt => opt.orderindex === field.value);\n    if (selectedOption) {\n      fieldValue = {\n        id: selectedOption.id,\n        name: selectedOption.name,\n        value: selectedOption.orderindex\n      };\n    } else {\n      fieldValue = '';\n    }\n  } else if (field.type === 'labels' && Array.isArray(field.value)) {\n    fieldValue = field.value.map(optionId => {\n      const option = field.type_config.options.find(opt => opt.id === optionId);\n      if (option) {\n        return {\n          id: option.id,\n          name: option.label,\n          color: option.color\n        };\n      }\n      return null;\n    }).filter(Boolean);\n  } else if (field.type === 'tasks' && Array.isArray(field.value)) {\n    fieldValue = field.value.map(task => ({\n      id: task.id,\n      name: task.name,\n      status: task.status\n    }));\n  } else if (field.type === 'emoji') {\n    fieldValue = field.value || '';\n  } else {\n    fieldValue = field.value !== undefined && field.value !== null ? field.value : '';\n  }\n\n  fieldObject.value = fieldValue;\n\n  // Apenas adiciona options se o campo tiver opções configuradas\n  if (field.type_config && field.type_config.options) {\n    const options = {};\n    field.type_config.options.forEach(opt => {\n      options[opt.id] = {\n        id: opt.id,\n        name: opt.label || opt.name\n      };\n    });\n    if (Object.keys(options).length > 0) {\n      fieldObject.options = options;\n    }\n  }\n\n  result[fieldId] = fieldObject;\n});\n\nreturn [{ json: result }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3f48ba2e-96f8-4129-8e5f-2152c17de774",
+      "name": "OrganizarClickUp",
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "pinData": {},
+  "connections": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b8fa15a8-3192-44d9-8c0e-0ea8c3a95036",
+  "meta": {
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "YQiSPhl44vt3lYWl",
+  "tags": [
+    {
+      "updatedAt": "2026-02-22T03:31:58.280Z",
+      "createdAt": "2026-02-22T03:31:58.280Z",
+      "id": "Z0ebX08TOx5PgsQ5",
+      "name": "Template"
+    }
+  ]
+}

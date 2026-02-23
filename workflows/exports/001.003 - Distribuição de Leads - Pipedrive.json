@@ -1,0 +1,762 @@
+{
+  "name": "001.003 - Distribuição de Leads - Pipedrive",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -288,
+        0
+      ],
+      "id": "675b013a-73ee-4867-9243-59182d346ff6",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"origem\"] }}",
+                    "rightValue": "calendly",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "92b8796d-33e2-453f-a6c8-69d9a8dad5c0"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "calendly"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f109de91-66ab-4f17-abac-6d6eabe76f04",
+                    "leftValue": "={{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"origem\"] }}",
+                    "rightValue": "parcial",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "parcial"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "60101386-a5d7-4843-a1b9-2f26915720c4",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO public.leads_distribuidos (\n  data,         \n  email\n)\nVALUES (\n  /* data */\n  NOW() AT TIME ZONE 'America/Sao_Paulo',\n\n  /* email */\n  '{{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"payload\"][\"scheduled_event\"][\"event_memberships\"][\"0\"][\"user_email\"] }}'\n\n)\nRETURNING data, email;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        752,
+        -128
+      ],
+      "id": "37358fad-fe18-481f-a9e4-fdd88a34ee19",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "12816f71-de3f-4ac6-a563-7969b87b0124",
+              "leftValue": "={{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"payload\"][\"scheduled_event\"][\"event_memberships\"][\"0\"][\"user_email\"] }}",
+              "rightValue": "evoluamidia@gmail.com",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "ae7e804d-d219-4ea2-b77d-5e9b145097a7",
+              "leftValue": "={{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"payload\"][\"scheduled_event\"][\"event_memberships\"][\"0\"][\"user_email\"] }}",
+              "rightValue": "lucas@harmoniza.pro",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        512,
+        -224
+      ],
+      "id": "53916082-4017-4284-bc0b-78b98e6ed4fc",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "04f8f931-b104-48f3-9a63-a390bbdf3dfa",
+              "name": "responsável",
+              "value": "={{ $item(\"0\").$node[\"Execute a SQL query\"].json[\"email\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        992,
+        -128
+      ],
+      "id": "dac37acf-b985-4967-b97b-3381531facfa",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- E-mails de colaboradores ativos\nSELECT DISTINCT\n  lower(trim(email)) AS email   -- normaliza: remove espaços e coloca em minúsculas\nFROM public.leads_colaboradores\nWHERE ativo IS TRUE             -- somente quem está ativo\n  AND COALESCE(email, '') <> '' -- ignora nulos/vazios\nORDER BY email;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        848,
+        -560
+      ],
+      "id": "b17efe7f-8931-4c98-9dee-27dd07a26e63",
+      "name": "Execute a SQL query1",
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Entrada: itens [{ json: { email: \"carol@...\" } }, { json: { email: \"louise@...\" }}, ...]\nconst emails = items\n  .map(i => (i.json.email || '').trim().toLowerCase())\n  .filter(e => e && e.includes('@'));          // remove vazios/ruins\n\nconst uniques = [...new Set(emails)];          // dedup\n\n// Para usar com IN (...) se o node não aceitar array como parâmetro\nconst emails_in = uniques\n  .map(e => `'${e.replace(/'/g, \"''\")}'`)      // escapa aspas simples\n  .join(',');\n\n// Saída: um único item\nreturn [{ json: { emails: uniques, emails_in } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1104,
+        -560
+      ],
+      "id": "2d0d7e67-ab5b-4461-9f0d-8c60e5b46a48",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Escolhe o colaborador ativo com MENOS leads nos últimos 7 dias.\n-- Desempate: quem está há mais tempo sem receber (last_received ASC NULLS FIRST),\n-- depois pela data de criação do cadastro e, por fim, pelo e-mail.\n\nWITH ativos AS (\n  SELECT DISTINCT\n         lower(trim(email)) AS email,\n         nome,\n         criado_em\n  FROM public.leads_colaboradores\n  WHERE ativo IS TRUE\n    AND COALESCE(email,'') <> ''\n),\nultimos7 AS (\n  SELECT\n    lower(trim(email))     AS email,\n    COUNT(*)               AS total_7d,\n    MAX(data)              AS last_received\n  FROM public.leads_distribuidos\n  WHERE data >= (NOW() AT TIME ZONE 'America/Sao_Paulo') - INTERVAL '7 days'\n  GROUP BY lower(trim(email))\n)\nSELECT\n  a.email,\n  a.nome,\n  COALESCE(u.total_7d, 0)  AS total_7d,\n  u.last_received\nFROM ativos a\nLEFT JOIN ultimos7 u USING (email)\nORDER BY\n  total_7d ASC,\n  u.last_received ASC NULLS FIRST,\n  a.criado_em ASC,\n  a.email ASC\nLIMIT 1;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        752,
+        -320
+      ],
+      "id": "1ddaf9c4-e9d7-40ed-8131-039490a6b4f3",
+      "name": "Execute a SQL query2",
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "04f8f931-b104-48f3-9a63-a390bbdf3dfa",
+              "name": "responsável",
+              "value": "={{ $item(\"0\").$node[\"Execute a SQL query2\"].json[\"email\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1200,
+        -320
+      ],
+      "id": "5953fbf8-711c-4fa3-9d24-61bc2c339282",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO public.leads_distribuidos (\n  data,         \n  email\n)\nVALUES (\n  /* data */\n  NOW() AT TIME ZONE 'America/Sao_Paulo',\n\n  /* email */\n  '{{ $item(\"0\").$node[\"Execute a SQL query2\"].json[\"email\"] }}'\n\n)\nRETURNING data, email;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        992,
+        -320
+      ],
+      "id": "c2b7ae65-6b0a-497d-96a2-2bfb1815800c",
+      "name": "Execute a SQL query3",
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Escolhe o colaborador ativo com MENOS leads nos últimos 7 dias.\n-- Desempate: quem está há mais tempo sem receber (last_received ASC NULLS FIRST),\n-- depois pela data de criação do cadastro e, por fim, pelo e-mail.\n\nWITH ativos AS (\n  SELECT DISTINCT\n         lower(trim(email)) AS email,\n         nome,\n         criado_em\n  FROM public.leads_colaboradores\n  WHERE ativo IS TRUE\n    AND COALESCE(email,'') <> ''\n),\nultimos7 AS (\n  SELECT\n    lower(trim(email))     AS email,\n    COUNT(*)               AS total_7d,\n    MAX(data)              AS last_received\n  FROM public.leads_distribuidos\n  WHERE data >= (NOW() AT TIME ZONE 'America/Sao_Paulo') - INTERVAL '7 days'\n  GROUP BY lower(trim(email))\n)\nSELECT\n  a.email,\n  a.nome,\n  COALESCE(u.total_7d, 0)  AS total_7d,\n  u.last_received\nFROM ativos a\nLEFT JOIN ultimos7 u USING (email)\nORDER BY\n  total_7d ASC,\n  u.last_received ASC NULLS FIRST,\n  a.criado_em ASC,\n  a.email ASC\nLIMIT 1;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        512,
+        144
+      ],
+      "id": "0894c499-b6e8-4a2f-bd67-417333076447",
+      "name": "Execute a SQL query4",
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "04f8f931-b104-48f3-9a63-a390bbdf3dfa",
+              "name": "responsável",
+              "value": "={{ $item(\"0\").$node[\"Execute a SQL query5\"].json[\"email\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        144
+      ],
+      "id": "f25da3d3-41f9-48b8-8ebb-57c97da88cfd",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO public.leads_distribuidos (\n  data,         \n  email\n)\nVALUES (\n  /* data */\n  NOW() AT TIME ZONE 'America/Sao_Paulo',\n\n  /* email */\n  '{{ $item(\"0\").$node[\"Execute a SQL query4\"].json[\"email\"] }}'\n\n)\nRETURNING data, email;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        752,
+        144
+      ],
+      "id": "673b66c3-b93f-407a-8ec2-5570de113bef",
+      "name": "Execute a SQL query5",
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "events": [
+          "update"
+        ]
+      },
+      "type": "n8n-nodes-base.n8nTrigger",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -864
+      ],
+      "id": "e01773d4-681d-4e41-9c13-9322e0435699",
+      "name": "Dados Cadastro Workflow",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e3c3eb3-253b-4434-9f68-f12806e90433",
+              "name": "Pasta Cliente",
+              "value": "901312698708",
+              "type": "string"
+            },
+            {
+              "id": "f5017427-6e91-4ce3-adfb-1f26db53104e",
+              "name": "Fluxos com Erro",
+              "value": "901319151056",
+              "type": "string"
+            },
+            {
+              "id": "69e95a88-9ca8-46ae-8016-ca15db383fd7",
+              "name": "Fluxos Cadastrados",
+              "value": "901319151049",
+              "type": "string"
+            },
+            {
+              "id": "d1a157b0-9836-4758-92bf-6fa81eff1a26",
+              "name": "Link N8N",
+              "value": "={{ \"https://workflows.\" + $execution.resumeUrl.split('/')[2].split('.').slice(1).join('.') + \"/workflow/\" + $workflow.id }}",
+              "type": "string"
+            },
+            {
+              "id": "a8a396de-7e97-4833-8520-dd5af4bb0baf",
+              "name": "Tarefa Cliente ID",
+              "value": "86ac2h7bc",
+              "type": "string"
+            },
+            {
+              "id": "1bca2025-d73c-4f0d-abee-0abf3d328f2a",
+              "name": "Campo Relacionamento Fluxo Cadastrado",
+              "value": "de89a9e9-7831-4b3e-90f4-0114797d4e6b",
+              "type": "string"
+            },
+            {
+              "id": "bc48d677-8f44-45a4-b66a-e5a671a74128",
+              "name": "Campo Relacionamento Reportar Erro",
+              "value": "6d2dbdb6-40dd-4c2a-a42b-f6e4b5536261",
+              "type": "string"
+            },
+            {
+              "id": "90c1b11d-2707-4db7-b02f-3ca053887764",
+              "name": "Nome do Fluxo",
+              "value": "={{ $workflow.name }}",
+              "type": "string"
+            },
+            {
+              "id": "c4f8fea6-e31a-4023-b56c-58e217565f7c",
+              "name": "ID Página Fluxos",
+              "value": "c9pay-8513",
+              "type": "string"
+            },
+            {
+              "id": "8e2f5c9a-6b3d-4e7f-a1c8-9d4e6f2b7a5c",
+              "name": "ID Documento",
+              "value": "c9pay-15913",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        192,
+        -864
+      ],
+      "id": "7e0f92c7-5e30-4bba-a414-de2a5b0dbdf2",
+      "name": "Variaveis do Cliente1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $workflow.id }}",
+          "mode": "id"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        464,
+        -864
+      ],
+      "id": "3631ed4f-ee6e-4a8d-b484-6cbeb02a2589",
+      "name": "Get a workflow",
+      "credentials": {
+        "n8nApi": {
+          "id": "F1ykyghOg9lLGBLd",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://webhooks.autotrackable.com.br/webhook/receber_cadastro_dos_clientes",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n(() => {\n  const err = $item(\"0\").$node[\"Dados Cadastro Workflow\"].json;\n  const cli = $item(\"0\").$node[\"Variaveis do Cliente1\"].json;\n  const workflow = $item(\"0\").$node[\"Get a workflow\"].json;\n  return { ...err, info_cliente: cli, workflow: workflow };\n})()\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        736,
+        -864
+      ],
+      "id": "5cccab27-a250-4b37-87f1-afe1fe19b288",
+      "name": "Encaminhar Erro para TrackAble1"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "Origem",
+              "value": "={{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"origem\"] }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        -16,
+        0
+      ],
+      "id": "e7f8c72d-0ea4-4526-ae5f-e6435c369c33",
+      "name": "Execution Data"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "created_at": "2025-12-22T11:46:49.000000Z",
+          "created_by": "https://api.calendly.com/users/fadf0046-64ed-435e-8a59-6eb43a0ef25f",
+          "event": "invitee.created",
+          "payload": {
+            "cancel_url": "https://calendly.com/cancellations/0e6629f8-59bc-4e8d-851a-993ffeb00775",
+            "created_at": "2025-12-22T11:46:48.941543Z",
+            "email": "andrezalugao52@gmail.com",
+            "event": "https://api.calendly.com/scheduled_events/a89a24c9-cfe7-4e22-a07d-bb81116d9c43",
+            "first_name": null,
+            "invitee_scheduled_by": null,
+            "last_name": null,
+            "name": "Andreza ",
+            "new_invitee": null,
+            "no_show": null,
+            "old_invitee": null,
+            "payment": null,
+            "questions_and_answers": [
+              {
+                "answer": "+55 21 97068-2012",
+                "position": 0,
+                "question": "WhatsApp"
+              }
+            ],
+            "reconfirmation": null,
+            "reschedule_url": "https://calendly.com/reschedulings/0e6629f8-59bc-4e8d-851a-993ffeb00775",
+            "rescheduled": false,
+            "routing_form_submission": null,
+            "scheduled_event": {
+              "created_at": "2025-12-22T11:46:48.889437Z",
+              "end_time": "2025-12-23T15:00:00.000000Z",
+              "event_guests": [],
+              "event_memberships": [
+                {
+                  "user": "https://api.calendly.com/users/8c535b93-3a75-4130-8c89-b5eac74ac2ae",
+                  "user_email": "andrew@harmoniza.pro",
+                  "user_name": "Andrew Rodrigues"
+                }
+              ],
+              "event_type": "https://api.calendly.com/event_types/e9b57a43-98f6-4af1-b41a-a7213aada46a",
+              "invitees_counter": {
+                "total": 1,
+                "active": 1,
+                "limit": 1
+              },
+              "location": {
+                "location": null,
+                "type": "custom"
+              },
+              "meeting_notes_html": null,
+              "meeting_notes_plain": null,
+              "name": "Sessão de Diagnóstico HarmonizaPRO",
+              "start_time": "2025-12-23T14:00:00.000000Z",
+              "status": "active",
+              "updated_at": "2025-12-22T11:46:48.889437Z",
+              "uri": "https://api.calendly.com/scheduled_events/a89a24c9-cfe7-4e22-a07d-bb81116d9c43"
+            },
+            "scheduling_method": null,
+            "status": "active",
+            "text_reminder_number": null,
+            "timezone": "America/Sao_Paulo",
+            "tracking": {
+              "utm_campaign": null,
+              "utm_source": null,
+              "utm_medium": null,
+              "utm_content": null,
+              "utm_term": null,
+              "salesforce_uuid": null
+            },
+            "updated_at": "2025-12-22T11:46:48.941543Z",
+            "uri": "https://api.calendly.com/scheduled_events/a89a24c9-cfe7-4e22-a07d-bb81116d9c43/invitees/0e6629f8-59bc-4e8d-851a-993ffeb00775"
+          },
+          "origem": "calendly"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Execution Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute a SQL query4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        []
+      ]
+    },
+    "Execute a SQL query2": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query3": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query5": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query4": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados Cadastro Workflow": {
+      "main": [
+        [
+          {
+            "node": "Variaveis do Cliente1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Variaveis do Cliente1": {
+      "main": [
+        [
+          {
+            "node": "Get a workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a workflow": {
+      "main": [
+        [
+          {
+            "node": "Encaminhar Erro para TrackAble1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execution Data": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "ByxX1TqYfyvlgp2T"
+  },
+  "versionId": "bc39c292-5a42-4a3b-bd34-0df597312b6c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "gTkwd0N0FUTUzo9q",
+  "tags": [
+    {
+      "updatedAt": "2025-10-03T18:16:37.959Z",
+      "createdAt": "2025-10-03T18:16:37.959Z",
+      "id": "olakFEXRFPPNeevi",
+      "name": "Cadastrado"
+    },
+    {
+      "updatedAt": "2025-11-17T13:43:22.843Z",
+      "createdAt": "2025-11-17T13:43:22.843Z",
+      "id": "xDu8TyrW6g7HiKXS",
+      "name": "Documentado"
+    }
+  ]
+}

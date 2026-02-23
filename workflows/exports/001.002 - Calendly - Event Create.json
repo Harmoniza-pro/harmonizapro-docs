@@ -1,0 +1,3042 @@
+{
+  "name": "001.002 - Calendly - Event Create",
+  "nodes": [
+    {
+      "parameters": {
+        "amount": 7,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1552,
+        16
+      ],
+      "id": "41910387-4ed1-400a-bf87-923bc79a2463",
+      "name": "Wait",
+      "webhookId": "8fffb76e-9a39-4f0b-b892-2a28544ab616"
+    },
+    {
+      "parameters": {
+        "type": "SHA256",
+        "value": "={{ $item(\"0\").$node[\"Code\"].json[\"telefone\"] == null ? \"\" : $item(\"0\").$node[\"Code\"].json[\"telefone\"].replace(/[^0-9]/g,'') }}",
+        "dataPropertyName": "TelefoneHash"
+      },
+      "id": "a9c63129-a60b-4f7c-bfd2-8a3be3a0479c",
+      "name": "Telefone",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 1,
+      "position": [
+        2512,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "type": "SHA256",
+        "value": "={{ $item(\"0\").$node[\"Code\"].json[\"nome\"].split(' ')[0] }}",
+        "dataPropertyName": "NomeHash"
+      },
+      "id": "d7ee829f-19f8-416a-88b9-a28c793fe83e",
+      "name": "Nome",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 1,
+      "position": [
+        1632,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "type": "SHA256",
+        "value": "={{ $item(\"0\").$node[\"Code\"].json[\"nome\"].replace($item(\"0\").$node[\"Code\"].json[\"nome\"].split(' ')[0],'').trim().toLowerCase() }}",
+        "dataPropertyName": "SobrenomeHash"
+      },
+      "id": "034a9250-83d2-4dce-aa73-2e595860bb69",
+      "name": "Sobrenome",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "type": "SHA256",
+        "value": "={{ $item(\"0\").$node[\"Code\"].json[\"email\"].trim().toLowerCase() }}",
+        "dataPropertyName": "EmailHash"
+      },
+      "id": "6cac48ae-5569-41a4-b609-1a2064008545",
+      "name": "Email",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 1,
+      "position": [
+        2208,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/{{ $item(\"0\").$node[\"set\"].json[\"version\"] }}/{{ $item(\"0\").$node[\"set\"].json[\"pixel\"] }}/events",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "data",
+              "value": "=[ \n  { \n   \"event_name\": \"Schedule\",\n   \"event_time\": {{ parseFloat((new Date().getTime()/1000).toString().split('.')[0]) }},\n   \"event_id\": \"{{ new Date().getTime() + \"-schedule\" }}\",\n   \"user_data\": {\n       \"fn\": [ \"{{ $item(\"0\").$node[\"Telefone\"].json.NomeHash }}\"],\n       \"ln\": [ \"{{ $item(\"0\").$node[\"Telefone\"].json.SobrenomeHash }}\"],\n       \"em\": [ \"{{ $item(\"0\").$node[\"Telefone\"].json.EmailHash }}\"],\n       \"ph\": [ \"{{ $item(\"0\").$node[\"Telefone\"].json.TelefoneHash }}\"],\n       \"client_ip_address\": \"{{ $item(\"0\").$node[\"Execute a SQL query3\"].json[\"ip\"] }}\",\n       \"client_user_agent\": \"{{ $item(\"0\").$node[\"Execute a SQL query3\"].json[\"user_agent\"] }}\",\n       \"fbc\": \"{{ $item(\"0\").$node[\"Execute a SQL query3\"].json[\"fbc\"] }}\",\n       \"fbp\": \"{{ $item(\"0\").$node[\"Execute a SQL query3\"].json[\"fbp\"] }}\"\n          }, \n    \"custom_data\": { \n    },\n   \"event_source_url\": \"{{ $item(\"0\").$node[\"Execute a SQL query3\"].json[\"page_url\"] }}\",\n   \"action_source\": \"website\"\n  }\n]"
+            },
+            {
+              "name": "access_token",
+              "value": "={{ $item(\"0\").$node[\"set\"].json[\"token\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "516a8560-a2dc-4318-abf4-71d8b3f3b3e4",
+      "name": "site2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        3424,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "04db64c7-4688-4d94-bf4c-51b962b8559f",
+              "leftValue": "={{ $item(\"0\").$node[\"Execute a SQL query3\"].json[\"fbc\"] }}",
+              "rightValue": "{",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "9693d275-6d01-4fa8-b575-c468471427a1",
+              "leftValue": "={{ $item(\"0\").$node[\"Code in JavaScript\"].json[\"fbc_valido_90_dias\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "fc8ac7e2-3a33-4c65-af91-23f051d607dc",
+      "name": "checkFbc2",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        3152,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/{{ $item(\"0\").$node[\"set\"].json[\"version\"] }}/{{ $item(\"0\").$node[\"set\"].json[\"pixel\"] }}/events",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "data",
+              "value": "=[ \n  { \n   \"event_name\": \"Schedule\",\n   \"event_time\": {{ parseFloat((new Date().getTime()/1000).toString().split('.')[0]) }},\n   \"event_id\": \"{{ new Date().getTime() + \"-schedule\" }}\",\n   \"user_data\": {\n       \"fn\": [ \"{{ $item(\"0\").$node[\"Telefone\"].json.NomeHash }}\"],\n       \"ln\": [ \"{{ $item(\"0\").$node[\"Telefone\"].json.SobrenomeHash }}\"],\n       \"em\": [ \"{{ $item(\"0\").$node[\"Telefone\"].json.EmailHash }}\"],\n       \"ph\": [ \"{{ $item(\"0\").$node[\"Telefone\"].json.TelefoneHash }}\"],\n       \"client_ip_address\": \"{{ $item(\"0\").$node[\"Execute a SQL query3\"].json[\"ip\"] }}\",\n       \"client_user_agent\": \"{{ $item(\"0\").$node[\"Execute a SQL query3\"].json[\"user_agent\"] }}\",\n       \"fbp\": \"{{ $item(\"0\").$node[\"Execute a SQL query3\"].json[\"fbp\"] }}\"\n          }, \n    \"custom_data\": { \n    },\n   \"event_source_url\": \"{{ $item(\"0\").$node[\"Execute a SQL query3\"].json[\"page_url\"] }}\",\n   \"action_source\": \"website\"\n  }\n]"
+            },
+            {
+              "name": "access_token",
+              "value": "={{ $item(\"0\").$node[\"set\"].json[\"token\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9eb6ba20-a538-46f3-92fc-45d33bb215fb",
+      "name": "site3",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        3424,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "813c771d-b2a9-4677-b159-8fb31a47f61c",
+              "name": "version",
+              "value": "v20.0",
+              "type": "string"
+            },
+            {
+              "id": "576ecc3f-06a0-46cc-adf9-a3460399d2d2",
+              "name": "pixel",
+              "value": "4243861495893717",
+              "type": "string"
+            },
+            {
+              "id": "fd90d8a5-c4e3-40bd-8ea4-667f3bef3eb2",
+              "name": "token",
+              "value": "EAAFcFeKmPtMBPdvYQgagK1GpvsOfOh71fj5BDgBtgd2M5z7nEaWxaFEvjZAwZBljwq9Tq3OdiRZCsqIxjWZBZAberuZAHGcer0MZCmZBAtugPIiLmbxHb3f9LsVkZBTqNFEv3T7ZAYnul3T8ZCSVE5P2gyuBhvM9wUcN4BPEqMnxcC7gXFZCFJC0ZBdBNfL20AsjMFAZDZD",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "02a18031-8d30-4f28-8206-4a9836ea77ad",
+      "name": "set",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        1328,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/{{ $item(\"0\").$node[\"set\"].json[\"version\"] }}/{{ $item(\"0\").$node[\"set\"].json[\"pixel\"] }}/events",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "data",
+              "value": "=[ \n  { \n   \"event_name\": \"{{(() => { const f = $item(\"0\").$node[\"Execute a SQL query2\"].json[\"faturamento\"]; const t = f ? f.replace(/[*]/g, '').trim() : null; const m = { \n      \"Ainda não faturo\": \"Faixa D\", \n      \"0 a 5k\": \"Faixa C\", \n      \"5 a 15k\": \"Faixa B\",\n      \"15 a 30k\": \"Faixa B\",\n      \"30 a 50k\": \"Faixa A\",\n      \"50 a 100k\": \"Faixa A\",\n      \"100 a 200k\": \"Faixa A\"\n    }; return m[t] || \"Faixa C\"; })() }}\",\n   \"event_time\": {{ parseFloat((new Date().getTime()/1000).toString().split('.')[0]) }},\n   \"event_id\": \"{{ new Date().getTime() + \"-faixa\" }}\",\n   \"user_data\": {\n       \"fn\": [ \"{{ $item(\"0\").$node[\"Telefone\"].json.NomeHash }}\"],\n       \"ln\": [ \"{{ $item(\"0\").$node[\"Telefone\"].json.SobrenomeHash }}\"],\n       \"em\": [ \"{{ $item(\"0\").$node[\"Telefone\"].json.EmailHash }}\"],\n       \"ph\": [ \"{{ $item(\"0\").$node[\"Telefone\"].json.TelefoneHash }}\"],\n       \"client_ip_address\": \"{{ $item(\"0\").$node[\"Execute a SQL query3\"].json[\"ip\"] }}\",\n       \"client_user_agent\": \"{{ $item(\"0\").$node[\"Execute a SQL query3\"].json[\"user_agent\"] }}\",\n       \"fbc\": \"{{ $item(\"0\").$node[\"Execute a SQL query3\"].json[\"fbc\"] }}\",\n       \"fbp\": \"{{ $item(\"0\").$node[\"Execute a SQL query3\"].json[\"fbp\"] }}\"\n          }, \n    \"custom_data\": { \n    },\n   \"event_source_url\": \"{{ $item(\"0\").$node[\"Execute a SQL query3\"].json[\"page_url\"] }}\",\n   \"action_source\": \"website\"\n  }\n]"
+            },
+            {
+              "name": "access_token",
+              "value": "={{ $item(\"0\").$node[\"set\"].json[\"token\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "09533cd8-a9c8-4ee6-ad7f-790bb9e2b4ff",
+      "name": "site4",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        3632,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/{{ $item(\"0\").$node[\"set\"].json[\"version\"] }}/{{ $item(\"0\").$node[\"set\"].json[\"pixel\"] }}/events",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "data",
+              "value": "=[ \n  { \n   \"event_name\": \"{{(() => { const f = $item(\"0\").$node[\"Execute a SQL query2\"].json[\"faturamento\"]; const t = f ? f.replace(/[*]/g, '').trim() : null; const m = { \n      \"Ainda não faturo\": \"Faixa D\", \n      \"0 a 5k\": \"Faixa C\", \n      \"5 a 15k\": \"Faixa B\",\n      \"15 a 30k\": \"Faixa B\",\n      \"30 a 50k\": \"Faixa A\",\n      \"50 a 100k\": \"Faixa A\",\n      \"100 a 200k\": \"Faixa A\"\n    }; return m[t] || \"Faixa C\"; })() }}\",\n   \"event_time\": {{ parseFloat((new Date().getTime()/1000).toString().split('.')[0]) }},\n   \"event_id\": \"{{ new Date().getTime() + \"-faixa\" }}\",\n   \"user_data\": {\n       \"fn\": [ \"{{ $item(\"0\").$node[\"Telefone\"].json.NomeHash }}\"],\n       \"ln\": [ \"{{ $item(\"0\").$node[\"Telefone\"].json.SobrenomeHash }}\"],\n       \"em\": [ \"{{ $item(\"0\").$node[\"Telefone\"].json.EmailHash }}\"],\n       \"ph\": [ \"{{ $item(\"0\").$node[\"Telefone\"].json.TelefoneHash }}\"],\n       \"client_ip_address\": \"{{ $item(\"0\").$node[\"Execute a SQL query3\"].json[\"ip\"] }}\",\n       \"client_user_agent\": \"{{ $item(\"0\").$node[\"Execute a SQL query3\"].json[\"user_agent\"] }}\",\n       \"fbp\": \"{{ $item(\"0\").$node[\"Execute a SQL query3\"].json[\"fbp\"] }}\"\n          }, \n    \"custom_data\": { \n    },\n   \"event_source_url\": \"{{ $item(\"0\").$node[\"Execute a SQL query3\"].json[\"page_url\"] }}\",\n   \"action_source\": \"website\"\n  }\n]"
+            },
+            {
+              "name": "access_token",
+              "value": "={{ $item(\"0\").$node[\"set\"].json[\"token\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e8b95f3c-381a-4246-8a0f-a5216b65056d",
+      "name": "site5",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        3632,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "dealId": "={{ $item(\"0\").$node[\"Code\"].json[\"id_negocio\"] }}",
+        "updateFields": {
+          "customProperties": {
+            "property": [
+              {
+                "name": "b9e645c6460d1b0c210f47f8dc326933ac6b8f18",
+                "value": "={{ $item(\"0\").$node[\"Calendly Trigger\"].json[\"payload\"][\"reschedule_url\"] }}"
+              }
+            ]
+          },
+          "user_id": "={{ $item(\"0\").$node[\"getUser\"].json[\"data\"][\"0\"][\"id\"] }}",
+          "stage_id": 81
+        }
+      },
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [
+        464,
+        0
+      ],
+      "id": "ca4a91fe-62aa-4fe3-9d55-22e7fe5fc976",
+      "name": "Update a deal",
+      "credentials": {
+        "pipedriveOAuth2Api": {
+          "id": "y8O0rqLgOCkuE8hK",
+          "name": "Pipedrive - evoluamidia@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE leads\nSET\n  evento_schedule = true,\n {{ (() => {\n  const f = $item(\"0\").$node[\"Execute a SQL query2\"].json[\"faturamento\"];\n  const clean = f ? f.replace(/[*]/g, '').trim() : null;\n\n  const map = { \n      \"Ainda não faturo\": \"C\", \n      \"Até R$12 mil por mês\": \"C\", \n      \"Entre R$13 e R$25 mil por mês\": \"B\",\n      \"Entre R$25 e R$50 mil por mês\": \"A\",\n      \"Entre R$50 e R$100 mil por mês\": \"A\",\n      \"Entre R$100 e R$200 mil por mês\": \"A\",\n      \"Mais de R$200 mil por mês\": \"A\"\n    };\n\n  const faixa = map[clean];\n\n  if (!faixa) {\n    return `evento_faxa_a = true, evento_faxa_b = true, evento_faxa_c = true`;\n  }\n\n  const result = [];\n  if (faixa === \"A\") result.push(\"evento_faxa_a = true\");\n  if (faixa === \"B\") result.push(\"evento_faxa_b = true\");\n  if (faixa === \"C\") result.push(\"evento_faxa_c = true\");\n\n  return result.join(', ');\n})() }}\n\n  \nWHERE id = {{ $item(\"0\").$node[\"Code\"].json[\"id\"]}};\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        3904,
+        0
+      ],
+      "id": "d487dc52-f10b-4522-bc2b-96dd32e7b33e",
+      "name": "Execute a SQL query",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, id_negocio, nome, email, telefone, created \nFROM leads\nWHERE\n  telefone = '{{ '+' + $item(\"0\").$node[\"Calendly Trigger\"].json[\"payload\"][\"questions_and_answers\"][\"0\"][\"answer\"].replace(/[^0-9]/g,'') }}'\nLIMIT 1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1344,
+        16
+      ],
+      "id": "c99c7797-b5da-433f-b5cf-f642a33241ac",
+      "name": "Execute a SQL query1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.z-api.io/instances/3D8D763C8F6D80780DEFAAB9B3CB7944/token/133454FA196621A9D2181F1E/send-text",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"phone\": \"{{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"Telefone\"].replace(/[^0-9]/g,'') }}\",\n  \"message\": \"Opa, {{$('edit').item.json.Nome}}! Tudo bem? Aqui é a Ana Paula, especialista da Burst Mídia 🔥\"\n}",
+        "options": {}
+      },
+      "id": "c52105ca-59af-47e4-8edb-f056f1d7e78d",
+      "name": "message1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1760,
+        -1184
+      ],
+      "retryOnFail": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "vYpu7XBWSmz0dhDh",
+          "name": "Z Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.z-api.io/instances/3D8D763C8F6D80780DEFAAB9B3CB7944/token/133454FA196621A9D2181F1E/send-text",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"phone\": \"{{ $item(\"0\").$node[\"Calendly Trigger\"].json[\"payload\"][\"questions_and_answers\"][\"0\"][\"answer\"].replace(/[^0-9]/g,'') }}\",\n  \"message\": \"Aqui é a Louise da HarmonizaPRO!\"\n}",
+        "options": {}
+      },
+      "id": "3598d00f-e447-45cc-89d5-48b82ca50e8d",
+      "name": "message",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        592,
+        -1008
+      ],
+      "retryOnFail": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "vYpu7XBWSmz0dhDh",
+          "name": "Z Api"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.z-api.io/instances/3D8D763C8F6D80780DEFAAB9B3CB7944/token/133454FA196621A9D2181F1E/send-text",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"phone\": \"{{ $item(\"0\").$node[\"Calendly Trigger\"].json[\"payload\"][\"questions_and_answers\"][\"0\"][\"answer\"].replace(/[^0-9]/g,'') }}\",\n  \"message\": \"Acabamos de receber sua aplicação e estamos analisando as suas respostas. Preciso apenas confirmar algumas informações com você. Ok?\"\n}",
+        "options": {}
+      },
+      "id": "7dcdde65-07e1-4b96-9562-4b23367fb2fb",
+      "name": "message2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        928,
+        -1008
+      ],
+      "retryOnFail": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "vYpu7XBWSmz0dhDh",
+          "name": "Z Api"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        -1008
+      ],
+      "id": "2d48abd5-118b-404e-9703-8e5bc3308d63",
+      "name": "Wait1",
+      "webhookId": "8e3c3990-5769-4f63-8613-f82dc25a6be7",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        768,
+        -1008
+      ],
+      "id": "0ad3c581-4bdc-4d00-a00b-e87a7bfc8484",
+      "name": "Wait2",
+      "webhookId": "8e3c3990-5769-4f63-8613-f82dc25a6be7",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.z-api.io/instances/3D8D763C8F6D80780DEFAAB9B3CB7944/token/133454FA196621A9D2181F1E/send-text",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"phone\": \"{{ $item(\"0\").$node[\"Calendly Trigger\"].json[\"payload\"][\"questions_and_answers\"][\"0\"][\"answer\"].replace(/[^0-9]/g,'') }}\",\n  \"message\": \"Olá {{ $item(\"0\").$node[\"Calendly Trigger\"].json[\"payload\"][\"name\"].includes(\" \") \n    ?  $item(\"0\").$node[\"Calendly Trigger\"].json[\"payload\"][\"name\"].split(\" \")[0].toLowerCase().replace(/^./, c => c.toUpperCase()) + \", \" \n    : $item(\"0\").$node[\"Calendly Trigger\"].json[\"payload\"][\"name\"].toLowerCase().replace(/^./, c => c.toUpperCase())+ \", \" }} tudo bem?\"\n}\n",
+        "options": {}
+      },
+      "id": "223b7772-80a7-4f82-9824-2de757a93eeb",
+      "name": "message3",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        224,
+        -1008
+      ],
+      "retryOnFail": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "vYpu7XBWSmz0dhDh",
+          "name": "Z Api"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT *\n  FROM leads_responses\nWHERE\n  lead_id = '{{ $item(\"0\").$node[\"Code\"].json[\"id\"]}}'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        736,
+        0
+      ],
+      "id": "5b344f62-28bb-481a-a0c1-b97414737238",
+      "name": "Execute a SQL query2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT *\n  FROM lead_tracking\nWHERE\n  lead_id = '{{ $item(\"0\").$node[\"Code\"].json[\"id\"]}}'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "3ca7aad2-4012-4a92-b1e8-4fdbff6847c0",
+      "name": "Execute a SQL query3",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "LeadScore",
+              "value": "={{(() => { const f = $item(\"0\").$node[\"Execute a SQL query2\"].json[\"faturamento\"]; const t = f ? f.replace(/[*]/g, '').trim() : null; const m = {        \"Ainda não faturo\": \"Faixa D\",        \"Até R$12 mil por mês\": \"Faixa C\",        \"Entre R$13 e R$25 mil por mês\": \"Faixa B\",       \"Entre R$25 e R$50 mil por mês\": \"Faixa A\",       \"Entre R$50 e R$100 mil por mês\": \"Faixa A\",       \"Entre R$100 e R$200 mil por mês\": \"Faixa A\",       \"Mais de R$200 mil por mês\": \"Faixa A\"     }; return m[t] || \"Faixa C\"; })() }}"
+            },
+            {
+              "key": "Lead_Email",
+              "value": "={{ $item(\"0\").$node[\"Calendly Trigger\"].json[\"payload\"][\"email\"] }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        4128,
+        0
+      ],
+      "id": "537d2dc9-28a3-4f8c-9a82-b292c414cd53",
+      "name": "Execution Data"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "get",
+        "dealId": "={{ $item(\"0\").$node[\"Code\"].json[\"id_negocio\"] }}"
+      },
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [
+        192,
+        0
+      ],
+      "id": "62e1d8a1-5316-401b-bf20-c01a6c05d93b",
+      "name": "Get a deal",
+      "credentials": {
+        "pipedriveOAuth2Api": {
+          "id": "y8O0rqLgOCkuE8hK",
+          "name": "Pipedrive - evoluamidia@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2800,
+        -96
+      ],
+      "id": "1d04935a-a622-4ece-9a66-28c46bcfa2f9",
+      "name": "Wait3",
+      "webhookId": "8e3c3990-5769-4f63-8613-f82dc25a6be7"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2288,
+        -192
+      ],
+      "id": "c8f59552-c72c-4632-870c-5b36b4a2debe",
+      "name": "Wait4",
+      "webhookId": "8e3c3990-5769-4f63-8613-f82dc25a6be7"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0c23661d-0a5e-464b-86a1-d8d73320ae7c",
+              "leftValue": "={{ $item(\"0\").$node[\"Execute a SQL query1\"].json[\"id\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1120,
+        16
+      ],
+      "id": "0375e173-0d9a-4245-8886-e2d732feb213",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "gTkwd0N0FUTUzo9q",
+          "mode": "list",
+          "cachedResultName": "Distribuição de Leads - Pipedrive"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -4336,
+        0
+      ],
+      "id": "90890e9c-a7bc-448a-8e8a-70362fbe6e63",
+      "name": "Execute Workflow"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b4391136-eead-4600-b705-3c3c3fc372db",
+              "name": "origem",
+              "value": "calendly",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4592,
+        0
+      ],
+      "id": "1a80dd35-af7c-4305-a620-be0047275796",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "dealId": "={{ $item(\"0\").$node[\"Loop Over Items\"].json[\"id\"] }}",
+        "updateFields": {
+          "user_id": "={{ $item(\"0\").$node[\"getUser\"].json[\"data\"][\"0\"][\"id\"] }}",
+          "stage_id": 81
+        }
+      },
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        528
+      ],
+      "id": "7aee8089-b68e-4c9b-8fdf-2fbd31006100",
+      "name": "Update a deal1",
+      "credentials": {
+        "pipedriveOAuth2Api": {
+          "id": "y8O0rqLgOCkuE8hK",
+          "name": "Pipedrive - evoluamidia@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://harmonizapro2.pipedrive.com/api/v1/users/find",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "pipedriveOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "search_by_email",
+              "value": "=true"
+            },
+            {
+              "name": "term",
+              "value": "={{ $item(\"0\").$node[\"Execute Workflow\"].json[\"responsável\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8f5b753e-c352-4de9-9f3c-3599f24cd9ce",
+      "name": "getUser",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4080,
+        0
+      ],
+      "credentials": {
+        "pipedriveOAuth2Api": {
+          "id": "y8O0rqLgOCkuE8hK",
+          "name": "Pipedrive - evoluamidia@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, id_negocio, nome, email, telefone, created \nFROM leads\nWHERE\n  email = '{{ $item(\"0\").$node[\"Calendly Trigger\"].json[\"payload\"][\"email\"] }}'\nLIMIT 1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -880,
+        160
+      ],
+      "id": "54e776c2-d366-4f5c-8ba0-dee699d93c60",
+      "name": "Execute a SQL query4",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0c23661d-0a5e-464b-86a1-d8d73320ae7c",
+              "leftValue": "={{ $json[\"id\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -624,
+        160
+      ],
+      "id": "1df2276a-b6f6-445d-85ef-590a5132a023",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.myNewField = 1;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -384,
+        0
+      ],
+      "id": "72dfc12b-b478-44f2-91aa-d4b5e217e5ea",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -3824,
+        0
+      ],
+      "id": "ecfd3b79-cd0d-428d-b73f-8ded744892dd",
+      "name": "Wait7",
+      "webhookId": "8fffb76e-9a39-4f0b-b892-2a28544ab616"
+    },
+    {
+      "parameters": {
+        "events": [
+          "update"
+        ]
+      },
+      "type": "n8n-nodes-base.n8nTrigger",
+      "typeVersion": 1,
+      "position": [
+        -4224,
+        -1088
+      ],
+      "id": "29df67d2-aa48-46a7-9e10-9f4ce3a41614",
+      "name": "Dados Cadastro Workflow",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e3c3eb3-253b-4434-9f68-f12806e90433",
+              "name": "Pasta Cliente",
+              "value": "901312698708",
+              "type": "string"
+            },
+            {
+              "id": "f5017427-6e91-4ce3-adfb-1f26db53104e",
+              "name": "Fluxos com Erro",
+              "value": "901319151056",
+              "type": "string"
+            },
+            {
+              "id": "69e95a88-9ca8-46ae-8016-ca15db383fd7",
+              "name": "Fluxos Cadastrados",
+              "value": "901319151049",
+              "type": "string"
+            },
+            {
+              "id": "d1a157b0-9836-4758-92bf-6fa81eff1a26",
+              "name": "Link N8N",
+              "value": "={{ \"https://workflows.\" + $execution.resumeUrl.split('/')[2].split('.').slice(1).join('.') + \"/workflow/\" + $workflow.id }}",
+              "type": "string"
+            },
+            {
+              "id": "a8a396de-7e97-4833-8520-dd5af4bb0baf",
+              "name": "Tarefa Cliente ID",
+              "value": "86ac2h7bc",
+              "type": "string"
+            },
+            {
+              "id": "1bca2025-d73c-4f0d-abee-0abf3d328f2a",
+              "name": "Campo Relacionamento Fluxo Cadastrado",
+              "value": "de89a9e9-7831-4b3e-90f4-0114797d4e6b",
+              "type": "string"
+            },
+            {
+              "id": "bc48d677-8f44-45a4-b66a-e5a671a74128",
+              "name": "Campo Relacionamento Reportar Erro",
+              "value": "6d2dbdb6-40dd-4c2a-a42b-f6e4b5536261",
+              "type": "string"
+            },
+            {
+              "id": "90c1b11d-2707-4db7-b02f-3ca053887764",
+              "name": "Nome do Fluxo",
+              "value": "={{ $workflow.name }}",
+              "type": "string"
+            },
+            {
+              "id": "c4f8fea6-e31a-4023-b56c-58e217565f7c",
+              "name": "ID Página Fluxos",
+              "value": "c9pay-8513",
+              "type": "string"
+            },
+            {
+              "id": "8e2f5c9a-6b3d-4e7f-a1c8-9d4e6f2b7a5c",
+              "name": "ID Documento",
+              "value": "c9pay-15913",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3952,
+        -1088
+      ],
+      "id": "e0cd4854-9450-4f7c-a92f-dbeeec8dfe5e",
+      "name": "Variaveis do Cliente1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $workflow.id }}",
+          "mode": "id"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        -3680,
+        -1088
+      ],
+      "id": "4a854c6e-0ea8-4555-9ec0-94e20edfb59b",
+      "name": "Get a workflow",
+      "credentials": {
+        "n8nApi": {
+          "id": "F1ykyghOg9lLGBLd",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://webhooks.autotrackable.com.br/webhook/receber_cadastro_dos_clientes",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n(() => {\n  const err = $item(\"0\").$node[\"Dados Cadastro Workflow\"].json;\n  const cli = $item(\"0\").$node[\"Variaveis do Cliente1\"].json;\n  const workflow = $item(\"0\").$node[\"Get a workflow\"].json;\n  return { ...err, info_cliente: cli, workflow: workflow };\n})()\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3408,
+        -1088
+      ],
+      "id": "47972e20-3784-4f1f-ad71-8d95c77d0fd6",
+      "name": "Encaminhar Erro para TrackAble1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evolua.megaapi.com.br/rest/sendMessage/CarolSDR/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNy8xMS8yMDI0IiwibmFtZSI6IlRlc3RlNiIsImFkbWluIjp0cnVlLCJpYXQiOjE1MTYyMzkwMjJ9.J7vMxf8GMX7nUoolQKFTEuxR4Tsm5F2EWwqqP9nFf8ILiZvax2s8RMqdcnWVeCMQ8sIpqYufkMWgYhMKs858TA"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messageData\":{\n    \"to\": \"5531971681198\",\n    \"text\": \"TESTE AUTOMAÇÃO\"\n  }\n}",
+        "options": {}
+      },
+      "id": "11c70ee3-edba-4403-a822-f5a4dba3411e",
+      "name": "message10",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -3952,
+        624
+      ],
+      "retryOnFail": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "scope": "organization",
+        "events": [
+          "invitee.created"
+        ]
+      },
+      "type": "n8n-nodes-base.calendlyTrigger",
+      "typeVersion": 1,
+      "position": [
+        -4848,
+        0
+      ],
+      "id": "8101c700-645a-4dc4-bdbf-926e83453581",
+      "name": "Calendly Trigger",
+      "webhookId": "f3de8360-ec95-4251-8834-41f37eaabefd",
+      "credentials": {
+        "calendlyOAuth2Api": {
+          "id": "vHzjW937IiZW5qDM",
+          "name": "Calendly account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "92efc9ac-aeb8-4687-851a-2abf2ee32631",
+              "name": "host",
+              "value": "https://harmonizapro.uazapi.com",
+              "type": "string"
+            },
+            {
+              "id": "198f6743-fcae-4ad4-b3e4-aa5b5b2ae0e3",
+              "name": "token",
+              "value": "={{ $item(\"0\").$node[\"Select rows from a table\"].json[\"token\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "67186f5d-164a-4078-b236-5493ef0613f3",
+              "name": "nome_atendente",
+              "value": "={{ $item(\"0\").$node[\"Select rows from a table\"].json[\"nome\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3296,
+        0
+      ],
+      "id": "15a50e07-2c84-40d4-b1d5-78d1d30cac2b",
+      "name": "SDR 1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $item(\"0\").$node[\"SDR 1\"].json[\"host\"] }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $item(\"0\").$node[\"SDR 1\"].json[\"token\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $item(\"0\").$node[\"Calendly Trigger\"].json[\"payload\"][\"questions_and_answers\"][\"0\"][\"answer\"].replace(/[^0-9]/g,'') }}\",\n  \"text\": \"Aqui é a {{ $item(\"0\").$node[\"SDR 1\"].json[\"nome_atendente\"] }} da HarmonizaPRO! - bit.ly/instaharmonizaPRO.  Tudo bem?\"\n}",
+        "options": {}
+      },
+      "id": "859db202-6193-41d8-a1f0-66fb98ed87a8",
+      "name": "Mensagem",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -3088,
+        0
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $item(\"0\").$node[\"SDR 1\"].json[\"host\"] }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $item(\"0\").$node[\"SDR 1\"].json[\"token\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $item(\"0\").$node[\"Calendly Trigger\"].json[\"payload\"][\"questions_and_answers\"][\"0\"][\"answer\"].replace(/[^0-9]/g,'') }}\",\n  \"text\": \"{{ $item(\"0\").$node[\"Calendly Trigger\"].json[\"payload\"][\"name\"].includes(\" \") \n    ?  $item(\"0\").$node[\"Calendly Trigger\"].json[\"payload\"][\"name\"].split(\" \")[0].toLowerCase().replace(/^./, c => c.toUpperCase()) + \", \" \n    : $item(\"0\").$node[\"Calendly Trigger\"].json[\"payload\"][\"name\"].toLowerCase().replace(/^./, c => c.toUpperCase())+ \", \" }}vi que você se cadastrou no nosso formulário e estamos analisando as informações para o seu diagnóstico.\"\n}",
+        "options": {}
+      },
+      "id": "8e7660ab-d283-45fa-87c7-19ff7f0cf18d",
+      "name": "Mensagem1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -2576,
+        -96
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $item(\"0\").$node[\"SDR 1\"].json[\"host\"] }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $item(\"0\").$node[\"SDR 1\"].json[\"token\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $item(\"0\").$node[\"Calendly Trigger\"].json[\"payload\"][\"questions_and_answers\"][\"0\"][\"answer\"].replace(/[^0-9]/g,'') }}\",\n  \"text\": \"Preciso apenas confirmar algumas informações com você. Ok?\"\n}",
+        "options": {}
+      },
+      "id": "11504391-d569-4aea-bb93-4b4f49316887",
+      "name": "Mensagem2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -2064,
+        -192
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "leads_colaboradores",
+          "mode": "list",
+          "cachedResultName": "leads_colaboradores"
+        },
+        "limit": 1,
+        "where": {
+          "values": [
+            {
+              "column": "email",
+              "value": "={{ $item(\"0\").$node[\"getUser\"].json[\"data\"][\"0\"][\"email\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -3568,
+        0
+      ],
+      "id": "f04ce18f-10b8-41d7-871a-b89c5dcf1d78",
+      "name": "Select rows from a table",
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://harmonizapro2.pipedrive.com/api/v2/activities",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "pipedriveOAuth2Api",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "subject",
+              "value": "={{ $item(\"0\").$node[\"Calendly Trigger\"].json[\"payload\"][\"scheduled_event\"][\"name\"] }} - {{ $item(\"0\").$node[\"Calendly Trigger\"].json[\"payload\"][\"scheduled_event\"][\"name\"] }}"
+            },
+            {
+              "name": "type",
+              "value": "meeting"
+            },
+            {
+              "name": "owner_id",
+              "value": "={{ $item(\"0\").$node[\"getUser\"].json[\"data\"][\"0\"][\"id\"] }}"
+            },
+            {
+              "name": "deal_id",
+              "value": "={{ $item(\"0\").$node[\"Code\"].json[\"id_negocio\"] }}"
+            },
+            {
+              "name": "due_date",
+              "value": "={{ $item(\"0\").$node[\"Calendly Trigger\"].json[\"payload\"][\"scheduled_event\"][\"start_time\"].split(\"T\")[0] }}"
+            },
+            {
+              "name": "due_time",
+              "value": "={{ ($item(\"0\").$node[\"Calendly Trigger\"].json[\"payload\"][\"scheduled_event\"][\"start_time\"].split(\"T\")[1].split(\".\")[0].split(\":\")[0]) + \":\" + $item(\"0\").$node[\"Calendly Trigger\"].json[\"payload\"][\"scheduled_event\"][\"start_time\"].split(\"T\")[1].split(\".\")[0].split(\":\")[1] }}"
+            },
+            {
+              "name": "duration",
+              "value": "00:30"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e96c4ae9-7ff7-4ea4-b39b-35a53a2c86ef",
+      "name": "createDealPipeLine",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -80,
+        0
+      ],
+      "credentials": {
+        "pipedriveOAuth2Api": {
+          "id": "y8O0rqLgOCkuE8hK",
+          "name": "Pipedrive - evoluamidia@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const fbc = $item(\"0\").$node[\"Execute a SQL query3\"].json[\"fbc\"];\n\nfunction isFbcLessThan7Days(fbc) {\n  if (!fbc || typeof fbc !== 'string') return false;\n\n  const parts = fbc.split('.');\n  \n  // Estrutura esperada: fb.1.timestamp.fbclid\n  if (parts.length < 4) return false;\n  if (parts[0] !== 'fb') return false;\n\n  const timestamp = Number(parts[2]);\n  if (isNaN(timestamp)) return false;\n\n  const now = Date.now();\n  const sevenDaysInMs = 90 * 24 * 60 * 60 * 1000;\n\n  return (now - timestamp) <= sevenDaysInMs;\n}\n\nreturn [\n  {\n    json: {\n      fbc_valido_90_dias: isFbcLessThan7Days(fbc)\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2864,
+        0
+      ],
+      "id": "06ae6f47-06a9-4d52-a9c8-634b7a0091e0",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {
+    "site4": [
+      {
+        "json": {
+          "events_received": 1,
+          "messages": [],
+          "fbtrace_id": "AYNkAF5DBawwxikUNvTauoC"
+        }
+      }
+    ],
+    "Execute a SQL query": [
+      {
+        "json": {
+          "success": true
+        }
+      }
+    ],
+    "Execution Data": [
+      {
+        "json": {
+          "success": true
+        }
+      }
+    ],
+    "Calendly Trigger": [
+      {
+        "json": {
+          "created_at": "2026-02-20T17:23:43.000000Z",
+          "created_by": "https://api.calendly.com/users/fadf0046-64ed-435e-8a59-6eb43a0ef25f",
+          "event": "invitee.created",
+          "payload": {
+            "cancel_url": "https://calendly.com/cancellations/0452c1ad-b2e5-4249-8b86-490cf7db432f",
+            "created_at": "2026-02-20T17:23:42.719766Z",
+            "email": "sarahcastro@outlook.com",
+            "event": "https://api.calendly.com/scheduled_events/c8f0aa38-4733-475c-b5dc-cc04bc266f26",
+            "first_name": null,
+            "invitee_scheduled_by": null,
+            "last_name": null,
+            "name": "Sarah Castro",
+            "new_invitee": null,
+            "no_show": null,
+            "old_invitee": null,
+            "payment": null,
+            "questions_and_answers": [
+              {
+                "answer": "+55 12 97408-6912",
+                "position": 0,
+                "question": "WhatsApp"
+              }
+            ],
+            "reconfirmation": null,
+            "reschedule_url": "https://calendly.com/reschedulings/0452c1ad-b2e5-4249-8b86-490cf7db432f",
+            "rescheduled": false,
+            "routing_form_submission": null,
+            "scheduled_event": {
+              "created_at": "2026-02-20T17:23:42.705085Z",
+              "end_time": "2026-02-23T14:00:00.000000Z",
+              "event_guests": [],
+              "event_memberships": [
+                {
+                  "user": "https://api.calendly.com/users/91a69ee5-eba1-4a3b-b60c-3b63c36d44bf",
+                  "user_email": "gabriele@harmoniza.pro",
+                  "user_name": "Gabriele Linhares"
+                }
+              ],
+              "event_type": "https://api.calendly.com/event_types/e9b57a43-98f6-4af1-b41a-a7213aada46a",
+              "invitees_counter": {
+                "total": 1,
+                "active": 1,
+                "limit": 1
+              },
+              "location": {
+                "location": null,
+                "type": "custom"
+              },
+              "meeting_notes_html": null,
+              "meeting_notes_plain": null,
+              "name": "Sessão de Diagnóstico HarmonizaPRO",
+              "start_time": "2026-02-23T13:00:00.000000Z",
+              "status": "active",
+              "updated_at": "2026-02-20T17:23:42.705085Z",
+              "uri": "https://api.calendly.com/scheduled_events/c8f0aa38-4733-475c-b5dc-cc04bc266f26"
+            },
+            "scheduling_method": null,
+            "status": "active",
+            "text_reminder_number": null,
+            "timezone": "America/Sao_Paulo",
+            "tracking": {
+              "utm_campaign": null,
+              "utm_source": null,
+              "utm_medium": null,
+              "utm_content": null,
+              "utm_term": null,
+              "salesforce_uuid": null
+            },
+            "updated_at": "2026-02-20T17:23:42.719766Z",
+            "uri": "https://api.calendly.com/scheduled_events/c8f0aa38-4733-475c-b5dc-cc04bc266f26/invitees/0452c1ad-b2e5-4249-8b86-490cf7db432f"
+          }
+        }
+      }
+    ],
+    "Wait": [
+      {
+        "json": {
+          "chatid": "5512974086912@s.whatsapp.net",
+          "content": {
+            "text": "Preciso apenas confirmar algumas informações com você. Ok?",
+            "contextInfo": {}
+          },
+          "convertOptions": "",
+          "edited": "",
+          "fromMe": true,
+          "id": "5547936185929:3EB0BCBFD2BFB7B32A3AEC",
+          "isGroup": false,
+          "messageTimestamp": 1771608292707,
+          "messageType": "ExtendedTextMessage",
+          "messageid": "3EB0BCBFD2BFB7B32A3AEC",
+          "owner": "5547936185929",
+          "quoted": "",
+          "reaction": "",
+          "readChatAttempted": false,
+          "sender": "5547936185929@s.whatsapp.net",
+          "senderName": "Gabe Linhares",
+          "source": "web",
+          "status": "Pending",
+          "text": "Preciso apenas confirmar algumas informações com você. Ok?",
+          "track_id": "",
+          "track_source": ""
+        }
+      }
+    ],
+    "Telefone": [
+      {
+        "json": {
+          "version": "v20.0",
+          "pixel": "4243861495893717",
+          "token": "EAAFcFeKmPtMBPdvYQgagK1GpvsOfOh71fj5BDgBtgd2M5z7nEaWxaFEvjZAwZBljwq9Tq3OdiRZCsqIxjWZBZAberuZAHGcer0MZCmZBAtugPIiLmbxHb3f9LsVkZBTqNFEv3T7ZAYnul3T8ZCSVE5P2gyuBhvM9wUcN4BPEqMnxcC7gXFZCFJC0ZBdBNfL20AsjMFAZDZD",
+          "NomeHash": "7e8c729e4e4ecc320cb411c4d1419bf5fbad733212d4e9491b7630aaef0b8b1c",
+          "SobrenomeHash": "df835dcf8d6c492c3d340604b9e58d8603d98cd5f90e754a3a85cf174488e17d",
+          "EmailHash": "44c7bcca4c007a58afcf8276d35b0473b41c2359b37e6dbdc17e2e12469ccfe8",
+          "TelefoneHash": "f0e781d935aafd01a52e57dbe9c3df4cb443078630fe58ccd43d2d5d3e3c9377"
+        }
+      },
+      {
+        "json": {
+          "version": "v20.0",
+          "pixel": "4243861495893717",
+          "token": "EAAFcFeKmPtMBPdvYQgagK1GpvsOfOh71fj5BDgBtgd2M5z7nEaWxaFEvjZAwZBljwq9Tq3OdiRZCsqIxjWZBZAberuZAHGcer0MZCmZBAtugPIiLmbxHb3f9LsVkZBTqNFEv3T7ZAYnul3T8ZCSVE5P2gyuBhvM9wUcN4BPEqMnxcC7gXFZCFJC0ZBdBNfL20AsjMFAZDZD",
+          "NomeHash": "7e8c729e4e4ecc320cb411c4d1419bf5fbad733212d4e9491b7630aaef0b8b1c",
+          "SobrenomeHash": "df835dcf8d6c492c3d340604b9e58d8603d98cd5f90e754a3a85cf174488e17d",
+          "EmailHash": "44c7bcca4c007a58afcf8276d35b0473b41c2359b37e6dbdc17e2e12469ccfe8",
+          "TelefoneHash": "f0e781d935aafd01a52e57dbe9c3df4cb443078630fe58ccd43d2d5d3e3c9377"
+        }
+      }
+    ],
+    "Nome": [
+      {
+        "json": {
+          "version": "v20.0",
+          "pixel": "4243861495893717",
+          "token": "EAAFcFeKmPtMBPdvYQgagK1GpvsOfOh71fj5BDgBtgd2M5z7nEaWxaFEvjZAwZBljwq9Tq3OdiRZCsqIxjWZBZAberuZAHGcer0MZCmZBAtugPIiLmbxHb3f9LsVkZBTqNFEv3T7ZAYnul3T8ZCSVE5P2gyuBhvM9wUcN4BPEqMnxcC7gXFZCFJC0ZBdBNfL20AsjMFAZDZD",
+          "NomeHash": "7e8c729e4e4ecc320cb411c4d1419bf5fbad733212d4e9491b7630aaef0b8b1c"
+        }
+      },
+      {
+        "json": {
+          "version": "v20.0",
+          "pixel": "4243861495893717",
+          "token": "EAAFcFeKmPtMBPdvYQgagK1GpvsOfOh71fj5BDgBtgd2M5z7nEaWxaFEvjZAwZBljwq9Tq3OdiRZCsqIxjWZBZAberuZAHGcer0MZCmZBAtugPIiLmbxHb3f9LsVkZBTqNFEv3T7ZAYnul3T8ZCSVE5P2gyuBhvM9wUcN4BPEqMnxcC7gXFZCFJC0ZBdBNfL20AsjMFAZDZD",
+          "NomeHash": "7e8c729e4e4ecc320cb411c4d1419bf5fbad733212d4e9491b7630aaef0b8b1c"
+        }
+      }
+    ],
+    "Sobrenome": [
+      {
+        "json": {
+          "version": "v20.0",
+          "pixel": "4243861495893717",
+          "token": "EAAFcFeKmPtMBPdvYQgagK1GpvsOfOh71fj5BDgBtgd2M5z7nEaWxaFEvjZAwZBljwq9Tq3OdiRZCsqIxjWZBZAberuZAHGcer0MZCmZBAtugPIiLmbxHb3f9LsVkZBTqNFEv3T7ZAYnul3T8ZCSVE5P2gyuBhvM9wUcN4BPEqMnxcC7gXFZCFJC0ZBdBNfL20AsjMFAZDZD",
+          "NomeHash": "7e8c729e4e4ecc320cb411c4d1419bf5fbad733212d4e9491b7630aaef0b8b1c",
+          "SobrenomeHash": "df835dcf8d6c492c3d340604b9e58d8603d98cd5f90e754a3a85cf174488e17d"
+        }
+      },
+      {
+        "json": {
+          "version": "v20.0",
+          "pixel": "4243861495893717",
+          "token": "EAAFcFeKmPtMBPdvYQgagK1GpvsOfOh71fj5BDgBtgd2M5z7nEaWxaFEvjZAwZBljwq9Tq3OdiRZCsqIxjWZBZAberuZAHGcer0MZCmZBAtugPIiLmbxHb3f9LsVkZBTqNFEv3T7ZAYnul3T8ZCSVE5P2gyuBhvM9wUcN4BPEqMnxcC7gXFZCFJC0ZBdBNfL20AsjMFAZDZD",
+          "NomeHash": "7e8c729e4e4ecc320cb411c4d1419bf5fbad733212d4e9491b7630aaef0b8b1c",
+          "SobrenomeHash": "df835dcf8d6c492c3d340604b9e58d8603d98cd5f90e754a3a85cf174488e17d"
+        }
+      }
+    ],
+    "Email": [
+      {
+        "json": {
+          "version": "v20.0",
+          "pixel": "4243861495893717",
+          "token": "EAAFcFeKmPtMBPdvYQgagK1GpvsOfOh71fj5BDgBtgd2M5z7nEaWxaFEvjZAwZBljwq9Tq3OdiRZCsqIxjWZBZAberuZAHGcer0MZCmZBAtugPIiLmbxHb3f9LsVkZBTqNFEv3T7ZAYnul3T8ZCSVE5P2gyuBhvM9wUcN4BPEqMnxcC7gXFZCFJC0ZBdBNfL20AsjMFAZDZD",
+          "NomeHash": "7e8c729e4e4ecc320cb411c4d1419bf5fbad733212d4e9491b7630aaef0b8b1c",
+          "SobrenomeHash": "df835dcf8d6c492c3d340604b9e58d8603d98cd5f90e754a3a85cf174488e17d",
+          "EmailHash": "44c7bcca4c007a58afcf8276d35b0473b41c2359b37e6dbdc17e2e12469ccfe8"
+        }
+      },
+      {
+        "json": {
+          "version": "v20.0",
+          "pixel": "4243861495893717",
+          "token": "EAAFcFeKmPtMBPdvYQgagK1GpvsOfOh71fj5BDgBtgd2M5z7nEaWxaFEvjZAwZBljwq9Tq3OdiRZCsqIxjWZBZAberuZAHGcer0MZCmZBAtugPIiLmbxHb3f9LsVkZBTqNFEv3T7ZAYnul3T8ZCSVE5P2gyuBhvM9wUcN4BPEqMnxcC7gXFZCFJC0ZBdBNfL20AsjMFAZDZD",
+          "NomeHash": "7e8c729e4e4ecc320cb411c4d1419bf5fbad733212d4e9491b7630aaef0b8b1c",
+          "SobrenomeHash": "df835dcf8d6c492c3d340604b9e58d8603d98cd5f90e754a3a85cf174488e17d",
+          "EmailHash": "44c7bcca4c007a58afcf8276d35b0473b41c2359b37e6dbdc17e2e12469ccfe8"
+        }
+      }
+    ],
+    "checkFbc2": [
+      {
+        "json": {
+          "fbc_valido_90_dias": true
+        }
+      }
+    ],
+    "set": [
+      {
+        "json": {
+          "version": "v20.0",
+          "pixel": "4243861495893717",
+          "token": "EAAFcFeKmPtMBPdvYQgagK1GpvsOfOh71fj5BDgBtgd2M5z7nEaWxaFEvjZAwZBljwq9Tq3OdiRZCsqIxjWZBZAberuZAHGcer0MZCmZBAtugPIiLmbxHb3f9LsVkZBTqNFEv3T7ZAYnul3T8ZCSVE5P2gyuBhvM9wUcN4BPEqMnxcC7gXFZCFJC0ZBdBNfL20AsjMFAZDZD"
+        }
+      },
+      {
+        "json": {
+          "version": "v20.0",
+          "pixel": "4243861495893717",
+          "token": "EAAFcFeKmPtMBPdvYQgagK1GpvsOfOh71fj5BDgBtgd2M5z7nEaWxaFEvjZAwZBljwq9Tq3OdiRZCsqIxjWZBZAberuZAHGcer0MZCmZBAtugPIiLmbxHb3f9LsVkZBTqNFEv3T7ZAYnul3T8ZCSVE5P2gyuBhvM9wUcN4BPEqMnxcC7gXFZCFJC0ZBdBNfL20AsjMFAZDZD"
+        }
+      }
+    ],
+    "Update a deal": [
+      {
+        "json": {
+          "id": 10516,
+          "creator_user_id": {
+            "id": 20851756,
+            "name": "HarmonizaPRO",
+            "email": "evoluamidia@gmail.com",
+            "has_pic": 1,
+            "pic_hash": "d1277e7d845531b7ef16c9aca2cb565e",
+            "active_flag": true,
+            "value": 20851756
+          },
+          "user_id": {
+            "id": 24393822,
+            "name": "Gabriele Linhares",
+            "email": "gabriele@harmoniza.pro",
+            "has_pic": 0,
+            "pic_hash": null,
+            "active_flag": true,
+            "value": 24393822
+          },
+          "person_id": {
+            "active_flag": true,
+            "name": "Sarah Castro",
+            "email": [
+              {
+                "label": "work",
+                "value": "sarahcastro@outlook.com",
+                "primary": true
+              }
+            ],
+            "phone": [
+              {
+                "label": "",
+                "value": "+5512974086912",
+                "primary": true
+              }
+            ],
+            "owner_id": 20851756,
+            "company_id": 13401220,
+            "value": 11186
+          },
+          "org_id": null,
+          "stage_id": 81,
+          "title": "Sarah Castro",
+          "value": 0,
+          "acv": null,
+          "mrr": null,
+          "arr": null,
+          "currency": "BRL",
+          "add_time": "2026-02-11 16:42:17",
+          "update_time": "2026-02-20 17:31:54",
+          "stage_change_time": "2026-02-20 17:31:54",
+          "active": true,
+          "deleted": false,
+          "status": "open",
+          "probability": null,
+          "next_activity_date": "2026-02-23",
+          "next_activity_time": null,
+          "next_activity_id": 45226,
+          "last_activity_id": 48681,
+          "last_activity_date": "2026-02-20",
+          "lost_reason": null,
+          "visible_to": "3",
+          "close_time": null,
+          "pipeline_id": 12,
+          "won_time": null,
+          "first_won_time": null,
+          "lost_time": null,
+          "products_count": 0,
+          "files_count": 0,
+          "notes_count": 0,
+          "followers_count": 2,
+          "email_messages_count": 0,
+          "activities_count": 14,
+          "done_activities_count": 12,
+          "undone_activities_count": 2,
+          "participants_count": 1,
+          "expected_close_date": null,
+          "last_incoming_mail_time": null,
+          "last_outgoing_mail_time": null,
+          "label": "109,140,142",
+          "local_won_date": null,
+          "local_lost_date": null,
+          "local_close_date": null,
+          "origin": "Marketplace",
+          "origin_id": "c7e5d1c72619645e",
+          "channel": 38,
+          "channel_id": "HarmonizaPRO",
+          "is_archived": false,
+          "archive_time": null,
+          "score": null,
+          "sequence_enrollment": null,
+          "source_lead_id": null,
+          "stage_order_nr": 1,
+          "person_name": "Sarah Castro",
+          "org_name": null,
+          "next_activity_subject": "Follow Up 3",
+          "next_activity_type": "task",
+          "next_activity_duration": null,
+          "next_activity_note": null,
+          "formatted_value": "R$ 0",
+          "weighted_value": 0,
+          "formatted_weighted_value": "R$ 0",
+          "weighted_value_currency": "BRL",
+          "rotten_time": null,
+          "acv_currency": null,
+          "mrr_currency": null,
+          "arr_currency": null,
+          "owner_name": "Gabriele Linhares",
+          "cc_email": "harmonizapro2+deal10516@pipedrivemail.com",
+          "b9e645c6460d1b0c210f47f8dc326933ac6b8f18": "https://calendly.com/reschedulings/0452c1ad-b2e5-4249-8b86-490cf7db432f",
+          "12be8f91d54d5f5719d813e026947fa5b1123fa1": "139",
+          "5d9d4fc087b7efca5496d57025372d9e46fba215": null,
+          "0c0d3428eb7ff8f903c32b6957735775be3dc55c": "126",
+          "bacf6b9ab400c991b29fe275641c50fba8472817": null,
+          "f475fd5c0b6d98e4d0b7c8f21936a0a689ff0cb7": null,
+          "695916a9baffe8f2c7e2c90c00ead5dbe07b0448": null,
+          "4177cb3cab5d0eea8c7f94f7ef145126cebfe6a5": null,
+          "71191bc0d10d21b8213604ea00c52bb771cd05fb": null,
+          "87dc85a0ca5e5af5b64cefc3d2bde86d0309c258": null,
+          "ea94cc20f046a478c65f1f162b386e56d3fee7ca": null,
+          "a4fb9cf6d7d3f450d3c620e9d432642145d728f5": "80",
+          "83a2907425bd02810f3541a1da13970fb4cad28a": "83",
+          "28ee073609b17fd1f8b337721e40442435eb0792": "86",
+          "601a5412a8553515d5da895a5b00cdc02c681b6f": "92",
+          "d540737cfbd1ff9ff2185e46e5ac9abae70a7f92": "102",
+          "27b0161724fac21d46132e9d327222c0c5563fd4": "Sarah Castro",
+          "842e0381bd316ebe2ef1141093b15e97310da42b": "+5512974086912",
+          "7202d18e20ba4c0b03441ac9ec028ab4491990a9": "@",
+          "13c9cd4cb4ffa5312edfda20039bed37337e0941": "https://instagram.com/",
+          "b6ce2593ce42ab171496deeb7ee6c4a65c8b3934": "sarahcastro@outlook.com",
+          "2afb629678ee7fbe687e6cf7c88b529f090c7f28": null,
+          "81b0d9efdce5f2776dfd6c3d3cb180ecb8a372d2": null,
+          "9d279e9c5f3f047c191100b7dd3ce645623068fb": null,
+          "9313043eb15c882d138a0136d61d29674305cd33": null,
+          "499d66a95d8a944ac9091e2ba1238cb0b41d6585": null,
+          "f41ec8c6ccea9deaf81d7b0e83ad7d5a6dbd8c32": null,
+          "7af7e2c9ac65ac7f34f39d8f277695d57c52c9e6": null,
+          "fa4385adfdf0db42cec5e9b9ba91d85325810db9": null,
+          "e3424c16643b0e4ea0a97d658eb8cfacf7de0d30": null,
+          "f411adfb5c1ccd6968627615551f614fe248c254": "link_in_bio",
+          "c17646917ef46d09e21e5523d02ec8506861f0e8": null,
+          "84790c2f40e7c276ed45d00ed1e00f873cd74bea": null,
+          "98c23f53854a205bb9e1b9f1d17a5459e0dc7d16": "biohpro",
+          "e5ae032d7fda4523edaf73cae9dbff166e1861fe": "social",
+          "1154d85b97ab799ecb95476c040eef165f8eca98": null,
+          "378430a5c3e70492a2e705aa5818052a6504407a": "link_in_bio",
+          "c83c89258b135c08b44d80a76eb69cf56fe41f99": null,
+          "a3a4cd5a4cdeff61454f4b72aa0796d0fcb62cb7": null,
+          "078fcc70bc995121efc1e1c3beffedd4dbb44cf7": null,
+          "51247e250a5d89bfcf7bde4cdd8d586dc5ea834d": null,
+          "1584834c45d23cb5e1a2543161fca7a2791c9ddd": null,
+          "6628a36a4b8b8518f37ba8763b5e744bbc5599a9": null,
+          "9e9209cbfa64563cb60b8a442e3c3a62fa9b284b": null,
+          "2a7bd62853a7e25c9e176cc242cfe43945a70ad2": null,
+          "c31cbe8f54216e54c9f6d7e6421cdb6d00da7fa7": null,
+          "4e9b242788f1076d1846f42a7a6fcb404d7ed523": null,
+          "2a62ed5510592c231e2e2d7632e31bea4a88e426": null,
+          "org_hidden": false,
+          "person_hidden": false
+        }
+      }
+    ],
+    "Execute a SQL query1": [
+      {
+        "json": {
+          "id": 4283,
+          "id_negocio": 10516,
+          "nome": "Sarah Castro",
+          "email": "sarahcastro@outlook.com",
+          "telefone": "+5512974086912",
+          "created": "2026-02-11T13:42:17.649Z"
+        }
+      }
+    ],
+    "Execute a SQL query2": [
+      {
+        "json": {
+          "id": 4279,
+          "lead_id": 4283,
+          "area_de_atuacao": "Harmonização Facial",
+          "investimento_anuncio": "R$4000 a R$6000",
+          "urgencia": "Médio",
+          "faturamento": "15 a 30k",
+          "case_um": "É isso que eu preciso também!",
+          "case_dois": "Quero saber mais sobre a HarmonizaPRO",
+          "case_tres": null,
+          "breve_descricao": null
+        }
+      }
+    ],
+    "Execute a SQL query3": [
+      {
+        "json": {
+          "id": 3762,
+          "lead_id": 4283,
+          "utm_source": "biohpro",
+          "utm_medium": "social",
+          "utm_campaign": null,
+          "utm_term": null,
+          "utm_id": null,
+          "utm_content": "link_in_bio",
+          "page_url": "https://harmoniza.typeform.com/to/bxyMbs67?utm_source=biohpro&utm_medium=social&utm_content=link_in_bio&fbclid=PAZXh0bgNhZW0CMTEAc3J0YwZhcHBfaWQPNTY3MDY3MzQzMzUyNDI3AAGn3X_1cFAdLIA36cDrVNdZCSau4lL4aTW2AC8r0D9iiyzF2NBigLnTyhImgfI_aem_zW8cK9uLHs5vT1Waa3JKxw&typeform-source=l.instagram.com",
+          "fbc": "fb.1.1770828053975.PAZXh0bgNhZW0CMTEAc3J0YwZhcHBfaWQPNTY3MDY3MzQzMzUyNDI3AAGn3X_1cFAdLIA36cDrVNdZCSau4lL4aTW2AC8r0D9iiyzF2NBigLnTyhImgfI_aem_zW8cK9uLHs5vT1Waa3JKxw",
+          "fbp": "fb.1.1770828053985.614397441309507170",
+          "gcl_aw": null,
+          "ctwaclid": null,
+          "campanha_id": null,
+          "campanha_name": null,
+          "conjunto_id": null,
+          "conjunto_name": "social",
+          "anuncio_id": null,
+          "anuncio_name": "link_in_bio",
+          "fonte_origem": "biohpro",
+          "ip": "138.117.233.112",
+          "user_agent": "Mozilla/5.0 (Linux; Android 16; SM-S721B Build/BP2A.250605.031.A3; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/144.0.7559.132 Mobile Safari/537.36 Instagram 415.1.0.46.76 Android (36/16; 450dpi; 1080x2340; samsung; SM-S721B; r12s; s5e9945; pt_BR; 878147030; IABMV/1)",
+          "created_at": "2026-02-11T13:47:00.338Z",
+          "updated_at": "2026-02-11T13:47:00.338Z",
+          "deleted_at": null,
+          "posicionamento": null,
+          "plataforma": null,
+          "id_negocio": 10516
+        }
+      },
+      {
+        "json": {
+          "id": 3917,
+          "lead_id": 4283,
+          "utm_source": "biohpro",
+          "utm_medium": "social",
+          "utm_campaign": null,
+          "utm_term": null,
+          "utm_id": null,
+          "utm_content": "link_in_bio",
+          "page_url": "https://harmoniza.typeform.com/to/bxyMbs67?utm_source=biohpro&utm_medium=social&utm_content=link_in_bio&fbclid=PAZXh0bgNhZW0CMTEAc3J0YwZhcHBfaWQMMjU2MjgxMDQwNTU4AAGnFML148SEsAcirXI9eWJYvKMjfb1L7IDU_cOy1PK-KCIUBnIdH92wixJrVqk_aem_ISQgKvfjxdtGmdGiMweBsw&typeform-source=l.instagram.com",
+          "fbc": "fb.1.1771607962929.PAZXh0bgNhZW0CMTEAc3J0YwZhcHBfaWQMMjU2MjgxMDQwNTU4AAGnFML148SEsAcirXI9eWJYvKMjfb1L7IDU_cOy1PK-KCIUBnIdH92wixJrVqk_aem_ISQgKvfjxdtGmdGiMweBsw",
+          "fbp": "fb.1.1771607962937.803793550411222008",
+          "gcl_aw": null,
+          "ctwaclid": null,
+          "campanha_id": null,
+          "campanha_name": null,
+          "conjunto_id": null,
+          "conjunto_name": "social",
+          "anuncio_id": null,
+          "anuncio_name": "link_in_bio",
+          "fonte_origem": "biohpro",
+          "ip": "177.24.131.60",
+          "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+          "created_at": "2026-02-20T14:26:46.370Z",
+          "updated_at": "2026-02-20T14:26:46.370Z",
+          "deleted_at": null,
+          "posicionamento": null,
+          "plataforma": null,
+          "id_negocio": 10516
+        }
+      }
+    ],
+    "Get a deal": [
+      {
+        "json": {
+          "id": 10516,
+          "creator_user_id": {
+            "id": 20851756,
+            "name": "HarmonizaPRO",
+            "email": "evoluamidia@gmail.com",
+            "has_pic": 1,
+            "pic_hash": "d1277e7d845531b7ef16c9aca2cb565e",
+            "active_flag": true,
+            "value": 20851756
+          },
+          "user_id": {
+            "id": 24393822,
+            "name": "Gabriele Linhares",
+            "email": "gabriele@harmoniza.pro",
+            "has_pic": 0,
+            "pic_hash": null,
+            "active_flag": true,
+            "value": 24393822
+          },
+          "person_id": {
+            "active_flag": true,
+            "name": "Sarah Castro",
+            "email": [
+              {
+                "label": "work",
+                "value": "sarahcastro@outlook.com",
+                "primary": true
+              }
+            ],
+            "phone": [
+              {
+                "label": "",
+                "value": "+5512974086912",
+                "primary": true
+              }
+            ],
+            "owner_id": 20851756,
+            "company_id": 13401220,
+            "value": 11186
+          },
+          "org_id": null,
+          "stage_id": 81,
+          "title": "Sarah Castro",
+          "value": 0,
+          "acv": null,
+          "mrr": null,
+          "arr": null,
+          "currency": "BRL",
+          "add_time": "2026-02-11 16:42:17",
+          "update_time": "2026-02-20 17:31:53",
+          "stage_change_time": "2026-02-20 17:23:48",
+          "active": true,
+          "deleted": false,
+          "status": "open",
+          "probability": null,
+          "next_activity_date": "2026-02-23",
+          "next_activity_time": null,
+          "next_activity_id": 45226,
+          "last_activity_id": 48681,
+          "last_activity_date": "2026-02-20",
+          "lost_reason": null,
+          "visible_to": "3",
+          "close_time": null,
+          "pipeline_id": 12,
+          "won_time": null,
+          "first_won_time": null,
+          "lost_time": null,
+          "products_count": 0,
+          "files_count": 0,
+          "notes_count": 0,
+          "followers_count": 2,
+          "email_messages_count": 0,
+          "activities_count": 14,
+          "done_activities_count": 12,
+          "undone_activities_count": 2,
+          "participants_count": 1,
+          "expected_close_date": null,
+          "last_incoming_mail_time": null,
+          "last_outgoing_mail_time": null,
+          "label": "109,140,142",
+          "local_won_date": null,
+          "local_lost_date": null,
+          "local_close_date": null,
+          "origin": "Marketplace",
+          "origin_id": "c7e5d1c72619645e",
+          "channel": 38,
+          "channel_id": "HarmonizaPRO",
+          "is_archived": false,
+          "archive_time": null,
+          "score": null,
+          "sequence_enrollment": null,
+          "source_lead_id": null,
+          "stage_order_nr": 1,
+          "person_name": "Sarah Castro",
+          "org_name": null,
+          "next_activity_subject": "Follow Up 3",
+          "next_activity_type": "task",
+          "next_activity_duration": null,
+          "next_activity_note": null,
+          "formatted_value": "R$ 0",
+          "weighted_value": 0,
+          "formatted_weighted_value": "R$ 0",
+          "weighted_value_currency": "BRL",
+          "rotten_time": null,
+          "acv_currency": null,
+          "mrr_currency": null,
+          "arr_currency": null,
+          "owner_name": "Gabriele Linhares",
+          "cc_email": "harmonizapro2+deal10516@pipedrivemail.com",
+          "b9e645c6460d1b0c210f47f8dc326933ac6b8f18": null,
+          "12be8f91d54d5f5719d813e026947fa5b1123fa1": "139",
+          "5d9d4fc087b7efca5496d57025372d9e46fba215": null,
+          "0c0d3428eb7ff8f903c32b6957735775be3dc55c": "126",
+          "bacf6b9ab400c991b29fe275641c50fba8472817": null,
+          "f475fd5c0b6d98e4d0b7c8f21936a0a689ff0cb7": null,
+          "695916a9baffe8f2c7e2c90c00ead5dbe07b0448": null,
+          "4177cb3cab5d0eea8c7f94f7ef145126cebfe6a5": null,
+          "71191bc0d10d21b8213604ea00c52bb771cd05fb": null,
+          "87dc85a0ca5e5af5b64cefc3d2bde86d0309c258": null,
+          "ea94cc20f046a478c65f1f162b386e56d3fee7ca": null,
+          "a4fb9cf6d7d3f450d3c620e9d432642145d728f5": "80",
+          "83a2907425bd02810f3541a1da13970fb4cad28a": "83",
+          "28ee073609b17fd1f8b337721e40442435eb0792": "86",
+          "601a5412a8553515d5da895a5b00cdc02c681b6f": "92",
+          "d540737cfbd1ff9ff2185e46e5ac9abae70a7f92": "102",
+          "27b0161724fac21d46132e9d327222c0c5563fd4": "Sarah Castro",
+          "842e0381bd316ebe2ef1141093b15e97310da42b": "+5512974086912",
+          "7202d18e20ba4c0b03441ac9ec028ab4491990a9": "@",
+          "13c9cd4cb4ffa5312edfda20039bed37337e0941": "https://instagram.com/",
+          "b6ce2593ce42ab171496deeb7ee6c4a65c8b3934": "sarahcastro@outlook.com",
+          "2afb629678ee7fbe687e6cf7c88b529f090c7f28": null,
+          "81b0d9efdce5f2776dfd6c3d3cb180ecb8a372d2": null,
+          "9d279e9c5f3f047c191100b7dd3ce645623068fb": null,
+          "9313043eb15c882d138a0136d61d29674305cd33": null,
+          "499d66a95d8a944ac9091e2ba1238cb0b41d6585": null,
+          "f41ec8c6ccea9deaf81d7b0e83ad7d5a6dbd8c32": null,
+          "7af7e2c9ac65ac7f34f39d8f277695d57c52c9e6": null,
+          "fa4385adfdf0db42cec5e9b9ba91d85325810db9": null,
+          "e3424c16643b0e4ea0a97d658eb8cfacf7de0d30": null,
+          "f411adfb5c1ccd6968627615551f614fe248c254": "link_in_bio",
+          "c17646917ef46d09e21e5523d02ec8506861f0e8": null,
+          "84790c2f40e7c276ed45d00ed1e00f873cd74bea": null,
+          "98c23f53854a205bb9e1b9f1d17a5459e0dc7d16": "biohpro",
+          "e5ae032d7fda4523edaf73cae9dbff166e1861fe": "social",
+          "1154d85b97ab799ecb95476c040eef165f8eca98": null,
+          "378430a5c3e70492a2e705aa5818052a6504407a": "link_in_bio",
+          "c83c89258b135c08b44d80a76eb69cf56fe41f99": null,
+          "a3a4cd5a4cdeff61454f4b72aa0796d0fcb62cb7": null,
+          "078fcc70bc995121efc1e1c3beffedd4dbb44cf7": null,
+          "51247e250a5d89bfcf7bde4cdd8d586dc5ea834d": null,
+          "1584834c45d23cb5e1a2543161fca7a2791c9ddd": null,
+          "6628a36a4b8b8518f37ba8763b5e744bbc5599a9": null,
+          "9e9209cbfa64563cb60b8a442e3c3a62fa9b284b": null,
+          "2a7bd62853a7e25c9e176cc242cfe43945a70ad2": null,
+          "c31cbe8f54216e54c9f6d7e6421cdb6d00da7fa7": null,
+          "4e9b242788f1076d1846f42a7a6fcb404d7ed523": null,
+          "2a62ed5510592c231e2e2d7632e31bea4a88e426": null,
+          "org_hidden": false,
+          "person_hidden": false,
+          "average_time_to_won": {
+            "y": 0,
+            "m": 0,
+            "d": 0,
+            "h": 0,
+            "i": 0,
+            "s": 0,
+            "total_seconds": 0
+          },
+          "average_stage_progress": 0,
+          "age": {
+            "y": 0,
+            "m": 0,
+            "d": 9,
+            "h": 0,
+            "i": 49,
+            "s": 36,
+            "total_seconds": 780576
+          },
+          "stay_in_pipeline_stages": {
+            "times_in_stages": {
+              "81": 11417,
+              "82": 167486,
+              "120": 0,
+              "121": 253362,
+              "122": 346912,
+              "128": 1399
+            },
+            "order_of_stages": [
+              128,
+              81,
+              82,
+              120,
+              121,
+              122
+            ]
+          },
+          "last_activity": {
+            "id": 48681,
+            "user_id": 20851756,
+            "done": true,
+            "type": "call",
+            "reference_type": null,
+            "reference_id": null,
+            "conference_meeting_client": null,
+            "conference_meeting_url": null,
+            "due_date": "2026-02-20",
+            "due_time": "",
+            "duration": "",
+            "busy_flag": false,
+            "add_time": "2026-02-20 17:27:36",
+            "marked_as_done_time": "2026-02-20 17:27:36",
+            "last_notification_time": null,
+            "last_notification_user_id": null,
+            "notification_language_id": null,
+            "subject": "Mensagem do Atendente",
+            "public_description": null,
+            "calendar_sync_include_context": null,
+            "location": null,
+            "org_id": null,
+            "person_id": 11186,
+            "deal_id": 10516,
+            "lead_id": null,
+            "project_id": null,
+            "active_flag": true,
+            "update_time": "2026-02-20 17:27:36",
+            "update_user_id": null,
+            "source_timezone": null,
+            "rec_rule": null,
+            "rec_rule_extension": null,
+            "rec_master_activity_id": null,
+            "conference_meeting_id": null,
+            "original_start_time": null,
+            "private": false,
+            "priority": null,
+            "note": "Gabi: Sarah, no seu formulario não consta seu instagram. Me encaminhe por aqui por gentileza?\n",
+            "created_by_user_id": 20851756,
+            "location_subpremise": null,
+            "location_street_number": null,
+            "location_route": null,
+            "location_sublocality": null,
+            "location_locality": null,
+            "location_admin_area_level_1": null,
+            "location_admin_area_level_2": null,
+            "location_country": null,
+            "location_postal_code": null,
+            "location_formatted_address": null,
+            "attendees": null,
+            "participants": [
+              {
+                "person_id": 11186,
+                "primary_flag": true
+              }
+            ],
+            "series": null,
+            "is_recurring": null,
+            "org_name": null,
+            "person_name": "Sarah Castro",
+            "deal_title": "Sarah Castro",
+            "lead_title": null,
+            "project_title": null,
+            "owner_name": "HarmonizaPRO",
+            "person_dropbox_bcc": "harmonizapro2@pipedrivemail.com",
+            "deal_dropbox_bcc": "harmonizapro2+deal10516@pipedrivemail.com",
+            "assigned_to_user_id": 20851756,
+            "type_name": "Chamada",
+            "lead": null
+          },
+          "next_activity": {
+            "id": 45226,
+            "user_id": 24393822,
+            "done": false,
+            "type": "task",
+            "reference_type": null,
+            "reference_id": null,
+            "conference_meeting_client": null,
+            "conference_meeting_url": null,
+            "due_date": "2026-02-23",
+            "due_time": "",
+            "duration": "",
+            "busy_flag": false,
+            "add_time": "2026-02-16 17:00:03",
+            "marked_as_done_time": "",
+            "last_notification_time": null,
+            "last_notification_user_id": null,
+            "notification_language_id": null,
+            "subject": "Follow Up 3",
+            "public_description": null,
+            "calendar_sync_include_context": null,
+            "location": null,
+            "org_id": null,
+            "person_id": 11186,
+            "deal_id": 10516,
+            "lead_id": null,
+            "project_id": null,
+            "active_flag": true,
+            "update_time": "2026-02-16 17:00:03",
+            "update_user_id": null,
+            "source_timezone": null,
+            "rec_rule": null,
+            "rec_rule_extension": null,
+            "rec_master_activity_id": null,
+            "conference_meeting_id": null,
+            "original_start_time": null,
+            "private": false,
+            "priority": null,
+            "note": null,
+            "created_by_user_id": 24393822,
+            "location_subpremise": null,
+            "location_street_number": null,
+            "location_route": null,
+            "location_sublocality": null,
+            "location_locality": null,
+            "location_admin_area_level_1": null,
+            "location_admin_area_level_2": null,
+            "location_country": null,
+            "location_postal_code": null,
+            "location_formatted_address": null,
+            "attendees": null,
+            "participants": [
+              {
+                "person_id": 11186,
+                "primary_flag": true
+              }
+            ],
+            "series": null,
+            "is_recurring": null,
+            "org_name": null,
+            "person_name": "Sarah Castro",
+            "deal_title": "Sarah Castro",
+            "lead_title": null,
+            "project_title": null,
+            "owner_name": "Gabriele Linhares",
+            "person_dropbox_bcc": "harmonizapro2@pipedrivemail.com",
+            "deal_dropbox_bcc": "harmonizapro2+deal10516@pipedrivemail.com",
+            "assigned_to_user_id": 24393822,
+            "type_name": "Tarefa",
+            "lead": null
+          }
+        }
+      }
+    ],
+    "Wait3": [
+      {
+        "json": {
+          "chatid": "5512974086912@s.whatsapp.net",
+          "content": {
+            "text": "Aqui é a Gabi da HarmonizaPRO! - bit.ly/instaharmonizaPRO.  Tudo bem?",
+            "contextInfo": {}
+          },
+          "convertOptions": "",
+          "edited": "",
+          "fromMe": true,
+          "id": "5547936185929:3EB00B7A52BC85C532EB8A",
+          "isGroup": false,
+          "messageTimestamp": 1771608286852,
+          "messageType": "ExtendedTextMessage",
+          "messageid": "3EB00B7A52BC85C532EB8A",
+          "owner": "5547936185929",
+          "quoted": "",
+          "reaction": "",
+          "readChatAttempted": false,
+          "sender": "5547936185929@s.whatsapp.net",
+          "senderName": "Gabe Linhares",
+          "source": "web",
+          "status": "Pending",
+          "text": "Aqui é a Gabi da HarmonizaPRO! - bit.ly/instaharmonizaPRO.  Tudo bem?",
+          "track_id": "",
+          "track_source": ""
+        }
+      }
+    ],
+    "Wait4": [
+      {
+        "json": {
+          "chatid": "5512974086912@s.whatsapp.net",
+          "content": {
+            "text": "Sarah, vi que você se cadastrou no nosso formulário e estamos analisando as informações para o seu diagnóstico.",
+            "contextInfo": {}
+          },
+          "convertOptions": "",
+          "edited": "",
+          "fromMe": true,
+          "id": "5547936185929:3EB07EF0A6F9A91019F167",
+          "isGroup": false,
+          "messageTimestamp": 1771608289786,
+          "messageType": "ExtendedTextMessage",
+          "messageid": "3EB07EF0A6F9A91019F167",
+          "owner": "5547936185929",
+          "quoted": "",
+          "reaction": "",
+          "readChatAttempted": false,
+          "sender": "5547936185929@s.whatsapp.net",
+          "senderName": "Gabe Linhares",
+          "source": "web",
+          "status": "Pending",
+          "text": "Sarah, vi que você se cadastrou no nosso formulário e estamos analisando as informações para o seu diagnóstico.",
+          "track_id": "",
+          "track_source": ""
+        }
+      }
+    ],
+    "If": [
+      {
+        "json": {
+          "id": 4283,
+          "id_negocio": 10516,
+          "nome": "Sarah Castro",
+          "email": "sarahcastro@outlook.com",
+          "telefone": "+5512974086912",
+          "created": "2026-02-11T13:42:17.649Z"
+        }
+      }
+    ],
+    "Execute Workflow": [
+      {
+        "json": {
+          "responsável": "gabriele@harmoniza.pro"
+        }
+      }
+    ],
+    "Edit Fields": [
+      {
+        "json": {
+          "created_at": "2026-02-20T17:23:43.000000Z",
+          "created_by": "https://api.calendly.com/users/fadf0046-64ed-435e-8a59-6eb43a0ef25f",
+          "event": "invitee.created",
+          "payload": {
+            "cancel_url": "https://calendly.com/cancellations/0452c1ad-b2e5-4249-8b86-490cf7db432f",
+            "created_at": "2026-02-20T17:23:42.719766Z",
+            "email": "sarahcastro@outlook.com",
+            "event": "https://api.calendly.com/scheduled_events/c8f0aa38-4733-475c-b5dc-cc04bc266f26",
+            "first_name": null,
+            "invitee_scheduled_by": null,
+            "last_name": null,
+            "name": "Sarah Castro",
+            "new_invitee": null,
+            "no_show": null,
+            "old_invitee": null,
+            "payment": null,
+            "questions_and_answers": [
+              {
+                "answer": "+55 12 97408-6912",
+                "position": 0,
+                "question": "WhatsApp"
+              }
+            ],
+            "reconfirmation": null,
+            "reschedule_url": "https://calendly.com/reschedulings/0452c1ad-b2e5-4249-8b86-490cf7db432f",
+            "rescheduled": false,
+            "routing_form_submission": null,
+            "scheduled_event": {
+              "created_at": "2026-02-20T17:23:42.705085Z",
+              "end_time": "2026-02-23T14:00:00.000000Z",
+              "event_guests": [],
+              "event_memberships": [
+                {
+                  "user": "https://api.calendly.com/users/91a69ee5-eba1-4a3b-b60c-3b63c36d44bf",
+                  "user_email": "gabriele@harmoniza.pro",
+                  "user_name": "Gabriele Linhares"
+                }
+              ],
+              "event_type": "https://api.calendly.com/event_types/e9b57a43-98f6-4af1-b41a-a7213aada46a",
+              "invitees_counter": {
+                "total": 1,
+                "active": 1,
+                "limit": 1
+              },
+              "location": {
+                "location": null,
+                "type": "custom"
+              },
+              "meeting_notes_html": null,
+              "meeting_notes_plain": null,
+              "name": "Sessão de Diagnóstico HarmonizaPRO",
+              "start_time": "2026-02-23T13:00:00.000000Z",
+              "status": "active",
+              "updated_at": "2026-02-20T17:23:42.705085Z",
+              "uri": "https://api.calendly.com/scheduled_events/c8f0aa38-4733-475c-b5dc-cc04bc266f26"
+            },
+            "scheduling_method": null,
+            "status": "active",
+            "text_reminder_number": null,
+            "timezone": "America/Sao_Paulo",
+            "tracking": {
+              "utm_campaign": null,
+              "utm_source": null,
+              "utm_medium": null,
+              "utm_content": null,
+              "utm_term": null,
+              "salesforce_uuid": null
+            },
+            "updated_at": "2026-02-20T17:23:42.719766Z",
+            "uri": "https://api.calendly.com/scheduled_events/c8f0aa38-4733-475c-b5dc-cc04bc266f26/invitees/0452c1ad-b2e5-4249-8b86-490cf7db432f"
+          },
+          "origem": "calendly"
+        }
+      }
+    ],
+    "getUser": [
+      {
+        "json": {
+          "success": true,
+          "data": [
+            {
+              "id": 24393822,
+              "name": "Gabriele Linhares",
+              "email": "gabriele@harmoniza.pro",
+              "lang": 7,
+              "locale": "pt_BR",
+              "timezone_name": "America/Sao_Paulo",
+              "timezone_offset": "-03:00",
+              "default_currency": "BRL",
+              "icon_url": null,
+              "active_flag": true,
+              "is_deleted": false,
+              "is_admin": 0,
+              "role_id": 1,
+              "created": "2025-07-16 15:06:45",
+              "has_created_company": false,
+              "is_you": false,
+              "access": [
+                {
+                  "app": "sales",
+                  "admin": false,
+                  "permission_set_id": "c78940e0-f741-11ee-85f1-d53fb529200d"
+                },
+                {
+                  "app": "global",
+                  "admin": false,
+                  "permission_set_id": "c78c7530-f741-11ee-85f1-d53fb529200d"
+                }
+              ],
+              "modified": "2026-02-20 10:43:11",
+              "last_login": "2026-02-20 10:43:11"
+            }
+          ],
+          "additional_data": null
+        }
+      }
+    ],
+    "Code": [
+      {
+        "json": {
+          "id": 4283,
+          "id_negocio": 10516,
+          "nome": "Sarah Castro",
+          "email": "sarahcastro@outlook.com",
+          "telefone": "+5512974086912",
+          "created": "2026-02-11T13:42:17.649Z",
+          "myNewField": 1
+        }
+      }
+    ],
+    "Wait7": [
+      {
+        "json": {
+          "success": true,
+          "data": [
+            {
+              "id": 24393822,
+              "name": "Gabriele Linhares",
+              "email": "gabriele@harmoniza.pro",
+              "lang": 7,
+              "locale": "pt_BR",
+              "timezone_name": "America/Sao_Paulo",
+              "timezone_offset": "-03:00",
+              "default_currency": "BRL",
+              "icon_url": null,
+              "active_flag": true,
+              "is_deleted": false,
+              "is_admin": 0,
+              "role_id": 1,
+              "created": "2025-07-16 15:06:45",
+              "has_created_company": false,
+              "is_you": false,
+              "access": [
+                {
+                  "app": "sales",
+                  "admin": false,
+                  "permission_set_id": "c78940e0-f741-11ee-85f1-d53fb529200d"
+                },
+                {
+                  "app": "global",
+                  "admin": false,
+                  "permission_set_id": "c78c7530-f741-11ee-85f1-d53fb529200d"
+                }
+              ],
+              "modified": "2026-02-20 10:43:11",
+              "last_login": "2026-02-20 10:43:11"
+            }
+          ],
+          "additional_data": null
+        }
+      }
+    ],
+    "SDR 1": [
+      {
+        "json": {
+          "host": "https://harmonizapro.uazapi.com",
+          "token": "e68ede83-fb29-4189-add6-f8e70c3849f0",
+          "nome_atendente": "Gabi"
+        }
+      }
+    ],
+    "Mensagem": [
+      {
+        "json": {
+          "chatid": "5512974086912@s.whatsapp.net",
+          "content": {
+            "text": "Aqui é a Gabi da HarmonizaPRO! - bit.ly/instaharmonizaPRO.  Tudo bem?",
+            "contextInfo": {}
+          },
+          "convertOptions": "",
+          "edited": "",
+          "fromMe": true,
+          "id": "5547936185929:3EB00B7A52BC85C532EB8A",
+          "isGroup": false,
+          "messageTimestamp": 1771608286852,
+          "messageType": "ExtendedTextMessage",
+          "messageid": "3EB00B7A52BC85C532EB8A",
+          "owner": "5547936185929",
+          "quoted": "",
+          "reaction": "",
+          "readChatAttempted": false,
+          "sender": "5547936185929@s.whatsapp.net",
+          "senderName": "Gabe Linhares",
+          "source": "web",
+          "status": "Pending",
+          "text": "Aqui é a Gabi da HarmonizaPRO! - bit.ly/instaharmonizaPRO.  Tudo bem?",
+          "track_id": "",
+          "track_source": ""
+        }
+      }
+    ],
+    "Mensagem1": [
+      {
+        "json": {
+          "chatid": "5512974086912@s.whatsapp.net",
+          "content": {
+            "text": "Sarah, vi que você se cadastrou no nosso formulário e estamos analisando as informações para o seu diagnóstico.",
+            "contextInfo": {}
+          },
+          "convertOptions": "",
+          "edited": "",
+          "fromMe": true,
+          "id": "5547936185929:3EB07EF0A6F9A91019F167",
+          "isGroup": false,
+          "messageTimestamp": 1771608289786,
+          "messageType": "ExtendedTextMessage",
+          "messageid": "3EB07EF0A6F9A91019F167",
+          "owner": "5547936185929",
+          "quoted": "",
+          "reaction": "",
+          "readChatAttempted": false,
+          "sender": "5547936185929@s.whatsapp.net",
+          "senderName": "Gabe Linhares",
+          "source": "web",
+          "status": "Pending",
+          "text": "Sarah, vi que você se cadastrou no nosso formulário e estamos analisando as informações para o seu diagnóstico.",
+          "track_id": "",
+          "track_source": ""
+        }
+      }
+    ],
+    "Mensagem2": [
+      {
+        "json": {
+          "chatid": "5512974086912@s.whatsapp.net",
+          "content": {
+            "text": "Preciso apenas confirmar algumas informações com você. Ok?",
+            "contextInfo": {}
+          },
+          "convertOptions": "",
+          "edited": "",
+          "fromMe": true,
+          "id": "5547936185929:3EB0BCBFD2BFB7B32A3AEC",
+          "isGroup": false,
+          "messageTimestamp": 1771608292707,
+          "messageType": "ExtendedTextMessage",
+          "messageid": "3EB0BCBFD2BFB7B32A3AEC",
+          "owner": "5547936185929",
+          "quoted": "",
+          "reaction": "",
+          "readChatAttempted": false,
+          "sender": "5547936185929@s.whatsapp.net",
+          "senderName": "Gabe Linhares",
+          "source": "web",
+          "status": "Pending",
+          "text": "Preciso apenas confirmar algumas informações com você. Ok?",
+          "track_id": "",
+          "track_source": ""
+        }
+      }
+    ],
+    "Select rows from a table": [
+      {
+        "json": {
+          "nome": "Gabi",
+          "email": "gabriele@harmoniza.pro",
+          "ativo": true,
+          "criado_em": "2025-08-27T17:23:48.471Z",
+          "token": "e68ede83-fb29-4189-add6-f8e70c3849f0"
+        }
+      }
+    ],
+    "createDealPipeLine": [
+      {
+        "json": {
+          "success": true,
+          "data": {
+            "id": 48696,
+            "subject": "Sessão de Diagnóstico HarmonizaPRO - Sessão de Diagnóstico HarmonizaPRO",
+            "type": "meeting",
+            "owner_id": 24393822,
+            "creator_user_id": 20851756,
+            "is_deleted": false,
+            "add_time": "2026-02-20T17:31:53Z",
+            "update_time": "2026-02-20T17:31:53Z",
+            "deal_id": 10516,
+            "lead_id": null,
+            "person_id": null,
+            "org_id": null,
+            "project_id": null,
+            "due_date": "2026-02-23",
+            "due_time": "13:00",
+            "duration": "00:30",
+            "done": false,
+            "busy": true,
+            "marked_as_done_time": null,
+            "location": null,
+            "participants": [],
+            "conference_meeting_client": null,
+            "conference_meeting_url": null,
+            "conference_meeting_id": null,
+            "public_description": null,
+            "priority": null,
+            "note": null
+          }
+        }
+      }
+    ],
+    "Code in JavaScript": [
+      {
+        "json": {
+          "fbc_valido_90_dias": true
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telefone": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Nome": {
+      "main": [
+        [
+          {
+            "node": "Sobrenome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sobrenome": {
+      "main": [
+        [
+          {
+            "node": "Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email": {
+      "main": [
+        [
+          {
+            "node": "Telefone",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "site2": {
+      "main": [
+        [
+          {
+            "node": "site4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "checkFbc2": {
+      "main": [
+        [
+          {
+            "node": "site2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "site3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "site3": {
+      "main": [
+        [
+          {
+            "node": "site5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set": {
+      "main": [
+        [
+          {
+            "node": "Nome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "site4": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "site5": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a deal": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "message": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "message3": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "message2": {
+      "main": [
+        []
+      ]
+    },
+    "Execute a SQL query2": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query3": {
+      "main": [
+        [
+          {
+            "node": "set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Execution Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a deal": {
+      "main": [
+        [
+          {
+            "node": "Update a deal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Mensagem1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait4": {
+      "main": [
+        [
+          {
+            "node": "Mensagem2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute a SQL query4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow": {
+      "main": [
+        [
+          {
+            "node": "getUser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a deal1": {
+      "main": [
+        []
+      ]
+    },
+    "getUser": {
+      "main": [
+        [
+          {
+            "node": "Wait7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query4": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "createDealPipeLine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait7": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados Cadastro Workflow": {
+      "main": [
+        [
+          {
+            "node": "Variaveis do Cliente1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Variaveis do Cliente1": {
+      "main": [
+        [
+          {
+            "node": "Get a workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a workflow": {
+      "main": [
+        [
+          {
+            "node": "Encaminhar Erro para TrackAble1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendly Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SDR 1": {
+      "main": [
+        [
+          {
+            "node": "Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensagem": {
+      "main": [
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensagem1": {
+      "main": [
+        [
+          {
+            "node": "Wait4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensagem2": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "SDR 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "createDealPipeLine": {
+      "main": [
+        [
+          {
+            "node": "Get a deal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "checkFbc2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "ByxX1TqYfyvlgp2T"
+  },
+  "versionId": "31b843a7-ab3d-42bd-ad66-a0ddb68c826a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "EOeEGroKenTL6tm8",
+  "tags": [
+    {
+      "updatedAt": "2025-07-16T01:17:20.453Z",
+      "createdAt": "2025-07-16T01:17:20.453Z",
+      "id": "NaaSNhB5hEdSZaTh",
+      "name": "OK"
+    },
+    {
+      "updatedAt": "2025-10-03T18:16:37.959Z",
+      "createdAt": "2025-10-03T18:16:37.959Z",
+      "id": "olakFEXRFPPNeevi",
+      "name": "Cadastrado"
+    }
+  ]
+}

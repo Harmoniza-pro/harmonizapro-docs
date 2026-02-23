@@ -1,0 +1,943 @@
+{
+  "name": "001.008 - Envio de Mensagem - Clientes",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -976,
+        16
+      ],
+      "id": "fb375680-1108-4295-8915-126f1f8d7a00",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e8e25b9-8640-4ec5-b76e-2d6b15c5b514",
+              "name": "host",
+              "value": "https://harmonizapro.uazapi.com",
+              "type": "string"
+            },
+            {
+              "id": "2d15ef73-fad8-4b4a-bf41-fffe17b6ac46",
+              "name": "token",
+              "value": "={{ $item(\"0\").$node[\"Code in JavaScript\"].json[\"data\"][\"0\"][\"Token\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "db959dea-3c63-4cb3-8c8b-496c76372fba",
+              "name": "status_instancia",
+              "value": "={{ $item(\"0\").$node[\"Code in JavaScript\"].json[\"data\"][\"0\"][\"Status WhatsApp\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "f0876194-634f-4987-814d-4b1614415688",
+              "name": "nome_cliente",
+              "value": "={{ $item(\"0\").$node[\"Code in JavaScript\"].json[\"data\"][\"1\"][\"Nome\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "9de2bf8a-4d67-4c58-a5c7-234868efa772",
+              "name": "telefone_cliente",
+              "value": "={{ $item(\"0\").$node[\"Code in JavaScript\"].json[\"data\"][\"1\"][\"Telefone\"].replace(/[^0-9]/g,\"\") }}",
+              "type": "string"
+            },
+            {
+              "id": "db875f80-e4e7-4106-85ef-bb79827582e8",
+              "name": "coluna_mensagem",
+              "value": "={{ $item(\"0\").$node[\"Code in JavaScript\"].json[\"data\"][\"0\"][\"Mensagem\"].replace(\"{ NOME }\", $item(\"0\").$node[\"Code in JavaScript\"].json[\"data\"][\"1\"][\"Nome\"]) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        352,
+        0
+      ],
+      "id": "5f27db7f-27be-420c-ae87-a5e843a95cb2",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "525a143e-233e-4fc9-aa8d-d0832b6e61c5",
+              "leftValue": "={{ $json[\"error\"][\"message\"] }}",
+              "rightValue": "Instance not logged in",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2000,
+        448
+      ],
+      "id": "7d7a758f-07cd-4416-8e97-6a9cdb04072f",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "2bddf3eb-33cc-433b-b58d-bd13c82f7534",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": "={{ Number((Math.random() * (12 - 7) + 7).toFixed(3)) }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1552,
+        208
+      ],
+      "id": "2841b984-0864-429e-a39d-ffd0a96d4b28",
+      "name": "Wait",
+      "webhookId": "fc7f134c-59f1-44c7-a90f-155378591a12"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "525a143e-233e-4fc9-aa8d-d0832b6e61c5",
+              "leftValue": "={{ $item(\"0\").$node[\"Edit Fields\"].json[\"status_instancia\"] }}",
+              "rightValue": "Desconectado",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2000,
+        -224
+      ],
+      "id": "0f3b6de9-3ffe-4062-a4fc-7d3e12f2d740",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/16A0lr_vhErIqjsh5pKJ-3L--oSyM2oALsgiActrwHH0/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16A0lr_vhErIqjsh5pKJ-3L--oSyM2oALsgiActrwHH0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status WhatsApp": "Conectado",
+            "row_number": "={{ $item(\"0\").$node[\"Get row(s) in sheet\"].json[\"row_number\"] }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Cliente",
+              "displayName": "Cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ID Typeform",
+              "displayName": "ID Typeform",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Instance Key",
+              "displayName": "Instance Key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status WhatsApp",
+              "displayName": "Status WhatsApp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mensagem",
+              "displayName": "Mensagem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2656,
+        -240
+      ],
+      "id": "0fdd297a-4d7e-4516-a15e-8dcf7c85a49f",
+      "name": "Conectado",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DHgktmNQ0OWZiYho",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/16A0lr_vhErIqjsh5pKJ-3L--oSyM2oALsgiActrwHH0/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16A0lr_vhErIqjsh5pKJ-3L--oSyM2oALsgiActrwHH0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status WhatsApp": "Desconectado",
+            "row_number": "={{ $item(\"0\").$node[\"Get row(s) in sheet\"].json[\"row_number\"] }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Cliente",
+              "displayName": "Cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ID Typeform",
+              "displayName": "ID Typeform",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Instance Key",
+              "displayName": "Instance Key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status WhatsApp",
+              "displayName": "Status WhatsApp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mensagem",
+              "displayName": "Mensagem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2448,
+        432
+      ],
+      "id": "4727d28c-53d6-40e8-8d39-b2932df2b5e3",
+      "name": "Desconectado",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DHgktmNQ0OWZiYho",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $item(\"0\").$node[\"Edit Fields\"].json[\"host\"] }}/rest/sendMessage/{{ $item(\"0\").$node[\"Edit Fields\"].json[\"instancia\"] }}/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ $item(\"0\").$node[\"Edit Fields\"].json[\"auth\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messageData\":{\n  \"to\": \"{{ $item(\"0\").$node[\"Edit Fields\"].json[\"telefone_cliente\"].replace(/[^0-9]/g,'') }}\",\n  \"text\": \"{{ $item(\"0\").$node[\"Loop Over Items\"].json[\"texto\"] }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "f4587e82-4c64-426b-925f-7ca908f22c5b",
+      "name": "Mensagem",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1312,
+        672
+      ],
+      "retryOnFail": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtém a string original\nconst mensagem = $item(\"0\").$node[\"Edit Fields\"].json[\"coluna_mensagem\"];\n\n// Divide a string pelo separador \"|\"\nconst partes = mensagem.split(\"|\").map(p => p.trim());\n\n// Retorna cada parte como um item separado\nreturn partes.map(parte => ({ json: { texto: parte } }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        0
+      ],
+      "id": "e96e0cd0-f83b-413c-8314-bfd402d8f1e1",
+      "name": "Separa Mensagens"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "=https://docs.google.com/spreadsheets/d/16A0lr_vhErIqjsh5pKJ-3L--oSyM2oALsgiActrwHH0/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16A0lr_vhErIqjsh5pKJ-3L--oSyM2oALsgiActrwHH0/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "ID Typeform",
+              "lookupValue": "={{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"form_id\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -592,
+        16
+      ],
+      "id": "f8a4a3e1-e992-4f7d-8888-dced1539baac",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DHgktmNQ0OWZiYho",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "var data = []\n\nconst dados_sheet = $item(\"0\").$node[\"Get row(s) in sheet\"].json\nconst dados_resposta = $item(\"0\").$node[\"When Executed by Another Workflow\"].json\n\ndata.push(dados_sheet, dados_resposta)\n\nreturn [{data}]  \n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -48,
+        0
+      ],
+      "id": "9d531610-8a77-4de1-aba7-368e22278b41",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -384,
+        176
+      ],
+      "id": "3d4b3b0c-1957-4b71-9b58-56cd09cdf9b4",
+      "name": "Wait1",
+      "webhookId": "3f1b9bff-9d7f-4a50-8c07-744acff824b5"
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2896,
+        -224
+      ],
+      "id": "a0d68d4b-575f-4348-88bc-5d0085d300d6",
+      "name": "Wait2",
+      "webhookId": "3f1b9bff-9d7f-4a50-8c07-744acff824b5"
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2704,
+        448
+      ],
+      "id": "b6797329-a7dd-4b79-a98c-70baae2e612f",
+      "name": "Wait3",
+      "webhookId": "3f1b9bff-9d7f-4a50-8c07-744acff824b5"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $item(\"0\").$node[\"Info WhatsApp2\"].json[\"host_url\"] }}/rest/sendMessage/{{ $item(\"0\").$node[\"Info WhatsApp2\"].json[\"instance\"] }}/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ $item(\"0\").$node[\"Info WhatsApp2\"].json[\"token\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messageData\":{\n  \"to\": \"31996693310\",\n  \"text\": \"TESTE - AUTOMAÇÃO\\n\\nFAVOR IGNORAR\"\n  }\n}",
+        "options": {}
+      },
+      "id": "8564b3d8-575f-4f4c-85ef-b1896d2a859c",
+      "name": "message10",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        480,
+        816
+      ],
+      "retryOnFail": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8e2e0e50-7dfb-425a-88e7-d4bb5541bf13",
+              "name": "host_url",
+              "value": "https://evolua.megaapi.com.br",
+              "type": "string"
+            },
+            {
+              "id": "ea446587-5771-4128-b9b7-7526805e5ce3",
+              "name": "instance",
+              "value": "CarolSDR",
+              "type": "string"
+            },
+            {
+              "id": "1bfcc216-dede-4a1a-81e7-e39da4bd0c8a",
+              "name": "token",
+              "value": "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNy8xMS8yMDI0IiwibmFtZSI6IlRlc3RlNiIsImFkbWluIjp0cnVlLCJpYXQiOjE1MTYyMzkwMjJ9.J7vMxf8GMX7nUoolQKFTEuxR4Tsm5F2EWwqqP9nFf8ILiZvax2s8RMqdcnWVeCMQ8sIpqYufkMWgYhMKs858TA",
+              "type": "string"
+            },
+            {
+              "id": "ae690cc0-a312-44e3-b180-6595615be804",
+              "name": "nome_atendente",
+              "value": "Carol",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        272,
+        816
+      ],
+      "id": "75c17b6b-52b6-4eea-b72e-64c428327249",
+      "name": "Info WhatsApp2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $item(\"0\").$node[\"Info WhatsApp2\"].json[\"host_url\"] }}/rest/chat/{{ $item(\"0\").$node[\"Info WhatsApp2\"].json[\"instance\"] }}/readChat",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNy8xMS8yMDI0IiwibmFtZSI6IlRlc3RlNiIsImFkbWluIjp0cnVlLCJpYXQiOjE1MTYyMzkwMjJ9.J7vMxf8GMX7nUoolQKFTEuxR4Tsm5F2EWwqqP9nFf8ILiZvax2s8RMqdcnWVeCMQ8sIpqYufkMWgYhMKs858TA"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"to\": \"{{ $item(\"0\").$node[\"message10\"].json[\"messageData\"][\"key\"][\"remoteJid\"] }}\",\n  \"option\": false,\n  \"messageData\": {\n    \"key\": {{ JSON.stringify($item(\"0\").$node[\"message10\"].json[\"messageData\"][\"key\"]) }},\n    \"messageTimestamp\": {{ $item(\"0\").$node[\"message10\"].json[\"messageData\"][\"messageTimestamp\"] }}\n  }\n}",
+        "options": {}
+      },
+      "id": "51e7e1ec-d57c-4832-9fda-ed7a6192ba31",
+      "name": "Mensagem2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        720,
+        704
+      ],
+      "retryOnFail": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $item(\"0\").$node[\"Edit Fields\"].json[\"host\"] }}/chat/read",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $item(\"0\").$node[\"Edit Fields\"].json[\"auth\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $item(\"0\").$node[\"Edit Fields\"].json[\"telefone_cliente\"].replace(/[^0-9]/g,'') + '@s.whatsapp.net' }}\",\n  \"read\": false\n}",
+        "options": {}
+      },
+      "id": "613df60c-a0ca-4bc3-b7a9-db1fda429ced",
+      "name": "Msg Não Lida",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1616,
+        -208
+      ],
+      "retryOnFail": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "keep": "lastItems"
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        -208
+      ],
+      "id": "0b3116e9-785c-4a84-ad6d-9f388462a0c3",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $item(\"0\").$node[\"Edit Fields\"].json[\"host\"] }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $item(\"0\").$node[\"Edit Fields\"].json[\"token\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $item(\"0\").$node[\"Edit Fields\"].json[\"telefone_cliente\"].replace(/[^0-9]/g,'') }}\",\n  \"text\": \"{{ $item(\"0\").$node[\"Loop Over Items\"].json[\"texto\"] }}\"\n}",
+        "options": {}
+      },
+      "id": "fc561c1c-4483-4bb7-aadc-f4927207ff59",
+      "name": "Mensagem1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1312,
+        224
+      ],
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "Nome": "Roseli Rodrigues",
+          "Telefone": "+5548999896645",
+          "formulário": "Dra. Patrícia Almeida",
+          "form_id": "iAMXtsqN"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Separa Mensagens",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Desconectado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mensagem1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Conectado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensagem": {
+      "main": [
+        [],
+        []
+      ]
+    },
+    "Separa Mensagens": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conectado": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Conectado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Desconectado": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Desconectado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Info WhatsApp2": {
+      "main": [
+        [
+          {
+            "node": "message10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "message10": {
+      "main": [
+        [
+          {
+            "node": "Mensagem2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Msg Não Lida": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Msg Não Lida",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensagem1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "4b55ef99-9e45-4863-a619-03f15b6a52d1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "VjXrQZZPivqrbNZM",
+  "tags": []
+}

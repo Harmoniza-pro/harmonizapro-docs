@@ -1,0 +1,2519 @@
+{
+  "name": "002.003 - Hunters - Ganho",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "ac294f23-e2e4-4b77-aa36-6c690f09dba6",
+              "leftValue": "={{ $json.fields.redelivered}}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "54de4c7e-dde1-4a92-8278-575e6a66d633",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -752,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "queue": "clickup_hunter_ganho",
+        "options": {
+          "arguments": {
+            "argument": [
+              {
+                "key": "x-queue-type",
+                "value": "quorum"
+              }
+            ]
+          },
+          "acknowledge": "executionFinishesSuccessfully",
+          "jsonParseBody": true,
+          "onlyContent": false,
+          "parallelMessages": 1
+        }
+      },
+      "id": "68abd87e-2a69-44f1-95b7-f19ecd29d2e1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.rabbitmqTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1040,
+        528
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "deleteMessage"
+      },
+      "id": "2d6fd9ff-093b-41a7-a690-905d6ee86c53",
+      "name": "RabbitMQ1",
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1.1,
+      "position": [
+        -448,
+        304
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "get",
+        "id": "={{ $item(\"0\").$node[\"If\"].json[\"content\"][\"task_id\"] }}"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        544
+      ],
+      "id": "f620cec8-5d12-4ef9-bf73-d69893fc7163",
+      "name": "Get a task",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonData = items[0].json;\nconst customFields = jsonData.custom_fields;\nconst result = {\n  task_id: jsonData.id,\n  name: jsonData.name,\n  status: jsonData.status.status\n};\n\ncustomFields.forEach(field => {\n  const fieldId = field.id;\n  let fieldValue;\n  let fieldObject = {\n    id: fieldId,\n    name: field.name\n  };\n\n  // Tratamento do valor do campo\n  if (field.type === 'users' && Array.isArray(field.value)) {\n    const allIds = field.value.map(user => user.id).join(',');\n    const userDetails = {};\n    field.value.forEach(user => {\n      userDetails[user.id] = {\n        id: user.id,\n        name: user.username,\n        email: user.email\n      };\n    });\n    fieldValue = {\n      geral: allIds,\n      ...userDetails\n    };\n  } else if (field.type === 'drop_down' && field.value !== undefined && field.value !== null) {\n    const selectedOption = field.type_config.options.find(opt => opt.orderindex === field.value);\n    if (selectedOption) {\n      fieldValue = {\n        id: selectedOption.id,\n        name: selectedOption.name,\n        value: selectedOption.orderindex\n      };\n    } else {\n      fieldValue = '';\n    }\n  } else if (field.type === 'labels' && Array.isArray(field.value)) {\n    fieldValue = field.value.map(optionId => {\n      const option = field.type_config.options.find(opt => opt.id === optionId);\n      if (option) {\n        return {\n          id: option.id,\n          name: option.label,\n          color: option.color\n        };\n      }\n      return null;\n    }).filter(Boolean);\n  } else if (field.type === 'tasks' && Array.isArray(field.value)) {\n    fieldValue = field.value.map(task => ({\n      id: task.id,\n      name: task.name,\n      status: task.status\n    }));\n  } else if (field.type === 'emoji') {\n    fieldValue = field.value || '';\n  } else {\n    fieldValue = field.value !== undefined && field.value !== null ? field.value : '';\n  }\n\n  fieldObject.value = fieldValue;\n\n  // Apenas adiciona options se o campo tiver opções configuradas\n  if (field.type_config && field.type_config.options) {\n    const options = {};\n    field.type_config.options.forEach(opt => {\n      options[opt.id] = {\n        id: opt.id,\n        name: opt.label || opt.name\n      };\n    });\n    if (Object.keys(options).length > 0) {\n      fieldObject.options = options;\n    }\n  }\n\n  result[fieldId] = fieldObject;\n});\n\nreturn [{ json: result }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        544
+      ],
+      "id": "42957db5-779e-4c78-8cae-c999c0cbbcfc",
+      "name": "OrganizarClickUp"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "setCustomField",
+        "task": "={{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"task_id\"] }}",
+        "field": "={{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Campo Automações\"] }}",
+        "value": "={{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Campo Ganho Recusado\"] }}"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        928,
+        736
+      ],
+      "id": "d0a3e6c8-3f26-4433-ba67-7e21455e1662",
+      "name": "Alterar Tag - Reprovado",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "comment",
+        "commentOn": "task",
+        "id": "={{ $item(\"0\").$node[\"OrganizarClickUp\"].json[\"task_id\"] }}",
+        "commentText": "={{ $item(\"0\").$node[\"Code4\"].json[\"mensagem\"] }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        1248,
+        736
+      ],
+      "id": "c02bbc2a-da97-4ea5-87de-a9de9d4ffdd7",
+      "name": "Create a comment",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obter o corpo da requisição\nconst body = $('OrganizarClickUp').first().json;\n\n// Função para verificar se um campo está vazio\nfunction campoVazio(valor) {\n    return valor === null || valor === undefined || valor.toString().trim() === '';\n}\n\n// Mapeamento de chaves internas do body para nomes reais\nconst nomesReais = {\n  \"16920421-85b5-47a6-9f25-ddeaef905257\": \"Valor do Fechamento\"\n};\n\n// Verifica quais campos estão vazios e retorna os nomes reais\nconst camposReprovados = Object.keys(nomesReais)\n    .filter(fieldId => campoVazio(body[fieldId]?.value))\n    .map(fieldId => nomesReais[fieldId]);\n\n// Se houver campos reprovados\nif (camposReprovados.length > 0) {\n    const mensagemFormatada = `❌ Reprovado!\\n\\n📋 Necessário preencher os seguintes campos:\\n\\n🔸 ${camposReprovados.join('\\n🔸 ')}`;\n\n    return [\n        {\n            json: {\n                dados: 'Reprovado',\n                camposReprovados,\n                mensagem: mensagemFormatada\n            }\n        }\n    ];\n}\n\n// Caso contrário, retorna o corpo original\nreturn [\n    {\n        json: body\n    }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        288,
+        544
+      ],
+      "id": "ca15029d-eb3e-4a1a-b31d-c76b89816caa",
+      "name": "Code4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "749f13f6-5920-4fa4-a5fd-edbba5dce191",
+              "leftValue": "={{ $json.dados }}",
+              "rightValue": "Reprovado",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        544
+      ],
+      "id": "bedacf78-ed26-4404-b2d4-ba799ae62f79",
+      "name": "If4"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "id": "={{ $item(\"0\").$node[\"OrganizarClickUp\"].json[\"task_id\"] }}",
+        "updateFields": {
+          "status": "negócio fechado"
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        1248,
+        528
+      ],
+      "id": "90424354-9fa5-4faa-ab6c-949c8a87f9e9",
+      "name": "Update a task",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "setCustomField",
+        "task": "={{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"task_id\"] }}",
+        "field": "={{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Campo Automações\"] }}",
+        "value": "={{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Campo Ganho Aprovado\"] }}"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        928,
+        528
+      ],
+      "id": "72ecd0ec-0ae1-4bdb-89c3-a23126816846",
+      "name": "Alterar Tag - Aprovado",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "get",
+        "id": "={{ $item(\"0\").$node[\"OrganizarClickUp\"].json[\"e87f9cee-8d4e-440b-9d97-c362aadd7419\"][\"value\"][\"0\"][\"id\"] }}"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        528
+      ],
+      "id": "a2f7011f-8a55-44f8-8bcd-44216652113e",
+      "name": "Get a task1",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonData = items[0].json;\nconst customFields = jsonData.custom_fields;\nconst result = {\n  task_id: jsonData.id,\n  name: jsonData.name,\n  status: jsonData.status.status\n};\n\ncustomFields.forEach(field => {\n  const fieldId = field.id;\n  let fieldValue;\n  let fieldObject = {\n    id: fieldId,\n    name: field.name\n  };\n\n  // Tratamento do valor do campo\n  if (field.type === 'users' && Array.isArray(field.value)) {\n    const allIds = field.value.map(user => user.id).join(',');\n    const userDetails = {};\n    field.value.forEach(user => {\n      userDetails[user.id] = {\n        id: user.id,\n        name: user.username,\n        email: user.email\n      };\n    });\n    fieldValue = {\n      geral: allIds,\n      ...userDetails\n    };\n  } else if (field.type === 'drop_down' && field.value !== undefined && field.value !== null) {\n    const selectedOption = field.type_config.options.find(opt => opt.orderindex === field.value);\n    if (selectedOption) {\n      fieldValue = {\n        id: selectedOption.id,\n        name: selectedOption.name,\n        value: selectedOption.orderindex\n      };\n    } else {\n      fieldValue = '';\n    }\n  } else if (field.type === 'labels' && Array.isArray(field.value)) {\n    fieldValue = field.value.map(optionId => {\n      const option = field.type_config.options.find(opt => opt.id === optionId);\n      if (option) {\n        return {\n          id: option.id,\n          name: option.label,\n          color: option.color\n        };\n      }\n      return null;\n    }).filter(Boolean);\n  } else if (field.type === 'tasks' && Array.isArray(field.value)) {\n    fieldValue = field.value.map(task => ({\n      id: task.id,\n      name: task.name,\n      status: task.status\n    }));\n  } else if (field.type === 'emoji') {\n    fieldValue = field.value || '';\n  } else {\n    fieldValue = field.value !== undefined && field.value !== null ? field.value : '';\n  }\n\n  fieldObject.value = fieldValue;\n\n  // Apenas adiciona options se o campo tiver opções configuradas\n  if (field.type_config && field.type_config.options) {\n    const options = {};\n    field.type_config.options.forEach(opt => {\n      options[opt.id] = {\n        id: opt.id,\n        name: opt.label || opt.name\n      };\n    });\n    if (Object.keys(options).length > 0) {\n      fieldObject.options = options;\n    }\n  }\n\n  result[fieldId] = fieldObject;\n});\n\nreturn [{ json: result }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1904,
+        528
+      ],
+      "id": "412f3eae-9aa0-4e51-94ec-4f8e95a92aee",
+      "name": "OrganizarClickUp1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "dbb6d3c5-f0e7-44dd-9402-68ce85723862",
+              "leftValue": "={{ $item(\"0\").$node[\"OrganizarClickUp1\"].json[\"4be65b4a-3a2e-4689-b885-1e0924e2eef1\"][\"value\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2208,
+        528
+      ],
+      "id": "09b4d666-a978-42a8-a933-bead042d9a54",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "setCustomField",
+        "task": "={{ $item(\"0\").$node[\"OrganizarClickUp1\"].json[\"task_id\"] }}",
+        "field": "={{ $item(\"0\").$node[\"OrganizarClickUp1\"].json[\"4be65b4a-3a2e-4689-b885-1e0924e2eef1\"][\"id\"] }}",
+        "value": "={{ new Date($now).getTime() }}"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        2560,
+        512
+      ],
+      "id": "14f2225d-7b59-4d5d-a8b2-c59191938761",
+      "name": "Set a custom Field on a task",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "fields": {
+            "consumerTag": "amq.ctag-bmL_l0DHt9aZttFNBOk17A",
+            "deliveryTag": 3,
+            "redelivered": false,
+            "exchange": "",
+            "routingKey": "clickup_hunter_ganho"
+          },
+          "properties": {
+            "headers": {}
+          },
+          "content": {
+            "Campo Automações": "79a04869-f666-42c7-8f93-2cf7a313d22d",
+            "Campo Ganho": "310977e6-9d21-48d6-ba20-37258a360246",
+            "Campo Perda": "b56ff4d6-eb48-42f5-b113-8384e5c2e3a0",
+            "task_id": "86af2b16q",
+            "Campo Ganho Aprovado": "90a90c44-5bdb-414d-a3d5-fae43c5cfe46",
+            "Campo Ganho Recusado": "98ea8f40-0989-4fc8-9aab-2122f0e59d91"
+          }
+        }
+      }
+    ],
+    "Get a task": [
+      {
+        "json": {
+          "id": "86af2b16q",
+          "custom_id": null,
+          "custom_item_id": 0,
+          "name": "Eloisa",
+          "text_content": "",
+          "description": "",
+          "status": {
+            "id": "sc901324875324_o8pJzoVe",
+            "status": "entrada do lead",
+            "color": "#8a817c",
+            "orderindex": 0,
+            "type": "open"
+          },
+          "orderindex": "120490416.00000000000000000000000000000000",
+          "date_created": "1770157747775",
+          "date_updated": "1771731712761",
+          "date_closed": null,
+          "date_done": null,
+          "archived": false,
+          "creator": {
+            "id": 278505381,
+            "username": "Ferramentas Harmoniza",
+            "color": "#595d66",
+            "email": "ferramentas@harmoniza.pro",
+            "profilePicture": null
+          },
+          "assignees": [
+            {
+              "id": 112100105,
+              "username": "Jéssica de freitas fernandes",
+              "color": null,
+              "initials": "JF",
+              "email": "jessica.de.freitas@hotmail.com",
+              "profilePicture": null
+            }
+          ],
+          "group_assignees": [],
+          "watchers": [
+            {
+              "id": 112100105,
+              "username": "Jéssica de freitas fernandes",
+              "color": null,
+              "initials": "JF",
+              "email": "jessica.de.freitas@hotmail.com",
+              "profilePicture": null
+            },
+            {
+              "id": 278505381,
+              "username": "Ferramentas Harmoniza",
+              "color": "#595d66",
+              "initials": "FH",
+              "email": "ferramentas@harmoniza.pro",
+              "profilePicture": null
+            }
+          ],
+          "checklists": [],
+          "tags": [],
+          "parent": null,
+          "top_level_parent": null,
+          "priority": null,
+          "due_date": null,
+          "start_date": null,
+          "points": null,
+          "time_estimate": null,
+          "time_spent": 0,
+          "custom_fields": [
+            {
+              "id": "7022191f-ae0b-40dd-9966-4fb6705e57a0",
+              "name": "Canal",
+              "type": "drop_down",
+              "type_config": {
+                "sorting": "manual",
+                "new_drop_down": true,
+                "options": [
+                  {
+                    "id": "e29e476d-8cc3-4bdc-9153-98623c40fc27",
+                    "name": "Anti-Curioso",
+                    "color": "#FF4081",
+                    "orderindex": 0
+                  },
+                  {
+                    "id": "f379a4fc-6ce6-467f-90c4-6b65e40a0332",
+                    "name": "Outro",
+                    "color": "#7C4DFF",
+                    "orderindex": 1
+                  }
+                ]
+              },
+              "date_created": "1770142593424",
+              "hide_from_guests": false,
+              "value": 0,
+              "value_richtext": null,
+              "required": false
+            },
+            {
+              "id": "4ff67b8d-1707-48f3-aea2-b32fcb99b923",
+              "name": "Cliente",
+              "type": "drop_down",
+              "type_config": {
+                "sorting": "manual",
+                "options": [
+                  {
+                    "id": "849f2c9c-6f1c-4dbb-9b27-cda06b953ff2",
+                    "name": "Dra. Patrícia Almeida",
+                    "color": "#fff",
+                    "orderindex": 0
+                  },
+                  {
+                    "id": "9125fb47-5ae5-49b4-ad8c-cde429214d21",
+                    "name": "Dra. Adriele Machado",
+                    "color": null,
+                    "orderindex": 1
+                  },
+                  {
+                    "id": "afaaf18d-a22a-4c3f-a7e6-7837dbb138c8",
+                    "name": "Dra. Renata Rezende",
+                    "color": null,
+                    "orderindex": 2
+                  },
+                  {
+                    "id": "41c9b5c3-5e47-4311-b741-53e056326757",
+                    "name": "Dra. Mirian de Paula",
+                    "color": null,
+                    "orderindex": 3
+                  },
+                  {
+                    "id": "96cfd026-d00e-4d9d-a957-6016454e9fb4",
+                    "name": "Dra. Jacinta Mesquita",
+                    "color": null,
+                    "orderindex": 4
+                  }
+                ]
+              },
+              "date_created": "1770751553546",
+              "hide_from_guests": false,
+              "value": 2,
+              "value_richtext": null,
+              "required": false
+            },
+            {
+              "id": "e87f9cee-8d4e-440b-9d97-c362aadd7419",
+              "name": "Cliente",
+              "type": "list_relationship",
+              "type_config": {
+                "fields": [],
+                "subcategory_id": "901325472193",
+                "linked_subcategory_access": true,
+                "subcategory_inverted_name": "Gestão de Clientes"
+              },
+              "date_created": "1771700797871",
+              "hide_from_guests": false,
+              "value": [
+                {
+                  "id": "86afe5d2j",
+                  "name": "Dra. Renata Rezende",
+                  "status": "cliente ativo",
+                  "color": "#30a46c",
+                  "custom_type": null,
+                  "team_id": "90132992412",
+                  "deleted": false,
+                  "url": "https://app.clickup.com/t/86afe5d2j",
+                  "access": true
+                }
+              ],
+              "required": false
+            },
+            {
+              "id": "3e0b8666-0ced-4eb8-8174-fb86ddf251a2",
+              "name": "Closer",
+              "type": "users",
+              "type_config": {
+                "single_user": false,
+                "include_groups": false,
+                "include_guests": true,
+                "include_team_members": false
+              },
+              "date_created": "1769626188482",
+              "hide_from_guests": false,
+              "required": null
+            },
+            {
+              "id": "e2a18d27-8adc-4112-b9d4-8c3685b78a23",
+              "name": "Clínica",
+              "type": "short_text",
+              "type_config": {},
+              "date_created": "1770129175615",
+              "hide_from_guests": true,
+              "value": "Dra. Renata Rezende",
+              "value_richtext": null,
+              "required": false
+            },
+            {
+              "id": "0d2ab8ce-6df3-41a3-bfc9-372eff7a7d09",
+              "name": "Data da Consulta",
+              "type": "date",
+              "type_config": {},
+              "date_created": "1770129288140",
+              "hide_from_guests": false,
+              "required": false
+            },
+            {
+              "id": "a31ac8f3-4792-4126-ad14-207c5634b4b0",
+              "name": "Data de Entrada",
+              "type": "date",
+              "type_config": {},
+              "date_created": "1770129279952",
+              "hide_from_guests": false,
+              "value": "1770102000000",
+              "value_richtext": null,
+              "required": false
+            },
+            {
+              "id": "fa78bdad-9017-4424-8534-cb8eec2ae05a",
+              "name": "Faturamento",
+              "type": "drop_down",
+              "type_config": {
+                "new_drop_down": true,
+                "options": [
+                  {
+                    "id": "0c72a4d7-bc60-459c-8152-bf31045f670b",
+                    "name": "Mais de 100K",
+                    "color": null,
+                    "orderindex": 0
+                  },
+                  {
+                    "id": "cc211748-a786-46b5-a032-56251db0416f",
+                    "name": "De 50K a 100K",
+                    "color": null,
+                    "orderindex": 1
+                  },
+                  {
+                    "id": "38b30495-46d1-4bd9-9336-f95d969696bf",
+                    "name": "De 40K a 50K",
+                    "color": null,
+                    "orderindex": 2
+                  },
+                  {
+                    "id": "2a6e4c3e-aadc-4366-b588-45eca40222d9",
+                    "name": "De 30K a 40K",
+                    "color": null,
+                    "orderindex": 3
+                  },
+                  {
+                    "id": "cd95d3d0-5d7e-4f4b-8200-4c0bb0648a0b",
+                    "name": "De 20K a 30K",
+                    "color": null,
+                    "orderindex": 4
+                  },
+                  {
+                    "id": "3699a010-dfc4-41d3-b3a8-7f8cb52b1da9",
+                    "name": "De 15K a 20K",
+                    "color": null,
+                    "orderindex": 5
+                  },
+                  {
+                    "id": "71ce5ab3-b85e-4604-81c3-71e84d333de7",
+                    "name": "De 10K a 15K",
+                    "color": null,
+                    "orderindex": 6
+                  },
+                  {
+                    "id": "84cc344b-1c59-46e1-917c-b64dd4ca8944",
+                    "name": "De 5K a 10K",
+                    "color": null,
+                    "orderindex": 7
+                  },
+                  {
+                    "id": "d88fef3c-243c-413c-923b-907e6038a1e7",
+                    "name": "Até 5K",
+                    "color": null,
+                    "orderindex": 8
+                  }
+                ]
+              },
+              "date_created": "1769626188482",
+              "hide_from_guests": false,
+              "required": null
+            },
+            {
+              "id": "10160bdf-5dae-4f9e-90f8-7f29407567d2",
+              "name": "Meeting",
+              "type": "url",
+              "type_config": {},
+              "date_created": "1769626188482",
+              "hide_from_guests": false,
+              "required": null
+            },
+            {
+              "id": "fc647506-3cb6-42cf-802c-49944cd6f41f",
+              "name": "Mensagem Automática",
+              "type": "checkbox",
+              "type_config": {},
+              "date_created": "1770407243184",
+              "hide_from_guests": false,
+              "required": false
+            },
+            {
+              "id": "72f55f36-f42c-4b3b-ba5a-2218ff02ff6a",
+              "name": "Oportunidade",
+              "type": "currency",
+              "type_config": {
+                "precision": 2,
+                "currency_type": "BRL"
+              },
+              "date_created": "1769626188482",
+              "hide_from_guests": false,
+              "required": null
+            },
+            {
+              "id": "0a6c283e-ebdd-41c6-ae53-b65b85879d9d",
+              "name": "Produtos Comprados",
+              "type": "labels",
+              "type_config": {
+                "options": [
+                  {
+                    "id": "3b9b6249-1a90-4dfe-a120-6eadecdec537",
+                    "label": "Octus Pro",
+                    "color": null,
+                    "orderindex": 0
+                  },
+                  {
+                    "id": "31f96442-4d56-467b-982f-8e0c0f70d65d",
+                    "label": "Octus Light",
+                    "color": null,
+                    "orderindex": 1
+                  },
+                  {
+                    "id": "f2c7f4bb-a668-41e9-a652-cfd4d5603b3f",
+                    "label": "ClickUp Automatizado",
+                    "color": null,
+                    "orderindex": 2
+                  },
+                  {
+                    "id": "2b7a07c8-fde4-4951-b4bb-9326c4b22f0b",
+                    "label": "Club",
+                    "color": null,
+                    "orderindex": 3
+                  },
+                  {
+                    "id": "22c2c41c-4f57-4ed7-8cbf-8b0b1e34ab93",
+                    "label": "Templates 3.0 – 2",
+                    "color": "#fff",
+                    "orderindex": 4
+                  },
+                  {
+                    "id": "99cb6fe8-a0b2-4cdb-a840-a3d00a78f0c8",
+                    "label": "Templates de ClickUp 3.0 – Advanced",
+                    "color": "#EA80FC",
+                    "orderindex": 5
+                  },
+                  {
+                    "id": "43c76e0a-ae84-4d53-bcbd-78dc3db9bb73",
+                    "label": "Comercial Automatizado",
+                    "color": "#1bbc9c",
+                    "orderindex": 6
+                  }
+                ]
+              },
+              "date_created": "1769626188482",
+              "hide_from_guests": false,
+              "required": null
+            },
+            {
+              "id": "2404a06e-0b8e-4bfe-8a33-bb1a6f3a0935",
+              "name": "Produtos Ofertados",
+              "type": "labels",
+              "type_config": {
+                "options": [
+                  {
+                    "id": "74545168-fe24-4c27-b838-6866f593bedb",
+                    "label": "Gestão Inteligente • Club",
+                    "color": null,
+                    "orderindex": 0
+                  },
+                  {
+                    "id": "f9e18eda-2894-40b1-bcf1-1a4176f7b2df",
+                    "label": "Templates de ClickUp 3.0 – Light",
+                    "color": null,
+                    "orderindex": 1
+                  },
+                  {
+                    "id": "0a06730d-52f4-44b4-9a8c-43381d34b828",
+                    "label": "Templates de ClickUp 3.0 – PRO",
+                    "color": null,
+                    "orderindex": 2
+                  },
+                  {
+                    "id": "cf10a432-f9ca-4cec-87d6-8a2a9ae4b029",
+                    "label": "Templates de ClickUp 3.0 – Advanced",
+                    "color": null,
+                    "orderindex": 3
+                  },
+                  {
+                    "id": "bf1186e7-3a6f-4055-ac3f-c480cd1a9b2d",
+                    "label": "Mentoria Black",
+                    "color": null,
+                    "orderindex": 4
+                  },
+                  {
+                    "id": "7b6911e9-6913-47f8-8f84-6d84c60e520b",
+                    "label": "Comercial Automatizado",
+                    "color": null,
+                    "orderindex": 5
+                  },
+                  {
+                    "id": "a24cb8f6-a6d0-412b-be68-386f165dcc7e",
+                    "label": "Templates 3.0",
+                    "color": null,
+                    "orderindex": 6
+                  },
+                  {
+                    "id": "cba4c6d1-5b1a-4edd-9bff-aa418369a7ac",
+                    "label": "ClickUp Pro",
+                    "color": null,
+                    "orderindex": 7
+                  },
+                  {
+                    "id": "213b52f1-8567-46ed-8e8c-95802f4efd8f",
+                    "label": "Example product",
+                    "color": "#9b59b6",
+                    "orderindex": 8
+                  },
+                  {
+                    "id": "e6438fa0-266e-454c-b902-42bf2dbc3acc",
+                    "label": "Código da Escala",
+                    "color": "#3082B7",
+                    "orderindex": 9
+                  },
+                  {
+                    "id": "768fbf86-b381-42e3-99fe-79a50f9dc2dd",
+                    "label": "Octus Pro",
+                    "color": "#AF7E2E",
+                    "orderindex": 10
+                  },
+                  {
+                    "id": "fb3b5732-399c-4ebb-9152-0d24b853ae6b",
+                    "label": "Implementação de Processo Comercial Automatizado",
+                    "color": "#2ecd6f",
+                    "orderindex": 11
+                  }
+                ]
+              },
+              "date_created": "1769626188482",
+              "hide_from_guests": false,
+              "required": null
+            },
+            {
+              "id": "3eb4520a-4115-4edb-9024-b730ded72f1c",
+              "name": "Protocolo",
+              "type": "short_text",
+              "type_config": {},
+              "date_created": "1770142605436",
+              "hide_from_guests": false,
+              "value_richtext": null,
+              "required": false
+            },
+            {
+              "id": "0a17aa7f-3d24-4eec-a678-321bddbe73df",
+              "name": "Status",
+              "type": "drop_down",
+              "type_config": {
+                "new_drop_down": true,
+                "options": [
+                  {
+                    "id": "e206d2d4-930f-4f5e-808b-db241961ebf9",
+                    "name": "Ativo",
+                    "color": "#2ecd6f",
+                    "orderindex": 0
+                  },
+                  {
+                    "id": "07d5f17e-3873-4e4c-9e7f-94999ff7b157",
+                    "name": "Inativo",
+                    "color": "#eaeced",
+                    "orderindex": 1
+                  }
+                ]
+              },
+              "date_created": "1769626188482",
+              "hide_from_guests": false,
+              "required": null
+            },
+            {
+              "id": "a52a8a5a-17dd-4fd4-a037-4b59b31bd642",
+              "name": "Telefone",
+              "type": "phone",
+              "type_config": {},
+              "date_created": "1770129145925",
+              "hide_from_guests": false,
+              "value": "+55 91 99149 4985",
+              "value_richtext": null,
+              "required": false
+            },
+            {
+              "id": "16920421-85b5-47a6-9f25-ddeaef905257",
+              "name": "Valor do Fechamento",
+              "type": "currency",
+              "type_config": {
+                "precision": 2,
+                "currency_type": "BRL"
+              },
+              "date_created": "1771731615503",
+              "hide_from_guests": false,
+              "value": "10",
+              "value_richtext": "",
+              "required": false
+            },
+            {
+              "id": "c204b6bf-e52c-4e58-b5c6-c2f21f01c5cb",
+              "name": "WhatsApp",
+              "type": "phone",
+              "type_config": {},
+              "date_created": "1769626188482",
+              "hide_from_guests": false,
+              "required": null
+            },
+            {
+              "id": "142497c4-b30a-4546-9e9b-4559ad7de98c",
+              "name": "Último Contato",
+              "type": "date",
+              "type_config": {},
+              "date_created": "1770144017281",
+              "hide_from_guests": false,
+              "required": false
+            },
+            {
+              "id": "79a04869-f666-42c7-8f93-2cf7a313d22d",
+              "name": "Automações",
+              "type": "drop_down",
+              "type_config": {
+                "sorting": "manual",
+                "options": [
+                  {
+                    "id": "310977e6-9d21-48d6-ba20-37258a360246",
+                    "name": "Ganho",
+                    "color": "#fff",
+                    "orderindex": 0
+                  },
+                  {
+                    "id": "b56ff4d6-eb48-42f5-b113-8384e5c2e3a0",
+                    "name": "Perda",
+                    "color": "#fff",
+                    "orderindex": 1
+                  },
+                  {
+                    "id": "98ea8f40-0989-4fc8-9aab-2122f0e59d91",
+                    "name": "Ganho Recusado",
+                    "color": "#e5484d",
+                    "orderindex": 2
+                  },
+                  {
+                    "id": "90a90c44-5bdb-414d-a3d5-fae43c5cfe46",
+                    "name": "Ganho Aprovado",
+                    "color": "#30a46c",
+                    "orderindex": 3
+                  },
+                  {
+                    "id": "efaced45-d55f-454e-bcab-04ede697075a",
+                    "name": "Perda Recusada",
+                    "color": "#e5484d",
+                    "orderindex": 4
+                  },
+                  {
+                    "id": "9538ca8f-c96b-40c7-8d35-2c75afff27fc",
+                    "name": "Perda Aprovada",
+                    "color": "#30a46c",
+                    "orderindex": 5
+                  }
+                ]
+              },
+              "date_created": "1771702116038",
+              "hide_from_guests": false,
+              "value": 0,
+              "value_richtext": "",
+              "required": false
+            },
+            {
+              "id": "9523971a-ba09-4465-8b9c-69d57c05a188",
+              "name": "Contexto",
+              "type": "text",
+              "type_config": {},
+              "date_created": "1770142658502",
+              "hide_from_guests": false,
+              "value": "O que mais te incomoda no seu rosto?: Boca\nQuais procedimento estético você já fez antes?: Nenhum\nQuantos anos você tem?: 28\nQual bairro você mora?: Florianópolis",
+              "value_richtext": "{\"ops\":[{\"insert\":\"O que mais te incomoda no seu rosto?: Boca\\nQuais procedimento estético você já fez antes?: Nenhum\\nQuantos anos você tem?: 28\\nQual bairro você mora?: Florianópolis\"}]}",
+              "required": false
+            },
+            {
+              "id": "01ace05a-2aed-4a8f-a606-1baf7bd732b1",
+              "name": "Link Whatsapp",
+              "type": "url",
+              "type_config": {},
+              "date_created": "1770137384205",
+              "hide_from_guests": false,
+              "value": "https://wa.me/5591991494985",
+              "value_richtext": null,
+              "required": false
+            }
+          ],
+          "dependencies": [],
+          "linked_tasks": [],
+          "locations": [],
+          "team_id": "90132992412",
+          "url": "https://app.clickup.com/t/86af2b16q",
+          "sharing": {
+            "public": false,
+            "public_share_expires_on": null,
+            "public_fields": [
+              "assignees",
+              "priority",
+              "due_date",
+              "content",
+              "comments",
+              "attachments",
+              "customFields",
+              "subtasks",
+              "tags",
+              "checklists",
+              "coverimage"
+            ],
+            "token": null,
+            "seo_optimized": false
+          },
+          "permission_level": "create",
+          "list": {
+            "id": "901324875324",
+            "name": "Hunter",
+            "access": true
+          },
+          "project": {
+            "id": "901316722258",
+            "name": "Área de Vendas",
+            "hidden": false,
+            "access": true
+          },
+          "folder": {
+            "id": "901316722258",
+            "name": "Área de Vendas",
+            "hidden": false,
+            "access": true
+          },
+          "space": {
+            "id": "901313001557"
+          },
+          "attachments": []
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "OrganizarClickUp": [
+      {
+        "json": {
+          "task_id": "86af2b16q",
+          "name": "Eloisa",
+          "status": "entrada do lead",
+          "7022191f-ae0b-40dd-9966-4fb6705e57a0": {
+            "id": "7022191f-ae0b-40dd-9966-4fb6705e57a0",
+            "name": "Canal",
+            "value": {
+              "id": "e29e476d-8cc3-4bdc-9153-98623c40fc27",
+              "name": "Anti-Curioso",
+              "value": 0
+            },
+            "options": {
+              "e29e476d-8cc3-4bdc-9153-98623c40fc27": {
+                "id": "e29e476d-8cc3-4bdc-9153-98623c40fc27",
+                "name": "Anti-Curioso"
+              },
+              "f379a4fc-6ce6-467f-90c4-6b65e40a0332": {
+                "id": "f379a4fc-6ce6-467f-90c4-6b65e40a0332",
+                "name": "Outro"
+              }
+            }
+          },
+          "4ff67b8d-1707-48f3-aea2-b32fcb99b923": {
+            "id": "4ff67b8d-1707-48f3-aea2-b32fcb99b923",
+            "name": "Cliente",
+            "value": {
+              "id": "afaaf18d-a22a-4c3f-a7e6-7837dbb138c8",
+              "name": "Dra. Renata Rezende",
+              "value": 2
+            },
+            "options": {
+              "849f2c9c-6f1c-4dbb-9b27-cda06b953ff2": {
+                "id": "849f2c9c-6f1c-4dbb-9b27-cda06b953ff2",
+                "name": "Dra. Patrícia Almeida"
+              },
+              "9125fb47-5ae5-49b4-ad8c-cde429214d21": {
+                "id": "9125fb47-5ae5-49b4-ad8c-cde429214d21",
+                "name": "Dra. Adriele Machado"
+              },
+              "afaaf18d-a22a-4c3f-a7e6-7837dbb138c8": {
+                "id": "afaaf18d-a22a-4c3f-a7e6-7837dbb138c8",
+                "name": "Dra. Renata Rezende"
+              },
+              "41c9b5c3-5e47-4311-b741-53e056326757": {
+                "id": "41c9b5c3-5e47-4311-b741-53e056326757",
+                "name": "Dra. Mirian de Paula"
+              },
+              "96cfd026-d00e-4d9d-a957-6016454e9fb4": {
+                "id": "96cfd026-d00e-4d9d-a957-6016454e9fb4",
+                "name": "Dra. Jacinta Mesquita"
+              }
+            }
+          },
+          "e87f9cee-8d4e-440b-9d97-c362aadd7419": {
+            "id": "e87f9cee-8d4e-440b-9d97-c362aadd7419",
+            "name": "Cliente",
+            "value": [
+              {
+                "id": "86afe5d2j",
+                "name": "Dra. Renata Rezende",
+                "status": "cliente ativo",
+                "color": "#30a46c",
+                "custom_type": null,
+                "team_id": "90132992412",
+                "deleted": false,
+                "url": "https://app.clickup.com/t/86afe5d2j",
+                "access": true
+              }
+            ]
+          },
+          "3e0b8666-0ced-4eb8-8174-fb86ddf251a2": {
+            "id": "3e0b8666-0ced-4eb8-8174-fb86ddf251a2",
+            "name": "Closer",
+            "value": ""
+          },
+          "e2a18d27-8adc-4112-b9d4-8c3685b78a23": {
+            "id": "e2a18d27-8adc-4112-b9d4-8c3685b78a23",
+            "name": "Clínica",
+            "value": "Dra. Renata Rezende"
+          },
+          "0d2ab8ce-6df3-41a3-bfc9-372eff7a7d09": {
+            "id": "0d2ab8ce-6df3-41a3-bfc9-372eff7a7d09",
+            "name": "Data da Consulta",
+            "value": ""
+          },
+          "a31ac8f3-4792-4126-ad14-207c5634b4b0": {
+            "id": "a31ac8f3-4792-4126-ad14-207c5634b4b0",
+            "name": "Data de Entrada",
+            "value": "1770102000000"
+          },
+          "fa78bdad-9017-4424-8534-cb8eec2ae05a": {
+            "id": "fa78bdad-9017-4424-8534-cb8eec2ae05a",
+            "name": "Faturamento",
+            "value": "",
+            "options": {
+              "0c72a4d7-bc60-459c-8152-bf31045f670b": {
+                "id": "0c72a4d7-bc60-459c-8152-bf31045f670b",
+                "name": "Mais de 100K"
+              },
+              "cc211748-a786-46b5-a032-56251db0416f": {
+                "id": "cc211748-a786-46b5-a032-56251db0416f",
+                "name": "De 50K a 100K"
+              },
+              "38b30495-46d1-4bd9-9336-f95d969696bf": {
+                "id": "38b30495-46d1-4bd9-9336-f95d969696bf",
+                "name": "De 40K a 50K"
+              },
+              "2a6e4c3e-aadc-4366-b588-45eca40222d9": {
+                "id": "2a6e4c3e-aadc-4366-b588-45eca40222d9",
+                "name": "De 30K a 40K"
+              },
+              "cd95d3d0-5d7e-4f4b-8200-4c0bb0648a0b": {
+                "id": "cd95d3d0-5d7e-4f4b-8200-4c0bb0648a0b",
+                "name": "De 20K a 30K"
+              },
+              "3699a010-dfc4-41d3-b3a8-7f8cb52b1da9": {
+                "id": "3699a010-dfc4-41d3-b3a8-7f8cb52b1da9",
+                "name": "De 15K a 20K"
+              },
+              "71ce5ab3-b85e-4604-81c3-71e84d333de7": {
+                "id": "71ce5ab3-b85e-4604-81c3-71e84d333de7",
+                "name": "De 10K a 15K"
+              },
+              "84cc344b-1c59-46e1-917c-b64dd4ca8944": {
+                "id": "84cc344b-1c59-46e1-917c-b64dd4ca8944",
+                "name": "De 5K a 10K"
+              },
+              "d88fef3c-243c-413c-923b-907e6038a1e7": {
+                "id": "d88fef3c-243c-413c-923b-907e6038a1e7",
+                "name": "Até 5K"
+              }
+            }
+          },
+          "10160bdf-5dae-4f9e-90f8-7f29407567d2": {
+            "id": "10160bdf-5dae-4f9e-90f8-7f29407567d2",
+            "name": "Meeting",
+            "value": ""
+          },
+          "fc647506-3cb6-42cf-802c-49944cd6f41f": {
+            "id": "fc647506-3cb6-42cf-802c-49944cd6f41f",
+            "name": "Mensagem Automática",
+            "value": ""
+          },
+          "72f55f36-f42c-4b3b-ba5a-2218ff02ff6a": {
+            "id": "72f55f36-f42c-4b3b-ba5a-2218ff02ff6a",
+            "name": "Oportunidade",
+            "value": ""
+          },
+          "0a6c283e-ebdd-41c6-ae53-b65b85879d9d": {
+            "id": "0a6c283e-ebdd-41c6-ae53-b65b85879d9d",
+            "name": "Produtos Comprados",
+            "value": "",
+            "options": {
+              "3b9b6249-1a90-4dfe-a120-6eadecdec537": {
+                "id": "3b9b6249-1a90-4dfe-a120-6eadecdec537",
+                "name": "Octus Pro"
+              },
+              "31f96442-4d56-467b-982f-8e0c0f70d65d": {
+                "id": "31f96442-4d56-467b-982f-8e0c0f70d65d",
+                "name": "Octus Light"
+              },
+              "f2c7f4bb-a668-41e9-a652-cfd4d5603b3f": {
+                "id": "f2c7f4bb-a668-41e9-a652-cfd4d5603b3f",
+                "name": "ClickUp Automatizado"
+              },
+              "2b7a07c8-fde4-4951-b4bb-9326c4b22f0b": {
+                "id": "2b7a07c8-fde4-4951-b4bb-9326c4b22f0b",
+                "name": "Club"
+              },
+              "22c2c41c-4f57-4ed7-8cbf-8b0b1e34ab93": {
+                "id": "22c2c41c-4f57-4ed7-8cbf-8b0b1e34ab93",
+                "name": "Templates 3.0 – 2"
+              },
+              "99cb6fe8-a0b2-4cdb-a840-a3d00a78f0c8": {
+                "id": "99cb6fe8-a0b2-4cdb-a840-a3d00a78f0c8",
+                "name": "Templates de ClickUp 3.0 – Advanced"
+              },
+              "43c76e0a-ae84-4d53-bcbd-78dc3db9bb73": {
+                "id": "43c76e0a-ae84-4d53-bcbd-78dc3db9bb73",
+                "name": "Comercial Automatizado"
+              }
+            }
+          },
+          "2404a06e-0b8e-4bfe-8a33-bb1a6f3a0935": {
+            "id": "2404a06e-0b8e-4bfe-8a33-bb1a6f3a0935",
+            "name": "Produtos Ofertados",
+            "value": "",
+            "options": {
+              "74545168-fe24-4c27-b838-6866f593bedb": {
+                "id": "74545168-fe24-4c27-b838-6866f593bedb",
+                "name": "Gestão Inteligente • Club"
+              },
+              "f9e18eda-2894-40b1-bcf1-1a4176f7b2df": {
+                "id": "f9e18eda-2894-40b1-bcf1-1a4176f7b2df",
+                "name": "Templates de ClickUp 3.0 – Light"
+              },
+              "0a06730d-52f4-44b4-9a8c-43381d34b828": {
+                "id": "0a06730d-52f4-44b4-9a8c-43381d34b828",
+                "name": "Templates de ClickUp 3.0 – PRO"
+              },
+              "cf10a432-f9ca-4cec-87d6-8a2a9ae4b029": {
+                "id": "cf10a432-f9ca-4cec-87d6-8a2a9ae4b029",
+                "name": "Templates de ClickUp 3.0 – Advanced"
+              },
+              "bf1186e7-3a6f-4055-ac3f-c480cd1a9b2d": {
+                "id": "bf1186e7-3a6f-4055-ac3f-c480cd1a9b2d",
+                "name": "Mentoria Black"
+              },
+              "7b6911e9-6913-47f8-8f84-6d84c60e520b": {
+                "id": "7b6911e9-6913-47f8-8f84-6d84c60e520b",
+                "name": "Comercial Automatizado"
+              },
+              "a24cb8f6-a6d0-412b-be68-386f165dcc7e": {
+                "id": "a24cb8f6-a6d0-412b-be68-386f165dcc7e",
+                "name": "Templates 3.0"
+              },
+              "cba4c6d1-5b1a-4edd-9bff-aa418369a7ac": {
+                "id": "cba4c6d1-5b1a-4edd-9bff-aa418369a7ac",
+                "name": "ClickUp Pro"
+              },
+              "213b52f1-8567-46ed-8e8c-95802f4efd8f": {
+                "id": "213b52f1-8567-46ed-8e8c-95802f4efd8f",
+                "name": "Example product"
+              },
+              "e6438fa0-266e-454c-b902-42bf2dbc3acc": {
+                "id": "e6438fa0-266e-454c-b902-42bf2dbc3acc",
+                "name": "Código da Escala"
+              },
+              "768fbf86-b381-42e3-99fe-79a50f9dc2dd": {
+                "id": "768fbf86-b381-42e3-99fe-79a50f9dc2dd",
+                "name": "Octus Pro"
+              },
+              "fb3b5732-399c-4ebb-9152-0d24b853ae6b": {
+                "id": "fb3b5732-399c-4ebb-9152-0d24b853ae6b",
+                "name": "Implementação de Processo Comercial Automatizado"
+              }
+            }
+          },
+          "3eb4520a-4115-4edb-9024-b730ded72f1c": {
+            "id": "3eb4520a-4115-4edb-9024-b730ded72f1c",
+            "name": "Protocolo",
+            "value": ""
+          },
+          "0a17aa7f-3d24-4eec-a678-321bddbe73df": {
+            "id": "0a17aa7f-3d24-4eec-a678-321bddbe73df",
+            "name": "Status",
+            "value": "",
+            "options": {
+              "e206d2d4-930f-4f5e-808b-db241961ebf9": {
+                "id": "e206d2d4-930f-4f5e-808b-db241961ebf9",
+                "name": "Ativo"
+              },
+              "07d5f17e-3873-4e4c-9e7f-94999ff7b157": {
+                "id": "07d5f17e-3873-4e4c-9e7f-94999ff7b157",
+                "name": "Inativo"
+              }
+            }
+          },
+          "a52a8a5a-17dd-4fd4-a037-4b59b31bd642": {
+            "id": "a52a8a5a-17dd-4fd4-a037-4b59b31bd642",
+            "name": "Telefone",
+            "value": "+55 91 99149 4985"
+          },
+          "16920421-85b5-47a6-9f25-ddeaef905257": {
+            "id": "16920421-85b5-47a6-9f25-ddeaef905257",
+            "name": "Valor do Fechamento",
+            "value": "10"
+          },
+          "c204b6bf-e52c-4e58-b5c6-c2f21f01c5cb": {
+            "id": "c204b6bf-e52c-4e58-b5c6-c2f21f01c5cb",
+            "name": "WhatsApp",
+            "value": ""
+          },
+          "142497c4-b30a-4546-9e9b-4559ad7de98c": {
+            "id": "142497c4-b30a-4546-9e9b-4559ad7de98c",
+            "name": "Último Contato",
+            "value": ""
+          },
+          "79a04869-f666-42c7-8f93-2cf7a313d22d": {
+            "id": "79a04869-f666-42c7-8f93-2cf7a313d22d",
+            "name": "Automações",
+            "value": {
+              "id": "310977e6-9d21-48d6-ba20-37258a360246",
+              "name": "Ganho",
+              "value": 0
+            },
+            "options": {
+              "310977e6-9d21-48d6-ba20-37258a360246": {
+                "id": "310977e6-9d21-48d6-ba20-37258a360246",
+                "name": "Ganho"
+              },
+              "b56ff4d6-eb48-42f5-b113-8384e5c2e3a0": {
+                "id": "b56ff4d6-eb48-42f5-b113-8384e5c2e3a0",
+                "name": "Perda"
+              },
+              "98ea8f40-0989-4fc8-9aab-2122f0e59d91": {
+                "id": "98ea8f40-0989-4fc8-9aab-2122f0e59d91",
+                "name": "Ganho Recusado"
+              },
+              "90a90c44-5bdb-414d-a3d5-fae43c5cfe46": {
+                "id": "90a90c44-5bdb-414d-a3d5-fae43c5cfe46",
+                "name": "Ganho Aprovado"
+              },
+              "efaced45-d55f-454e-bcab-04ede697075a": {
+                "id": "efaced45-d55f-454e-bcab-04ede697075a",
+                "name": "Perda Recusada"
+              },
+              "9538ca8f-c96b-40c7-8d35-2c75afff27fc": {
+                "id": "9538ca8f-c96b-40c7-8d35-2c75afff27fc",
+                "name": "Perda Aprovada"
+              }
+            }
+          },
+          "9523971a-ba09-4465-8b9c-69d57c05a188": {
+            "id": "9523971a-ba09-4465-8b9c-69d57c05a188",
+            "name": "Contexto",
+            "value": "O que mais te incomoda no seu rosto?: Boca\nQuais procedimento estético você já fez antes?: Nenhum\nQuantos anos você tem?: 28\nQual bairro você mora?: Florianópolis"
+          },
+          "01ace05a-2aed-4a8f-a606-1baf7bd732b1": {
+            "id": "01ace05a-2aed-4a8f-a606-1baf7bd732b1",
+            "name": "Link Whatsapp",
+            "value": "https://wa.me/5591991494985"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Code4": [
+      {
+        "json": {
+          "task_id": "86af2b16q",
+          "name": "Eloisa",
+          "status": "entrada do lead",
+          "7022191f-ae0b-40dd-9966-4fb6705e57a0": {
+            "id": "7022191f-ae0b-40dd-9966-4fb6705e57a0",
+            "name": "Canal",
+            "value": {
+              "id": "e29e476d-8cc3-4bdc-9153-98623c40fc27",
+              "name": "Anti-Curioso",
+              "value": 0
+            },
+            "options": {
+              "e29e476d-8cc3-4bdc-9153-98623c40fc27": {
+                "id": "e29e476d-8cc3-4bdc-9153-98623c40fc27",
+                "name": "Anti-Curioso"
+              },
+              "f379a4fc-6ce6-467f-90c4-6b65e40a0332": {
+                "id": "f379a4fc-6ce6-467f-90c4-6b65e40a0332",
+                "name": "Outro"
+              }
+            }
+          },
+          "4ff67b8d-1707-48f3-aea2-b32fcb99b923": {
+            "id": "4ff67b8d-1707-48f3-aea2-b32fcb99b923",
+            "name": "Cliente",
+            "value": {
+              "id": "afaaf18d-a22a-4c3f-a7e6-7837dbb138c8",
+              "name": "Dra. Renata Rezende",
+              "value": 2
+            },
+            "options": {
+              "849f2c9c-6f1c-4dbb-9b27-cda06b953ff2": {
+                "id": "849f2c9c-6f1c-4dbb-9b27-cda06b953ff2",
+                "name": "Dra. Patrícia Almeida"
+              },
+              "9125fb47-5ae5-49b4-ad8c-cde429214d21": {
+                "id": "9125fb47-5ae5-49b4-ad8c-cde429214d21",
+                "name": "Dra. Adriele Machado"
+              },
+              "afaaf18d-a22a-4c3f-a7e6-7837dbb138c8": {
+                "id": "afaaf18d-a22a-4c3f-a7e6-7837dbb138c8",
+                "name": "Dra. Renata Rezende"
+              },
+              "41c9b5c3-5e47-4311-b741-53e056326757": {
+                "id": "41c9b5c3-5e47-4311-b741-53e056326757",
+                "name": "Dra. Mirian de Paula"
+              },
+              "96cfd026-d00e-4d9d-a957-6016454e9fb4": {
+                "id": "96cfd026-d00e-4d9d-a957-6016454e9fb4",
+                "name": "Dra. Jacinta Mesquita"
+              }
+            }
+          },
+          "e87f9cee-8d4e-440b-9d97-c362aadd7419": {
+            "id": "e87f9cee-8d4e-440b-9d97-c362aadd7419",
+            "name": "Cliente",
+            "value": [
+              {
+                "id": "86afe5d2j",
+                "name": "Dra. Renata Rezende",
+                "status": "cliente ativo",
+                "color": "#30a46c",
+                "custom_type": null,
+                "team_id": "90132992412",
+                "deleted": false,
+                "url": "https://app.clickup.com/t/86afe5d2j",
+                "access": true
+              }
+            ]
+          },
+          "3e0b8666-0ced-4eb8-8174-fb86ddf251a2": {
+            "id": "3e0b8666-0ced-4eb8-8174-fb86ddf251a2",
+            "name": "Closer",
+            "value": ""
+          },
+          "e2a18d27-8adc-4112-b9d4-8c3685b78a23": {
+            "id": "e2a18d27-8adc-4112-b9d4-8c3685b78a23",
+            "name": "Clínica",
+            "value": "Dra. Renata Rezende"
+          },
+          "0d2ab8ce-6df3-41a3-bfc9-372eff7a7d09": {
+            "id": "0d2ab8ce-6df3-41a3-bfc9-372eff7a7d09",
+            "name": "Data da Consulta",
+            "value": ""
+          },
+          "a31ac8f3-4792-4126-ad14-207c5634b4b0": {
+            "id": "a31ac8f3-4792-4126-ad14-207c5634b4b0",
+            "name": "Data de Entrada",
+            "value": "1770102000000"
+          },
+          "fa78bdad-9017-4424-8534-cb8eec2ae05a": {
+            "id": "fa78bdad-9017-4424-8534-cb8eec2ae05a",
+            "name": "Faturamento",
+            "value": "",
+            "options": {
+              "0c72a4d7-bc60-459c-8152-bf31045f670b": {
+                "id": "0c72a4d7-bc60-459c-8152-bf31045f670b",
+                "name": "Mais de 100K"
+              },
+              "cc211748-a786-46b5-a032-56251db0416f": {
+                "id": "cc211748-a786-46b5-a032-56251db0416f",
+                "name": "De 50K a 100K"
+              },
+              "38b30495-46d1-4bd9-9336-f95d969696bf": {
+                "id": "38b30495-46d1-4bd9-9336-f95d969696bf",
+                "name": "De 40K a 50K"
+              },
+              "2a6e4c3e-aadc-4366-b588-45eca40222d9": {
+                "id": "2a6e4c3e-aadc-4366-b588-45eca40222d9",
+                "name": "De 30K a 40K"
+              },
+              "cd95d3d0-5d7e-4f4b-8200-4c0bb0648a0b": {
+                "id": "cd95d3d0-5d7e-4f4b-8200-4c0bb0648a0b",
+                "name": "De 20K a 30K"
+              },
+              "3699a010-dfc4-41d3-b3a8-7f8cb52b1da9": {
+                "id": "3699a010-dfc4-41d3-b3a8-7f8cb52b1da9",
+                "name": "De 15K a 20K"
+              },
+              "71ce5ab3-b85e-4604-81c3-71e84d333de7": {
+                "id": "71ce5ab3-b85e-4604-81c3-71e84d333de7",
+                "name": "De 10K a 15K"
+              },
+              "84cc344b-1c59-46e1-917c-b64dd4ca8944": {
+                "id": "84cc344b-1c59-46e1-917c-b64dd4ca8944",
+                "name": "De 5K a 10K"
+              },
+              "d88fef3c-243c-413c-923b-907e6038a1e7": {
+                "id": "d88fef3c-243c-413c-923b-907e6038a1e7",
+                "name": "Até 5K"
+              }
+            }
+          },
+          "10160bdf-5dae-4f9e-90f8-7f29407567d2": {
+            "id": "10160bdf-5dae-4f9e-90f8-7f29407567d2",
+            "name": "Meeting",
+            "value": ""
+          },
+          "fc647506-3cb6-42cf-802c-49944cd6f41f": {
+            "id": "fc647506-3cb6-42cf-802c-49944cd6f41f",
+            "name": "Mensagem Automática",
+            "value": ""
+          },
+          "72f55f36-f42c-4b3b-ba5a-2218ff02ff6a": {
+            "id": "72f55f36-f42c-4b3b-ba5a-2218ff02ff6a",
+            "name": "Oportunidade",
+            "value": ""
+          },
+          "0a6c283e-ebdd-41c6-ae53-b65b85879d9d": {
+            "id": "0a6c283e-ebdd-41c6-ae53-b65b85879d9d",
+            "name": "Produtos Comprados",
+            "value": "",
+            "options": {
+              "3b9b6249-1a90-4dfe-a120-6eadecdec537": {
+                "id": "3b9b6249-1a90-4dfe-a120-6eadecdec537",
+                "name": "Octus Pro"
+              },
+              "31f96442-4d56-467b-982f-8e0c0f70d65d": {
+                "id": "31f96442-4d56-467b-982f-8e0c0f70d65d",
+                "name": "Octus Light"
+              },
+              "f2c7f4bb-a668-41e9-a652-cfd4d5603b3f": {
+                "id": "f2c7f4bb-a668-41e9-a652-cfd4d5603b3f",
+                "name": "ClickUp Automatizado"
+              },
+              "2b7a07c8-fde4-4951-b4bb-9326c4b22f0b": {
+                "id": "2b7a07c8-fde4-4951-b4bb-9326c4b22f0b",
+                "name": "Club"
+              },
+              "22c2c41c-4f57-4ed7-8cbf-8b0b1e34ab93": {
+                "id": "22c2c41c-4f57-4ed7-8cbf-8b0b1e34ab93",
+                "name": "Templates 3.0 – 2"
+              },
+              "99cb6fe8-a0b2-4cdb-a840-a3d00a78f0c8": {
+                "id": "99cb6fe8-a0b2-4cdb-a840-a3d00a78f0c8",
+                "name": "Templates de ClickUp 3.0 – Advanced"
+              },
+              "43c76e0a-ae84-4d53-bcbd-78dc3db9bb73": {
+                "id": "43c76e0a-ae84-4d53-bcbd-78dc3db9bb73",
+                "name": "Comercial Automatizado"
+              }
+            }
+          },
+          "2404a06e-0b8e-4bfe-8a33-bb1a6f3a0935": {
+            "id": "2404a06e-0b8e-4bfe-8a33-bb1a6f3a0935",
+            "name": "Produtos Ofertados",
+            "value": "",
+            "options": {
+              "74545168-fe24-4c27-b838-6866f593bedb": {
+                "id": "74545168-fe24-4c27-b838-6866f593bedb",
+                "name": "Gestão Inteligente • Club"
+              },
+              "f9e18eda-2894-40b1-bcf1-1a4176f7b2df": {
+                "id": "f9e18eda-2894-40b1-bcf1-1a4176f7b2df",
+                "name": "Templates de ClickUp 3.0 – Light"
+              },
+              "0a06730d-52f4-44b4-9a8c-43381d34b828": {
+                "id": "0a06730d-52f4-44b4-9a8c-43381d34b828",
+                "name": "Templates de ClickUp 3.0 – PRO"
+              },
+              "cf10a432-f9ca-4cec-87d6-8a2a9ae4b029": {
+                "id": "cf10a432-f9ca-4cec-87d6-8a2a9ae4b029",
+                "name": "Templates de ClickUp 3.0 – Advanced"
+              },
+              "bf1186e7-3a6f-4055-ac3f-c480cd1a9b2d": {
+                "id": "bf1186e7-3a6f-4055-ac3f-c480cd1a9b2d",
+                "name": "Mentoria Black"
+              },
+              "7b6911e9-6913-47f8-8f84-6d84c60e520b": {
+                "id": "7b6911e9-6913-47f8-8f84-6d84c60e520b",
+                "name": "Comercial Automatizado"
+              },
+              "a24cb8f6-a6d0-412b-be68-386f165dcc7e": {
+                "id": "a24cb8f6-a6d0-412b-be68-386f165dcc7e",
+                "name": "Templates 3.0"
+              },
+              "cba4c6d1-5b1a-4edd-9bff-aa418369a7ac": {
+                "id": "cba4c6d1-5b1a-4edd-9bff-aa418369a7ac",
+                "name": "ClickUp Pro"
+              },
+              "213b52f1-8567-46ed-8e8c-95802f4efd8f": {
+                "id": "213b52f1-8567-46ed-8e8c-95802f4efd8f",
+                "name": "Example product"
+              },
+              "e6438fa0-266e-454c-b902-42bf2dbc3acc": {
+                "id": "e6438fa0-266e-454c-b902-42bf2dbc3acc",
+                "name": "Código da Escala"
+              },
+              "768fbf86-b381-42e3-99fe-79a50f9dc2dd": {
+                "id": "768fbf86-b381-42e3-99fe-79a50f9dc2dd",
+                "name": "Octus Pro"
+              },
+              "fb3b5732-399c-4ebb-9152-0d24b853ae6b": {
+                "id": "fb3b5732-399c-4ebb-9152-0d24b853ae6b",
+                "name": "Implementação de Processo Comercial Automatizado"
+              }
+            }
+          },
+          "3eb4520a-4115-4edb-9024-b730ded72f1c": {
+            "id": "3eb4520a-4115-4edb-9024-b730ded72f1c",
+            "name": "Protocolo",
+            "value": ""
+          },
+          "0a17aa7f-3d24-4eec-a678-321bddbe73df": {
+            "id": "0a17aa7f-3d24-4eec-a678-321bddbe73df",
+            "name": "Status",
+            "value": "",
+            "options": {
+              "e206d2d4-930f-4f5e-808b-db241961ebf9": {
+                "id": "e206d2d4-930f-4f5e-808b-db241961ebf9",
+                "name": "Ativo"
+              },
+              "07d5f17e-3873-4e4c-9e7f-94999ff7b157": {
+                "id": "07d5f17e-3873-4e4c-9e7f-94999ff7b157",
+                "name": "Inativo"
+              }
+            }
+          },
+          "a52a8a5a-17dd-4fd4-a037-4b59b31bd642": {
+            "id": "a52a8a5a-17dd-4fd4-a037-4b59b31bd642",
+            "name": "Telefone",
+            "value": "+55 91 99149 4985"
+          },
+          "16920421-85b5-47a6-9f25-ddeaef905257": {
+            "id": "16920421-85b5-47a6-9f25-ddeaef905257",
+            "name": "Valor do Fechamento",
+            "value": "10"
+          },
+          "c204b6bf-e52c-4e58-b5c6-c2f21f01c5cb": {
+            "id": "c204b6bf-e52c-4e58-b5c6-c2f21f01c5cb",
+            "name": "WhatsApp",
+            "value": ""
+          },
+          "142497c4-b30a-4546-9e9b-4559ad7de98c": {
+            "id": "142497c4-b30a-4546-9e9b-4559ad7de98c",
+            "name": "Último Contato",
+            "value": ""
+          },
+          "79a04869-f666-42c7-8f93-2cf7a313d22d": {
+            "id": "79a04869-f666-42c7-8f93-2cf7a313d22d",
+            "name": "Automações",
+            "value": {
+              "id": "310977e6-9d21-48d6-ba20-37258a360246",
+              "name": "Ganho",
+              "value": 0
+            },
+            "options": {
+              "310977e6-9d21-48d6-ba20-37258a360246": {
+                "id": "310977e6-9d21-48d6-ba20-37258a360246",
+                "name": "Ganho"
+              },
+              "b56ff4d6-eb48-42f5-b113-8384e5c2e3a0": {
+                "id": "b56ff4d6-eb48-42f5-b113-8384e5c2e3a0",
+                "name": "Perda"
+              },
+              "98ea8f40-0989-4fc8-9aab-2122f0e59d91": {
+                "id": "98ea8f40-0989-4fc8-9aab-2122f0e59d91",
+                "name": "Ganho Recusado"
+              },
+              "90a90c44-5bdb-414d-a3d5-fae43c5cfe46": {
+                "id": "90a90c44-5bdb-414d-a3d5-fae43c5cfe46",
+                "name": "Ganho Aprovado"
+              },
+              "efaced45-d55f-454e-bcab-04ede697075a": {
+                "id": "efaced45-d55f-454e-bcab-04ede697075a",
+                "name": "Perda Recusada"
+              },
+              "9538ca8f-c96b-40c7-8d35-2c75afff27fc": {
+                "id": "9538ca8f-c96b-40c7-8d35-2c75afff27fc",
+                "name": "Perda Aprovada"
+              }
+            }
+          },
+          "9523971a-ba09-4465-8b9c-69d57c05a188": {
+            "id": "9523971a-ba09-4465-8b9c-69d57c05a188",
+            "name": "Contexto",
+            "value": "O que mais te incomoda no seu rosto?: Boca\nQuais procedimento estético você já fez antes?: Nenhum\nQuantos anos você tem?: 28\nQual bairro você mora?: Florianópolis"
+          },
+          "01ace05a-2aed-4a8f-a606-1baf7bd732b1": {
+            "id": "01ace05a-2aed-4a8f-a606-1baf7bd732b1",
+            "name": "Link Whatsapp",
+            "value": "https://wa.me/5591991494985"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Update a task": [
+      {
+        "json": {
+          "id": "86af2b16q",
+          "custom_id": null,
+          "custom_item_id": 0,
+          "name": "Eloisa",
+          "text_content": "",
+          "description": "",
+          "status": {
+            "id": "sc901324875324_YjPsyzEH",
+            "status": "negócio fechado",
+            "color": "#008844",
+            "orderindex": 8,
+            "type": "closed"
+          },
+          "orderindex": "120490416.00000000000000000000000000000000",
+          "date_created": "1770157747775",
+          "date_updated": "1771731893845",
+          "date_closed": "1771731893845",
+          "date_done": "1771731893845",
+          "archived": false,
+          "creator": {
+            "id": 278505381,
+            "username": "Ferramentas Harmoniza",
+            "color": "#595d66",
+            "email": "ferramentas@harmoniza.pro",
+            "profilePicture": null
+          },
+          "assignees": [
+            {
+              "id": 112100105,
+              "username": "Jéssica de freitas fernandes",
+              "color": null,
+              "initials": "JF",
+              "email": "jessica.de.freitas@hotmail.com",
+              "profilePicture": null
+            }
+          ],
+          "group_assignees": [],
+          "watchers": [
+            {
+              "id": 112100105,
+              "username": "Jéssica de freitas fernandes",
+              "color": null,
+              "initials": "JF",
+              "email": "jessica.de.freitas@hotmail.com",
+              "profilePicture": null
+            },
+            {
+              "id": 278505381,
+              "username": "Ferramentas Harmoniza",
+              "color": "#595d66",
+              "initials": "FH",
+              "email": "ferramentas@harmoniza.pro",
+              "profilePicture": null
+            }
+          ],
+          "checklists": [],
+          "tags": [],
+          "parent": null,
+          "top_level_parent": null,
+          "priority": null,
+          "due_date": null,
+          "start_date": null,
+          "points": null,
+          "time_estimate": null,
+          "time_spent": 0,
+          "custom_fields": [
+            {
+              "id": "7022191f-ae0b-40dd-9966-4fb6705e57a0",
+              "name": "Canal",
+              "type": "drop_down",
+              "type_config": {
+                "sorting": "manual",
+                "new_drop_down": true,
+                "options": [
+                  {
+                    "id": "e29e476d-8cc3-4bdc-9153-98623c40fc27",
+                    "name": "Anti-Curioso",
+                    "color": "#FF4081",
+                    "orderindex": 0
+                  },
+                  {
+                    "id": "f379a4fc-6ce6-467f-90c4-6b65e40a0332",
+                    "name": "Outro",
+                    "color": "#7C4DFF",
+                    "orderindex": 1
+                  }
+                ]
+              },
+              "date_created": "1770142593424",
+              "hide_from_guests": false,
+              "value": 0,
+              "value_richtext": null,
+              "required": false
+            },
+            {
+              "id": "4ff67b8d-1707-48f3-aea2-b32fcb99b923",
+              "name": "Cliente",
+              "type": "drop_down",
+              "type_config": {
+                "sorting": "manual",
+                "options": [
+                  {
+                    "id": "849f2c9c-6f1c-4dbb-9b27-cda06b953ff2",
+                    "name": "Dra. Patrícia Almeida",
+                    "color": "#fff",
+                    "orderindex": 0
+                  },
+                  {
+                    "id": "9125fb47-5ae5-49b4-ad8c-cde429214d21",
+                    "name": "Dra. Adriele Machado",
+                    "color": null,
+                    "orderindex": 1
+                  },
+                  {
+                    "id": "afaaf18d-a22a-4c3f-a7e6-7837dbb138c8",
+                    "name": "Dra. Renata Rezende",
+                    "color": null,
+                    "orderindex": 2
+                  },
+                  {
+                    "id": "41c9b5c3-5e47-4311-b741-53e056326757",
+                    "name": "Dra. Mirian de Paula",
+                    "color": null,
+                    "orderindex": 3
+                  },
+                  {
+                    "id": "96cfd026-d00e-4d9d-a957-6016454e9fb4",
+                    "name": "Dra. Jacinta Mesquita",
+                    "color": null,
+                    "orderindex": 4
+                  }
+                ]
+              },
+              "date_created": "1770751553546",
+              "hide_from_guests": false,
+              "value": 2,
+              "value_richtext": null,
+              "required": false
+            },
+            {
+              "id": "e87f9cee-8d4e-440b-9d97-c362aadd7419",
+              "name": "Cliente",
+              "type": "list_relationship",
+              "type_config": {
+                "fields": [],
+                "subcategory_id": "901325472193",
+                "linked_subcategory_access": true,
+                "subcategory_inverted_name": "Gestão de Clientes"
+              },
+              "date_created": "1771700797871",
+              "hide_from_guests": false,
+              "value": [
+                {
+                  "id": "86afe5d2j",
+                  "name": "Dra. Renata Rezende",
+                  "status": "cliente ativo",
+                  "color": "#30a46c",
+                  "custom_type": null,
+                  "team_id": "90132992412",
+                  "deleted": false,
+                  "url": "https://app.clickup.com/t/86afe5d2j",
+                  "access": true
+                }
+              ],
+              "required": false
+            },
+            {
+              "id": "3e0b8666-0ced-4eb8-8174-fb86ddf251a2",
+              "name": "Closer",
+              "type": "users",
+              "type_config": {
+                "single_user": false,
+                "include_groups": false,
+                "include_guests": true,
+                "include_team_members": false
+              },
+              "date_created": "1769626188482",
+              "hide_from_guests": false,
+              "required": null
+            },
+            {
+              "id": "e2a18d27-8adc-4112-b9d4-8c3685b78a23",
+              "name": "Clínica",
+              "type": "short_text",
+              "type_config": {},
+              "date_created": "1770129175615",
+              "hide_from_guests": true,
+              "value": "Dra. Renata Rezende",
+              "value_richtext": null,
+              "required": false
+            },
+            {
+              "id": "0d2ab8ce-6df3-41a3-bfc9-372eff7a7d09",
+              "name": "Data da Consulta",
+              "type": "date",
+              "type_config": {},
+              "date_created": "1770129288140",
+              "hide_from_guests": false,
+              "required": false
+            },
+            {
+              "id": "a31ac8f3-4792-4126-ad14-207c5634b4b0",
+              "name": "Data de Entrada",
+              "type": "date",
+              "type_config": {},
+              "date_created": "1770129279952",
+              "hide_from_guests": false,
+              "value": "1770102000000",
+              "value_richtext": null,
+              "required": false
+            },
+            {
+              "id": "fa78bdad-9017-4424-8534-cb8eec2ae05a",
+              "name": "Faturamento",
+              "type": "drop_down",
+              "type_config": {
+                "new_drop_down": true,
+                "options": [
+                  {
+                    "id": "0c72a4d7-bc60-459c-8152-bf31045f670b",
+                    "name": "Mais de 100K",
+                    "color": null,
+                    "orderindex": 0
+                  },
+                  {
+                    "id": "cc211748-a786-46b5-a032-56251db0416f",
+                    "name": "De 50K a 100K",
+                    "color": null,
+                    "orderindex": 1
+                  },
+                  {
+                    "id": "38b30495-46d1-4bd9-9336-f95d969696bf",
+                    "name": "De 40K a 50K",
+                    "color": null,
+                    "orderindex": 2
+                  },
+                  {
+                    "id": "2a6e4c3e-aadc-4366-b588-45eca40222d9",
+                    "name": "De 30K a 40K",
+                    "color": null,
+                    "orderindex": 3
+                  },
+                  {
+                    "id": "cd95d3d0-5d7e-4f4b-8200-4c0bb0648a0b",
+                    "name": "De 20K a 30K",
+                    "color": null,
+                    "orderindex": 4
+                  },
+                  {
+                    "id": "3699a010-dfc4-41d3-b3a8-7f8cb52b1da9",
+                    "name": "De 15K a 20K",
+                    "color": null,
+                    "orderindex": 5
+                  },
+                  {
+                    "id": "71ce5ab3-b85e-4604-81c3-71e84d333de7",
+                    "name": "De 10K a 15K",
+                    "color": null,
+                    "orderindex": 6
+                  },
+                  {
+                    "id": "84cc344b-1c59-46e1-917c-b64dd4ca8944",
+                    "name": "De 5K a 10K",
+                    "color": null,
+                    "orderindex": 7
+                  },
+                  {
+                    "id": "d88fef3c-243c-413c-923b-907e6038a1e7",
+                    "name": "Até 5K",
+                    "color": null,
+                    "orderindex": 8
+                  }
+                ]
+              },
+              "date_created": "1769626188482",
+              "hide_from_guests": false,
+              "required": null
+            },
+            {
+              "id": "10160bdf-5dae-4f9e-90f8-7f29407567d2",
+              "name": "Meeting",
+              "type": "url",
+              "type_config": {},
+              "date_created": "1769626188482",
+              "hide_from_guests": false,
+              "required": null
+            },
+            {
+              "id": "fc647506-3cb6-42cf-802c-49944cd6f41f",
+              "name": "Mensagem Automática",
+              "type": "checkbox",
+              "type_config": {},
+              "date_created": "1770407243184",
+              "hide_from_guests": false,
+              "required": false
+            },
+            {
+              "id": "72f55f36-f42c-4b3b-ba5a-2218ff02ff6a",
+              "name": "Oportunidade",
+              "type": "currency",
+              "type_config": {
+                "precision": 2,
+                "currency_type": "BRL"
+              },
+              "date_created": "1769626188482",
+              "hide_from_guests": false,
+              "required": null
+            },
+            {
+              "id": "0a6c283e-ebdd-41c6-ae53-b65b85879d9d",
+              "name": "Produtos Comprados",
+              "type": "labels",
+              "type_config": {
+                "options": [
+                  {
+                    "id": "3b9b6249-1a90-4dfe-a120-6eadecdec537",
+                    "label": "Octus Pro",
+                    "color": null,
+                    "orderindex": 0
+                  },
+                  {
+                    "id": "31f96442-4d56-467b-982f-8e0c0f70d65d",
+                    "label": "Octus Light",
+                    "color": null,
+                    "orderindex": 1
+                  },
+                  {
+                    "id": "f2c7f4bb-a668-41e9-a652-cfd4d5603b3f",
+                    "label": "ClickUp Automatizado",
+                    "color": null,
+                    "orderindex": 2
+                  },
+                  {
+                    "id": "2b7a07c8-fde4-4951-b4bb-9326c4b22f0b",
+                    "label": "Club",
+                    "color": null,
+                    "orderindex": 3
+                  },
+                  {
+                    "id": "22c2c41c-4f57-4ed7-8cbf-8b0b1e34ab93",
+                    "label": "Templates 3.0 – 2",
+                    "color": "#fff",
+                    "orderindex": 4
+                  },
+                  {
+                    "id": "99cb6fe8-a0b2-4cdb-a840-a3d00a78f0c8",
+                    "label": "Templates de ClickUp 3.0 – Advanced",
+                    "color": "#EA80FC",
+                    "orderindex": 5
+                  },
+                  {
+                    "id": "43c76e0a-ae84-4d53-bcbd-78dc3db9bb73",
+                    "label": "Comercial Automatizado",
+                    "color": "#1bbc9c",
+                    "orderindex": 6
+                  }
+                ]
+              },
+              "date_created": "1769626188482",
+              "hide_from_guests": false,
+              "required": null
+            },
+            {
+              "id": "2404a06e-0b8e-4bfe-8a33-bb1a6f3a0935",
+              "name": "Produtos Ofertados",
+              "type": "labels",
+              "type_config": {
+                "options": [
+                  {
+                    "id": "74545168-fe24-4c27-b838-6866f593bedb",
+                    "label": "Gestão Inteligente • Club",
+                    "color": null,
+                    "orderindex": 0
+                  },
+                  {
+                    "id": "f9e18eda-2894-40b1-bcf1-1a4176f7b2df",
+                    "label": "Templates de ClickUp 3.0 – Light",
+                    "color": null,
+                    "orderindex": 1
+                  },
+                  {
+                    "id": "0a06730d-52f4-44b4-9a8c-43381d34b828",
+                    "label": "Templates de ClickUp 3.0 – PRO",
+                    "color": null,
+                    "orderindex": 2
+                  },
+                  {
+                    "id": "cf10a432-f9ca-4cec-87d6-8a2a9ae4b029",
+                    "label": "Templates de ClickUp 3.0 – Advanced",
+                    "color": null,
+                    "orderindex": 3
+                  },
+                  {
+                    "id": "bf1186e7-3a6f-4055-ac3f-c480cd1a9b2d",
+                    "label": "Mentoria Black",
+                    "color": null,
+                    "orderindex": 4
+                  },
+                  {
+                    "id": "7b6911e9-6913-47f8-8f84-6d84c60e520b",
+                    "label": "Comercial Automatizado",
+                    "color": null,
+                    "orderindex": 5
+                  },
+                  {
+                    "id": "a24cb8f6-a6d0-412b-be68-386f165dcc7e",
+                    "label": "Templates 3.0",
+                    "color": null,
+                    "orderindex": 6
+                  },
+                  {
+                    "id": "cba4c6d1-5b1a-4edd-9bff-aa418369a7ac",
+                    "label": "ClickUp Pro",
+                    "color": null,
+                    "orderindex": 7
+                  },
+                  {
+                    "id": "213b52f1-8567-46ed-8e8c-95802f4efd8f",
+                    "label": "Example product",
+                    "color": "#9b59b6",
+                    "orderindex": 8
+                  },
+                  {
+                    "id": "e6438fa0-266e-454c-b902-42bf2dbc3acc",
+                    "label": "Código da Escala",
+                    "color": "#3082B7",
+                    "orderindex": 9
+                  },
+                  {
+                    "id": "768fbf86-b381-42e3-99fe-79a50f9dc2dd",
+                    "label": "Octus Pro",
+                    "color": "#AF7E2E",
+                    "orderindex": 10
+                  },
+                  {
+                    "id": "fb3b5732-399c-4ebb-9152-0d24b853ae6b",
+                    "label": "Implementação de Processo Comercial Automatizado",
+                    "color": "#2ecd6f",
+                    "orderindex": 11
+                  }
+                ]
+              },
+              "date_created": "1769626188482",
+              "hide_from_guests": false,
+              "required": null
+            },
+            {
+              "id": "3eb4520a-4115-4edb-9024-b730ded72f1c",
+              "name": "Protocolo",
+              "type": "short_text",
+              "type_config": {},
+              "date_created": "1770142605436",
+              "hide_from_guests": false,
+              "value_richtext": null,
+              "required": false
+            },
+            {
+              "id": "0a17aa7f-3d24-4eec-a678-321bddbe73df",
+              "name": "Status",
+              "type": "drop_down",
+              "type_config": {
+                "new_drop_down": true,
+                "options": [
+                  {
+                    "id": "e206d2d4-930f-4f5e-808b-db241961ebf9",
+                    "name": "Ativo",
+                    "color": "#2ecd6f",
+                    "orderindex": 0
+                  },
+                  {
+                    "id": "07d5f17e-3873-4e4c-9e7f-94999ff7b157",
+                    "name": "Inativo",
+                    "color": "#eaeced",
+                    "orderindex": 1
+                  }
+                ]
+              },
+              "date_created": "1769626188482",
+              "hide_from_guests": false,
+              "required": null
+            },
+            {
+              "id": "a52a8a5a-17dd-4fd4-a037-4b59b31bd642",
+              "name": "Telefone",
+              "type": "phone",
+              "type_config": {},
+              "date_created": "1770129145925",
+              "hide_from_guests": false,
+              "value": "+55 91 99149 4985",
+              "value_richtext": null,
+              "required": false
+            },
+            {
+              "id": "16920421-85b5-47a6-9f25-ddeaef905257",
+              "name": "Valor do Fechamento",
+              "type": "currency",
+              "type_config": {
+                "precision": 2,
+                "currency_type": "BRL"
+              },
+              "date_created": "1771731615503",
+              "hide_from_guests": false,
+              "value": "10",
+              "value_richtext": "",
+              "required": false
+            },
+            {
+              "id": "c204b6bf-e52c-4e58-b5c6-c2f21f01c5cb",
+              "name": "WhatsApp",
+              "type": "phone",
+              "type_config": {},
+              "date_created": "1769626188482",
+              "hide_from_guests": false,
+              "required": null
+            },
+            {
+              "id": "142497c4-b30a-4546-9e9b-4559ad7de98c",
+              "name": "Último Contato",
+              "type": "date",
+              "type_config": {},
+              "date_created": "1770144017281",
+              "hide_from_guests": false,
+              "required": false
+            },
+            {
+              "id": "79a04869-f666-42c7-8f93-2cf7a313d22d",
+              "name": "Automações",
+              "type": "drop_down",
+              "type_config": {
+                "sorting": "manual",
+                "options": [
+                  {
+                    "id": "310977e6-9d21-48d6-ba20-37258a360246",
+                    "name": "Ganho",
+                    "color": "#fff",
+                    "orderindex": 0
+                  },
+                  {
+                    "id": "b56ff4d6-eb48-42f5-b113-8384e5c2e3a0",
+                    "name": "Perda",
+                    "color": "#fff",
+                    "orderindex": 1
+                  },
+                  {
+                    "id": "98ea8f40-0989-4fc8-9aab-2122f0e59d91",
+                    "name": "Ganho Recusado",
+                    "color": "#e5484d",
+                    "orderindex": 2
+                  },
+                  {
+                    "id": "90a90c44-5bdb-414d-a3d5-fae43c5cfe46",
+                    "name": "Ganho Aprovado",
+                    "color": "#30a46c",
+                    "orderindex": 3
+                  },
+                  {
+                    "id": "efaced45-d55f-454e-bcab-04ede697075a",
+                    "name": "Perda Recusada",
+                    "color": "#e5484d",
+                    "orderindex": 4
+                  },
+                  {
+                    "id": "9538ca8f-c96b-40c7-8d35-2c75afff27fc",
+                    "name": "Perda Aprovada",
+                    "color": "#30a46c",
+                    "orderindex": 5
+                  }
+                ]
+              },
+              "date_created": "1771702116038",
+              "hide_from_guests": false,
+              "value": 3,
+              "value_richtext": null,
+              "required": false
+            },
+            {
+              "id": "9523971a-ba09-4465-8b9c-69d57c05a188",
+              "name": "Contexto",
+              "type": "text",
+              "type_config": {},
+              "date_created": "1770142658502",
+              "hide_from_guests": false,
+              "value": "O que mais te incomoda no seu rosto?: Boca\nQuais procedimento estético você já fez antes?: Nenhum\nQuantos anos você tem?: 28\nQual bairro você mora?: Florianópolis",
+              "value_richtext": "{\"ops\":[{\"insert\":\"O que mais te incomoda no seu rosto?: Boca\\nQuais procedimento estético você já fez antes?: Nenhum\\nQuantos anos você tem?: 28\\nQual bairro você mora?: Florianópolis\"}]}",
+              "required": false
+            },
+            {
+              "id": "01ace05a-2aed-4a8f-a606-1baf7bd732b1",
+              "name": "Link Whatsapp",
+              "type": "url",
+              "type_config": {},
+              "date_created": "1770137384205",
+              "hide_from_guests": false,
+              "value": "https://wa.me/5591991494985",
+              "value_richtext": null,
+              "required": false
+            }
+          ],
+          "dependencies": [],
+          "linked_tasks": [],
+          "locations": [],
+          "team_id": "90132992412",
+          "url": "https://app.clickup.com/t/86af2b16q",
+          "sharing": {
+            "public": false,
+            "public_share_expires_on": null,
+            "public_fields": [
+              "assignees",
+              "priority",
+              "due_date",
+              "content",
+              "comments",
+              "attachments",
+              "customFields",
+              "subtasks",
+              "tags",
+              "checklists",
+              "coverimage"
+            ],
+            "token": null,
+            "seo_optimized": false
+          },
+          "permission_level": "create",
+          "list": {
+            "id": "901324875324",
+            "name": "Hunter",
+            "access": true
+          },
+          "project": {
+            "id": "901316722258",
+            "name": "Área de Vendas",
+            "hidden": false,
+            "access": true
+          },
+          "folder": {
+            "id": "901316722258",
+            "name": "Área de Vendas",
+            "hidden": false,
+            "access": true
+          },
+          "space": {
+            "id": "901313001557"
+          },
+          "attachments": []
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Alterar Tag - Aprovado": [
+      {
+        "json": {},
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "RabbitMQ1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a task": {
+      "main": [
+        [
+          {
+            "node": "OrganizarClickUp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OrganizarClickUp": {
+      "main": [
+        [
+          {
+            "node": "Code4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alterar Tag - Reprovado": {
+      "main": [
+        [
+          {
+            "node": "Create a comment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code4": {
+      "main": [
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [
+          {
+            "node": "Alterar Tag - Aprovado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alterar Tag - Reprovado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a task": {
+      "main": [
+        [
+          {
+            "node": "Get a task1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alterar Tag - Aprovado": {
+      "main": [
+        [
+          {
+            "node": "Update a task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a task1": {
+      "main": [
+        [
+          {
+            "node": "OrganizarClickUp1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OrganizarClickUp1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Set a custom Field on a task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7c523bc5-3265-4d9c-8fa3-1d00a225f84e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "9LCzkcuPhBYaK1MO",
+  "tags": []
+}

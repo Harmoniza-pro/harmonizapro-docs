@@ -46,31 +46,74 @@ theme:
 
 nav:
   - Início: index.md
-  - PRD:
-      - "PRD 001 — Agente de Qualificação IA": prd-001-agente-qualificacao.md
+  - PRD: prd.md
   - Workflows:
-      - Índice de Workflows: workflows/index.md
-      - "Agente de IA (entrada principal)": workflows/agente-de-ia.md
-      - "Chamada Typeform": workflows/chamada-typeform.md
-      - "Tool Transferir (Handoff)": workflows/tool-transferir.md
-      - "Fluxo Follow Ups": workflows/fluxo-follow-ups.md
-      - "⏱️ Métricas Diárias": workflows/metricas-diarias.md
-      - "💰 Monitoramento de Custos": workflows/monitoramento-custos.md
+      - "🏗️ Visão Geral": workflows/index.md
+      - 🤖 IA Harmoniza:
+          - "Agente de IA": workflows/ia-harmoniza/agente-de-ia.md
+          - "Chamada Typeform": workflows/ia-harmoniza/chamada-typeform.md
+          - "Tool Transferir": workflows/ia-harmoniza/tool-transferir.md
+          - "Fluxo Follow Ups": workflows/ia-harmoniza/fluxo-follow-ups.md
+      - ⚙️ Operação:
+          - "Central de Automação": workflows/operacao/central-automacao.md
+          - "Alterar Link Formulário": workflows/operacao/alterar-link-formulario.md
+          - "Desempenho Meta Ads": workflows/operacao/desempenho-meta-ads.md
+          - "Retroativo - Respostas no ClickUp": workflows/operacao/retroativo-respostas-banco.md
+          - "Retroativo - Tarefas do CRM": workflows/operacao/retroativo-tarefas-crm.md
+      - 🎯 Hunters: 
+          - "Central de Automação": workflows/hunters/central-automacao.md
+          - "Typeform Clientes": workflows/hunters/typeform-clientes.md
+          - "CRM Hunter": workflows/hunters/crm-hunter.md
+          - "Ganho": workflows/hunters/ganho.md
+          - "Perda": workflows/hunters/perda.md
+      - 📣 Comercial e Marketing: 
+          - "Typeform Formulários [1/2]": workflows/comercial/typeform-formularios-1.md
+          - "Typeform Formulários [2/2]": workflows/comercial/typeform-formularios-2.md
+          - "Calendly Event Create": workflows/comercial/calendly-event-create.md
+          - "Distribuição de Leads": workflows/comercial/distribuicao-leads.md
+          - "Envio Mensagem Parcial": workflows/comercial/envio-mensagem-parcial.md
+          - "Transferência de Leads": workflows/comercial/transferencia-leads.md
+          - "Conversão de Campos": workflows/comercial/conversao-campos.md
+          - "Convite Lead [1/3] Scheduler": workflows/comercial/convite-lead-1.md
+          - "Convite Lead [2/3] Mensagem": workflows/comercial/convite-lead-2.md
+          - "Convite Lead [3/3] Resposta": workflows/comercial/convite-lead-3.md
+          - "Envio Mensagem Clientes": workflows/comercial/envio-mensagem-clientes.md
+          - "Documentar Msgs CRM": workflows/comercial/documentar-mensagens-crm.md
+          - "Evento Pixel Lead Score": workflows/comercial/evento-pixel-lead-score.md
+          - "Update Deal (Dispatcher)": workflows/comercial/pipedrive-update-deal.md
+          - "Typeform Banco de Dados": workflows/comercial/typeform-banco-dados.md
+          - "Evento Lead Clientes": workflows/comercial/evento-lead-clientes.md
+          - "Atualizar Dados Cliente": workflows/comercial/atualizar-dados-cliente.md
+          - "Dashboard Planilha": workflows/comercial/dashboard-planilha-atualizada.md
+          - "Retroativo UTM": workflows/comercial/retroativo-utm.md
+          - "Leads Parados": workflows/comercial/leads-parados.md
+      - 📍 Tracking: 
+          - "GTM Typeform Receptor": workflows/tracking/gtm-typeform-1-receptor.md
+          - "GTM Typeform Enriquecimento": workflows/tracking/gtm-typeform-2-enriquecimento.md
+          - "GTM Typeform Pixel CAPI": workflows/tracking/gtm-typeform-3-pixel.md
+      - 📋 Templates: 
+          - "Organizar ClickUp": workflows/templates/organizar-clickup.md
+          - "RabbitMQ": workflows/templates/rabbitmq.md
+      - 📝 Formulários Clickup: 
+          - "Central de Automações": workflows/clickup/formularios-1-central.md
+          - "TaskCreated": workflows/clickup/formularios-2-created.md
+          - "TaskDeleted": workflows/clickup/formularios-3-deleted.md
+          - "TaskUpdated": workflows/clickup/formularios-4-updated.md
   - Playbooks:
-      - Índice: playbooks/index.md
-      - "Abordagem Inicial por Perfil": playbooks/abordagem-por-perfil.md
-      - "Respostas para Objeções": playbooks/respostas-objecoes.md
-  - Runbooks:
-      - Índice: runbooks/index.md
-      - "Webhook Fora do Ar": runbooks/webhook-fora.md
-      - "Handoff Falhando": runbooks/handoff-falhando.md
+          - "Inicio": "playbooks/index.md"
+          - "Abordagem Perfil": playbooks/abordagem-por-perfil.md
+          - "Respostas a  Objeções": playbooks/respostas-objecoes.md
+  - Runbooks: 
+          - "Inicio": "runbooks/index.md"
+          - "HandOff falhando": "runbooks/handoff-falhando.md"
+          - "Webhook Fora": "runbooks/webhook-fora.md"
   - Base de Conhecimento:
-      - "Clínicas e Protocolos": base-conhecimento-clinicas.md
+          - "🏥Clínicas": base/base-conhecimento-clinicas.md
   - Operação:
-      - "📊 Dashboard de Métricas":  operacao/dashboard.md
-      - "💰 Custos por Workflow": operacao/custos.md
-      - "🔗 Mapa de Dependências": operacao/dependencias.md
-      - "📋 Changelog": operacao/changelog.md
+          - "Mapa de Dependências": operacao/dependencias.md
+          - "Changelog": operacao/changelog.md
+          - "Métricas Diárias": operacao/dashboard.md
+          - "Monitoramento de Custos": operacao/custos.md
   - Equipe: equipe.md
 
 

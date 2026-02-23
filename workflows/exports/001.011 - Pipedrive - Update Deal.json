@@ -1,0 +1,628 @@
+{
+  "name": "001.011 - Pipedrive - Update Deal",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "pipedrive_update_deal",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2af9683a-3ab3-4f16-b752-2b63a28ebd09",
+      "name": "Webhook",
+      "webhookId": "c4d15125-ff20-44a6-8ec3-c968045826a0"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "1ZOJnFDLY7e8hV8j",
+          "mode": "list",
+          "cachedResultName": "PipeDrive - Conversão de Campos"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        0
+      ],
+      "id": "0f1a96fa-e306-43aa-8917-50c7fe801834",
+      "name": "Converter Campos"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "aaae2dc8-4ab9-41d1-a1a8-cd4c5fb7cee7",
+              "name": "origem_campo",
+              "value": "webhook",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        0
+      ],
+      "id": "aa1b5b91-3185-4717-88b2-9eb11f086b14",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "content": "Mapeia a origem dos dados para posteriormente enviar para outro fluxo de conversão de campos e fazer o tratamento correto para essa estrutura específica",
+        "height": 140,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        240,
+        -160
+      ],
+      "typeVersion": 1,
+      "id": "d8c4c626-e12b-4e74-ad79-af106e6f32d8",
+      "name": "Sticky Note59"
+    },
+    {
+      "parameters": {
+        "content": "Envia os dados do webhook para um [fluxo de conversão de campos](https://workflows.goldeletra.pro/workflow/1ZOJnFDLY7e8hV8j), para que os ID's dos campos contenham todas as informações necessárias para o restante do fluxo",
+        "height": 140,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        560,
+        -160
+      ],
+      "typeVersion": 1,
+      "id": "50d5615f-3d32-451d-ad57-6466c7809d52",
+      "name": "Sticky Note60"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ !!$item(\"0\").$node[\"Webhook\"].json[\"body\"][\"previous\"][\"custom_fields\"][\"84790c2f40e7c276ed45d00ed1e00f873cd74bea\"] && $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"data\"][\"custom_fields\"][\"84790c2f40e7c276ed45d00ed1e00f873cd74bea\"] != null }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "3ea2bb99-b306-4e33-ac10-dee6f306d2f8"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Pixel Proposta"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "021d9099-52a7-483f-abb7-daa03a3c4ee1",
+                    "leftValue": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"previous\"][\"owner_id\"] !== undefine }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mudança Usuário"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        944,
+        0
+      ],
+      "id": "f3202194-5751-4c8c-9e7d-a9fa5575bfd7",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "queue": "pipedrive_leadscore_pixel",
+        "options": {
+          "arguments": {
+            "argument": [
+              {
+                "key": "x-queue-type",
+                "value": "quorum"
+              }
+            ]
+          },
+          "durable": true
+        }
+      },
+      "id": "f559b67a-1105-42be-b8dc-16c064790b04",
+      "name": "Pixel Lead Score",
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1.1,
+      "position": [
+        1248,
+        -240
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "events": [
+          "update"
+        ]
+      },
+      "type": "n8n-nodes-base.n8nTrigger",
+      "typeVersion": 1,
+      "position": [
+        64,
+        -576
+      ],
+      "id": "0dda9239-2cf4-4a8c-aa9a-15d891838e92",
+      "name": "Dados Cadastro Workflow",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e3c3eb3-253b-4434-9f68-f12806e90433",
+              "name": "Pasta Cliente",
+              "value": "901312698708",
+              "type": "string"
+            },
+            {
+              "id": "f5017427-6e91-4ce3-adfb-1f26db53104e",
+              "name": "Fluxos com Erro",
+              "value": "901319151056",
+              "type": "string"
+            },
+            {
+              "id": "69e95a88-9ca8-46ae-8016-ca15db383fd7",
+              "name": "Fluxos Cadastrados",
+              "value": "901319151049",
+              "type": "string"
+            },
+            {
+              "id": "d1a157b0-9836-4758-92bf-6fa81eff1a26",
+              "name": "Link N8N",
+              "value": "={{ \"https://workflows.\" + $execution.resumeUrl.split('/')[2].split('.').slice(1).join('.') + \"/workflow/\" + $workflow.id }}",
+              "type": "string"
+            },
+            {
+              "id": "a8a396de-7e97-4833-8520-dd5af4bb0baf",
+              "name": "Tarefa Cliente ID",
+              "value": "86ac2h7bc",
+              "type": "string"
+            },
+            {
+              "id": "1bca2025-d73c-4f0d-abee-0abf3d328f2a",
+              "name": "Campo Relacionamento Fluxo Cadastrado",
+              "value": "de89a9e9-7831-4b3e-90f4-0114797d4e6b",
+              "type": "string"
+            },
+            {
+              "id": "bc48d677-8f44-45a4-b66a-e5a671a74128",
+              "name": "Campo Relacionamento Reportar Erro",
+              "value": "6d2dbdb6-40dd-4c2a-a42b-f6e4b5536261",
+              "type": "string"
+            },
+            {
+              "id": "90c1b11d-2707-4db7-b02f-3ca053887764",
+              "name": "Nome do Fluxo",
+              "value": "={{ $workflow.name }}",
+              "type": "string"
+            },
+            {
+              "id": "c4f8fea6-e31a-4023-b56c-58e217565f7c",
+              "name": "ID Página Fluxos",
+              "value": "c9pay-8513",
+              "type": "string"
+            },
+            {
+              "id": "8e2f5c9a-6b3d-4e7f-a1c8-9d4e6f2b7a5c",
+              "name": "ID Documento",
+              "value": "c9pay-15913",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        336,
+        -576
+      ],
+      "id": "562d1984-12a5-4fe1-afb1-c86a4015e6b5",
+      "name": "Variaveis do Cliente1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $workflow.id }}",
+          "mode": "id"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        608,
+        -576
+      ],
+      "id": "072ff279-85c7-4704-aae8-6c50354a4b55",
+      "name": "Get a workflow",
+      "credentials": {
+        "n8nApi": {
+          "id": "F1ykyghOg9lLGBLd",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://webhooks.autotrackable.com.br/webhook/receber_cadastro_dos_clientes",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n(() => {\n  const err = $item(\"0\").$node[\"Dados Cadastro Workflow\"].json;\n  const cli = $item(\"0\").$node[\"Variaveis do Cliente1\"].json;\n  const workflow = $item(\"0\").$node[\"Get a workflow\"].json;\n  return { ...err, info_cliente: cli, workflow: workflow };\n})()\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        -576
+      ],
+      "id": "d5d88f9f-c2e2-428a-a616-32f2d371a764",
+      "name": "Encaminhar Erro para TrackAble1"
+    },
+    {
+      "parameters": {
+        "queue": "pipedrive_mudanca_user",
+        "options": {
+          "arguments": {
+            "argument": [
+              {
+                "key": "x-queue-type",
+                "value": "quorum"
+              }
+            ]
+          },
+          "durable": true
+        }
+      },
+      "id": "b306557f-8665-400e-aff5-ab05b887064a",
+      "name": "Mudar Responsável",
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1.1,
+      "position": [
+        1248,
+        16
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhooks.goldeletra.pro",
+            "user-agent": "Pipedrive Webhooks",
+            "content-length": "3446",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "x-forwarded-for": "44.228.233.78",
+            "x-forwarded-host": "webhooks.goldeletra.pro",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik_traefik.1",
+            "x-real-ip": "44.228.233.78"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "data": {
+              "add_time": "2026-01-09T20:01:45Z",
+              "channel": null,
+              "channel_id": null,
+              "close_time": null,
+              "creator_user_id": 20851756,
+              "currency": "BRL",
+              "custom_fields": {
+                "2a7bd62853a7e25c9e176cc242cfe43945a70ad2": null,
+                "378430a5c3e70492a2e705aa5818052a6504407a": null,
+                "84790c2f40e7c276ed45d00ed1e00f873cd74bea": null,
+                "a3a4cd5a4cdeff61454f4b72aa0796d0fcb62cb7": null,
+                "27b0161724fac21d46132e9d327222c0c5563fd4": null,
+                "695916a9baffe8f2c7e2c90c00ead5dbe07b0448": null,
+                "c31cbe8f54216e54c9f6d7e6421cdb6d00da7fa7": null,
+                "bacf6b9ab400c991b29fe275641c50fba8472817": null,
+                "f41ec8c6ccea9deaf81d7b0e83ad7d5a6dbd8c32": null,
+                "9d279e9c5f3f047c191100b7dd3ce645623068fb": null,
+                "f475fd5c0b6d98e4d0b7c8f21936a0a689ff0cb7": null,
+                "7202d18e20ba4c0b03441ac9ec028ab4491990a9": null,
+                "a4fb9cf6d7d3f450d3c620e9d432642145d728f5": null,
+                "87dc85a0ca5e5af5b64cefc3d2bde86d0309c258": null,
+                "51247e250a5d89bfcf7bde4cdd8d586dc5ea834d": null,
+                "81b0d9efdce5f2776dfd6c3d3cb180ecb8a372d2": null,
+                "13c9cd4cb4ffa5312edfda20039bed37337e0941": null,
+                "842e0381bd316ebe2ef1141093b15e97310da42b": null,
+                "9e9209cbfa64563cb60b8a442e3c3a62fa9b284b": null,
+                "ea94cc20f046a478c65f1f162b386e56d3fee7ca": null,
+                "98c23f53854a205bb9e1b9f1d17a5459e0dc7d16": null,
+                "b9e645c6460d1b0c210f47f8dc326933ac6b8f18": null,
+                "83a2907425bd02810f3541a1da13970fb4cad28a": null,
+                "c17646917ef46d09e21e5523d02ec8506861f0e8": null,
+                "1154d85b97ab799ecb95476c040eef165f8eca98": null,
+                "1584834c45d23cb5e1a2543161fca7a2791c9ddd": null,
+                "4e9b242788f1076d1846f42a7a6fcb404d7ed523": null,
+                "fa4385adfdf0db42cec5e9b9ba91d85325810db9": null,
+                "b6ce2593ce42ab171496deeb7ee6c4a65c8b3934": null,
+                "28ee073609b17fd1f8b337721e40442435eb0792": null,
+                "9313043eb15c882d138a0136d61d29674305cd33": null,
+                "d540737cfbd1ff9ff2185e46e5ac9abae70a7f92": null,
+                "0c0d3428eb7ff8f903c32b6957735775be3dc55c": null,
+                "2a62ed5510592c231e2e2d7632e31bea4a88e426": null,
+                "c83c89258b135c08b44d80a76eb69cf56fe41f99": null,
+                "e3424c16643b0e4ea0a97d658eb8cfacf7de0d30": null,
+                "4177cb3cab5d0eea8c7f94f7ef145126cebfe6a5": null,
+                "078fcc70bc995121efc1e1c3beffedd4dbb44cf7": null,
+                "6628a36a4b8b8518f37ba8763b5e744bbc5599a9": null,
+                "71191bc0d10d21b8213604ea00c52bb771cd05fb": null,
+                "e5ae032d7fda4523edaf73cae9dbff166e1861fe": null,
+                "2afb629678ee7fbe687e6cf7c88b529f090c7f28": null,
+                "601a5412a8553515d5da895a5b00cdc02c681b6f": null,
+                "f411adfb5c1ccd6968627615551f614fe248c254": null,
+                "499d66a95d8a944ac9091e2ba1238cb0b41d6585": null,
+                "7af7e2c9ac65ac7f34f39d8f277695d57c52c9e6": null
+              },
+              "expected_close_date": null,
+              "first_won_time": null,
+              "id": 9479,
+              "label_ids": [],
+              "lost_reason": null,
+              "lost_time": null,
+              "org_id": null,
+              "origin": "ManuallyCreated",
+              "origin_id": null,
+              "owner_id": 22755636,
+              "person_id": 9864,
+              "pipeline_id": 12,
+              "probability": null,
+              "stage_change_time": null,
+              "stage_id": 130,
+              "status": "open",
+              "title": "TESTE - AUTOMAÇÃO",
+              "update_time": "2026-01-09T20:02:18Z",
+              "value": 0,
+              "visible_to": "3",
+              "won_time": null,
+              "is_archived": false,
+              "archive_time": null
+            },
+            "previous": {
+              "owner_id": 20851756
+            },
+            "meta": {
+              "action": "change",
+              "company_id": "13401220",
+              "correlation_id": "d25345c9-182b-446c-8d26-f11a40206645",
+              "entity_id": "9479",
+              "entity": "deal",
+              "id": "98374cc8-1b4c-424a-b4a7-01f822176d05",
+              "is_bulk_edit": false,
+              "timestamp": "2026-01-09T20:02:18.971Z",
+              "type": "general",
+              "user_id": "20851756",
+              "version": "2.0",
+              "webhook_id": "1638423",
+              "webhook_owner_id": "20851756",
+              "change_source": "app",
+              "permitted_user_ids": [
+                "20851756",
+                "20852185",
+                "22197232",
+                "22208793",
+                "22755636",
+                "23926146",
+                "24388190",
+                "24393822",
+                "24494747",
+                "24945747",
+                "25029710",
+                "25256640",
+                "25298418",
+                "25298429"
+              ],
+              "attempt": 1,
+              "host": "harmonizapro2.pipedrive.com"
+            }
+          },
+          "webhookUrl": "https://webhooks.goldeletra.pro/webhook/pipedrive_update_deal",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Converter Campos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Converter Campos": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Pixel Lead Score",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mudar Responsável",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados Cadastro Workflow": {
+      "main": [
+        [
+          {
+            "node": "Variaveis do Cliente1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Variaveis do Cliente1": {
+      "main": [
+        [
+          {
+            "node": "Get a workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a workflow": {
+      "main": [
+        [
+          {
+            "node": "Encaminhar Erro para TrackAble1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "ByxX1TqYfyvlgp2T"
+  },
+  "versionId": "b5c8c637-a591-4152-a0cf-871841f72900",
+  "meta": {
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "xawOX8VHRfM8AbwM",
+  "tags": [
+    {
+      "updatedAt": "2025-07-16T01:17:20.453Z",
+      "createdAt": "2025-07-16T01:17:20.453Z",
+      "id": "NaaSNhB5hEdSZaTh",
+      "name": "OK"
+    },
+    {
+      "updatedAt": "2025-10-03T18:16:37.959Z",
+      "createdAt": "2025-10-03T18:16:37.959Z",
+      "id": "olakFEXRFPPNeevi",
+      "name": "Cadastrado"
+    },
+    {
+      "updatedAt": "2025-11-17T13:43:22.843Z",
+      "createdAt": "2025-11-17T13:43:22.843Z",
+      "id": "xDu8TyrW6g7HiKXS",
+      "name": "Documentado"
+    }
+  ]
+}

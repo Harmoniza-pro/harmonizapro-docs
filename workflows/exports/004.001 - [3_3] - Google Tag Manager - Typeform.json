@@ -1,0 +1,755 @@
+{
+  "name": "004.001 - [3/3] - Google Tag Manager - Typeform",
+  "nodes": [
+    {
+      "parameters": {
+        "queue": "gtm_banco_de_dados_2_2",
+        "options": {
+          "arguments": {
+            "argument": [
+              {
+                "key": "x-queue-type",
+                "value": "quorum"
+              }
+            ]
+          },
+          "acknowledge": "executionFinishesSuccessfully",
+          "jsonParseBody": true,
+          "onlyContent": false,
+          "parallelMessages": 1
+        }
+      },
+      "id": "860e0e31-2040-444d-a973-969581693141",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.rabbitmqTrigger",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        32
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/{{ $('set').item.json.version }}/{{ $('set').item.json.pixel }}/events",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "data",
+              "value": "=[ \n  { \n   \"event_name\": \"Lead\",\n   \"event_time\": {{ parseFloat((new Date().getTime()/1000).toString().split('.')[0]) }},\n   \"event_id\": \"{{ new Date().getTime() + \"-lead\" }}\",\n   \"user_data\": {  \n       \"ph\": [ \"{{ $item(\"0\").$node[\"checkFbc\"].json[\"TelefoneHash\"] }}\"],\n       \"fn\": [ \"{{ $item(\"0\").$node[\"checkFbc\"].json[\"NomeHash\"] }}\"],\n       \"ln\": [ \"{{ $item(\"0\").$node[\"checkFbc\"].json[\"SobrenomeHash\"] }}\"],\n       \"em\": [ \"{{ $item(\"0\").$node[\"checkFbc\"].json[\"EmailHash\"] }}\"],\n       \"client_ip_address\": \"{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"ip\"] }}\",\n       \"client_user_agent\": \"{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"agent\"] }}\",\n       \"fbc\": \"{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"fbc\"] }}\",\n       \"fbp\": \"{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"fbp\"] }}\"\n          }, \n    \"custom_data\": { \n    },\n   \"event_source_url\": \"{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"url\"] }}\",\n   \"action_source\": \"website\"\n  }\n]"
+            },
+            {
+              "name": "access_token",
+              "value": "={{ $('set').item.json.token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ade562d5-939d-4e1e-bd91-15b74792ab0a",
+      "name": "site",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1632,
+        -176
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "813c771d-b2a9-4677-b159-8fb31a47f61c",
+              "name": "version",
+              "value": "v20.0",
+              "type": "string"
+            },
+            {
+              "id": "576ecc3f-06a0-46cc-adf9-a3460399d2d2",
+              "name": "pixel",
+              "value": "4243861495893717",
+              "type": "string"
+            },
+            {
+              "id": "fd90d8a5-c4e3-40bd-8ea4-667f3bef3eb2",
+              "name": "token",
+              "value": "EAAFcFeKmPtMBPdvYQgagK1GpvsOfOh71fj5BDgBtgd2M5z7nEaWxaFEvjZAwZBljwq9Tq3OdiRZCsqIxjWZBZAberuZAHGcer0MZCmZBAtugPIiLmbxHb3f9LsVkZBTqNFEv3T7ZAYnul3T8ZCSVE5P2gyuBhvM9wUcN4BPEqMnxcC7gXFZCFJC0ZBdBNfL20AsjMFAZDZD",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5ef13177-f6d0-4d1c-8b23-1717a5ee5a7a",
+      "name": "set",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        400,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "type": "SHA256",
+        "value": "={{ $item(\"0\").$node[\"Postgres\"].json[\"telefone\"] == null ? \"\" : $item(\"0\").$node[\"Postgres\"].json[\"telefone\"].replace(/[^0-9]/g,'') }}",
+        "dataPropertyName": "TelefoneHash"
+      },
+      "id": "77c275fc-3a61-4266-8492-45ed3b11ecb9",
+      "name": "Telefone",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 1,
+      "position": [
+        1184,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "04db64c7-4688-4d94-bf4c-51b962b8559f",
+              "leftValue": "={{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"fbc\"] }}",
+              "rightValue": "{",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "95255e35-2aa8-4c58-bdee-25019cce9f52",
+      "name": "checkFbc",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "061a3450-d817-46e1-8fdd-c04db9d3a310",
+              "leftValue": "={{ $json.fields.redelivered }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "40b86184-a1e6-46f6-81e8-6925dab04ad5",
+      "name": "checkQueue",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -416,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "deleteMessage"
+      },
+      "id": "fcd01c33-4309-4ceb-8b7a-6b5eb0fe11bf",
+      "name": "deleteQueue",
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1.1,
+      "position": [
+        -144,
+        -224
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT nome, email, telefone, created\n  FROM leads\nWHERE\n  id = '{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"lead_id\"] }}'\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -160,
+        64
+      ],
+      "id": "022caae1-8ebb-470a-9386-e938f016e1d3",
+      "name": "Postgres",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "177a0426-1bd1-4e6d-bacb-0eff0f895f58",
+              "leftValue": "={{ $item(\"0\").$node[\"Postgres\"].json[\"nome\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        64,
+        64
+      ],
+      "id": "e2b4ca7d-e731-41ee-9efe-e97de298d341",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "errorMessage": "Lead não encontrado no banco para envio do pixel"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        400,
+        304
+      ],
+      "id": "de8a0483-c566-4642-9371-8e1e85bbc979",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "type": "SHA256",
+        "value": "={{ $item(\"0\").$node[\"Postgres\"].json[\"nome\"].split(' ')[0].toLowerCase() }}",
+        "dataPropertyName": "NomeHash"
+      },
+      "id": "6b4ea65c-8e95-426c-aa77-7cfafd6b1283",
+      "name": "nome",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 1,
+      "position": [
+        608,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "type": "SHA256",
+        "value": "={{ $item(\"0\").$node[\"Postgres\"].json[\"email\"] == null ? \"\" : $item(\"0\").$node[\"Postgres\"].json[\"email\"].trim().toLowerCase() }}",
+        "dataPropertyName": "EmailHash"
+      },
+      "id": "05607492-21b2-4623-aca9-64dc528ac1ab",
+      "name": "email",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/{{ $('set').item.json.version }}/{{ $('set').item.json.pixel }}/events",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "data",
+              "value": "=[ \n  { \n   \"event_name\": \"Lead\",\n   \"event_time\": {{ parseFloat((new Date().getTime()/1000).toString().split('.')[0]) }},\n   \"event_id\": \"{{ new Date().getTime() + \"-lead\" }}\",\n   \"user_data\": {  \n       \"ph\": [ \"{{ $item(\"0\").$node[\"checkFbc\"].json[\"TelefoneHash\"] }}\"],\n       \"fn\": [ \"{{ $item(\"0\").$node[\"checkFbc\"].json[\"NomeHash\"] }}\"],\n       \"ln\": [ \"{{ $item(\"0\").$node[\"checkFbc\"].json[\"SobrenomeHash\"] }}\"],\n       \"em\": [ \"{{ $item(\"0\").$node[\"checkFbc\"].json[\"EmailHash\"] }}\"],\n       \"client_ip_address\": \"{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"ip\"] }}\",\n       \"client_user_agent\": \"{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"agent\"] }}\",\n       \"fbp\": \"{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"fbp\"] }}\"\n          }, \n    \"custom_data\": { \n    },\n   \"event_source_url\": \"{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"url\"] }}\",\n   \"action_source\": \"website\"\n  }\n]"
+            },
+            {
+              "name": "access_token",
+              "value": "={{ $('set').item.json.token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5aeddfd8-3e8c-45a4-bd16-407ad873a05b",
+      "name": "site1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1632,
+        -16
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE leads\nSET\n  evento_lead = true\n\nWHERE id = {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"lead_id\"] }};\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1920,
+        -96
+      ],
+      "id": "b4474037-3f53-4c55-8192-7245c5215a16",
+      "name": "Postgres2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "type": "SHA256",
+        "value": "={{ $item(\"0\").$node[\"Postgres\"].json[\"nome\"].replace($item(\"0\").$node[\"Postgres\"].json[\"nome\"].split(' ')[0],'').trim().toLowerCase() }}",
+        "dataPropertyName": "SobrenomeHash"
+      },
+      "id": "86a81617-7578-4110-8172-1cad727b9720",
+      "name": "Sobrenome",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 1,
+      "position": [
+        800,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "events": [
+          "update"
+        ]
+      },
+      "type": "n8n-nodes-base.n8nTrigger",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        -608
+      ],
+      "id": "ebc4d8aa-33d7-45b7-8718-27bd52aa6063",
+      "name": "Dados Cadastro Workflow",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e3c3eb3-253b-4434-9f68-f12806e90433",
+              "name": "Pasta Cliente",
+              "value": "901312698708",
+              "type": "string"
+            },
+            {
+              "id": "f5017427-6e91-4ce3-adfb-1f26db53104e",
+              "name": "Fluxos com Erro",
+              "value": "901319151056",
+              "type": "string"
+            },
+            {
+              "id": "69e95a88-9ca8-46ae-8016-ca15db383fd7",
+              "name": "Fluxos Cadastrados",
+              "value": "901319151049",
+              "type": "string"
+            },
+            {
+              "id": "d1a157b0-9836-4758-92bf-6fa81eff1a26",
+              "name": "Link N8N",
+              "value": "={{ \"https://workflows.\" + $execution.resumeUrl.split('/')[2].split('.').slice(1).join('.') + \"/workflow/\" + $workflow.id }}",
+              "type": "string"
+            },
+            {
+              "id": "a8a396de-7e97-4833-8520-dd5af4bb0baf",
+              "name": "Tarefa Cliente ID",
+              "value": "86ac2h7bc",
+              "type": "string"
+            },
+            {
+              "id": "1bca2025-d73c-4f0d-abee-0abf3d328f2a",
+              "name": "Campo Relacionamento Fluxo Cadastrado",
+              "value": "de89a9e9-7831-4b3e-90f4-0114797d4e6b",
+              "type": "string"
+            },
+            {
+              "id": "bc48d677-8f44-45a4-b66a-e5a671a74128",
+              "name": "Campo Relacionamento Reportar Erro",
+              "value": "6d2dbdb6-40dd-4c2a-a42b-f6e4b5536261",
+              "type": "string"
+            },
+            {
+              "id": "90c1b11d-2707-4db7-b02f-3ca053887764",
+              "name": "Nome do Fluxo",
+              "value": "={{ $workflow.name }}",
+              "type": "string"
+            },
+            {
+              "id": "c4f8fea6-e31a-4023-b56c-58e217565f7c",
+              "name": "ID Página Fluxos",
+              "value": "c9pay-8513",
+              "type": "string"
+            },
+            {
+              "id": "8e2f5c9a-6b3d-4e7f-a1c8-9d4e6f2b7a5c",
+              "name": "ID Documento",
+              "value": "c9pay-15913",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -368,
+        -608
+      ],
+      "id": "4cfe3aea-8e93-475f-897e-9750379189f3",
+      "name": "Variaveis do Cliente1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $workflow.id }}",
+          "mode": "id"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        -608
+      ],
+      "id": "29a4d813-2b94-411a-98bf-b8d2d1fd15b1",
+      "name": "Get a workflow",
+      "credentials": {
+        "n8nApi": {
+          "id": "F1ykyghOg9lLGBLd",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://webhooks.autotrackable.com.br/webhook/receber_cadastro_dos_clientes",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n(() => {\n  const err = $item(\"0\").$node[\"Dados Cadastro Workflow\"].json;\n  const cli = $item(\"0\").$node[\"Variaveis do Cliente1\"].json;\n  const workflow = $item(\"0\").$node[\"Get a workflow\"].json;\n  return { ...err, info_cliente: cli, workflow: workflow };\n})()\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        176,
+        -608
+      ],
+      "id": "59bac0ec-5a7a-40c5-b413-7fa5240f2232",
+      "name": "Encaminhar Erro para TrackAble1"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "fields": {
+            "consumerTag": "amq.ctag-LA2KeAXAUL_igDUI-KCMWw",
+            "deliveryTag": 3,
+            "redelivered": false,
+            "exchange": "",
+            "routingKey": "gtm_banco_de_dados_2_2"
+          },
+          "properties": {
+            "headers": {}
+          },
+          "content": {
+            "telefone": "54999999999",
+            "utm_source": "xxxxx",
+            "utm_medium": "xxxxx",
+            "utm_content": "xxxxx",
+            "utm_campaign": "xxxxx",
+            "utm_term": "xxxxx",
+            "utm_id": "xxxxx",
+            "fbp": "fb.1.1752518446872.482359811967480121",
+            "fbc": "",
+            "ip": "191.220.245.96",
+            "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+            "url": "https://harmoniza.typeform.com/to/bxyMbs67?utm_source=xxxxx&utm_medium=xxxxx&utm_campaign=xxxxx&utm_term=xxxxx&utm_content=xxxxx&gtm_debug=1752518744538&typeform-source=tagassistant.google.com",
+            "formulario": "",
+            "_gcl_aw": "",
+            "lead_id": 1,
+            "id_negocio": 3391
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "checkQueue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "site": {
+      "main": [
+        [
+          {
+            "node": "Postgres2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set": {
+      "main": [
+        [
+          {
+            "node": "nome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telefone": {
+      "main": [
+        [
+          {
+            "node": "checkFbc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "checkFbc": {
+      "main": [
+        [
+          {
+            "node": "site",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "site1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "checkQueue": {
+      "main": [
+        [
+          {
+            "node": "deleteQueue",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "set",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "nome": {
+      "main": [
+        [
+          {
+            "node": "Sobrenome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "email": {
+      "main": [
+        [
+          {
+            "node": "Telefone",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "site1": {
+      "main": [
+        [
+          {
+            "node": "Postgres2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sobrenome": {
+      "main": [
+        [
+          {
+            "node": "email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados Cadastro Workflow": {
+      "main": [
+        [
+          {
+            "node": "Variaveis do Cliente1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Variaveis do Cliente1": {
+      "main": [
+        [
+          {
+            "node": "Get a workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a workflow": {
+      "main": [
+        [
+          {
+            "node": "Encaminhar Erro para TrackAble1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "ByxX1TqYfyvlgp2T"
+  },
+  "versionId": "b37021b1-d6b0-4783-9ef9-79a6217d90dd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "cq6W0FsGX4IMNdtl",
+  "tags": [
+    {
+      "updatedAt": "2025-07-16T01:17:20.453Z",
+      "createdAt": "2025-07-16T01:17:20.453Z",
+      "id": "NaaSNhB5hEdSZaTh",
+      "name": "OK"
+    },
+    {
+      "updatedAt": "2025-10-03T18:16:37.959Z",
+      "createdAt": "2025-10-03T18:16:37.959Z",
+      "id": "olakFEXRFPPNeevi",
+      "name": "Cadastrado"
+    },
+    {
+      "updatedAt": "2025-11-17T13:43:22.843Z",
+      "createdAt": "2025-11-17T13:43:22.843Z",
+      "id": "xDu8TyrW6g7HiKXS",
+      "name": "Documentado"
+    }
+  ]
+}

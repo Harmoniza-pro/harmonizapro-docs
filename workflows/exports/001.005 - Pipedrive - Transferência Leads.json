@@ -1,0 +1,677 @@
+{
+  "name": "001.005 - Pipedrive - Transferência Leads",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 3
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -96,
+        -16
+      ],
+      "id": "8350bf47-9ae1-4f34-abc5-7c1de494da5a",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://harmonizapro2.pipedrive.com/api/v2/deals",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "pipedriveOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "pipeline_id",
+              "value": "=21"
+            },
+            {
+              "name": "status",
+              "value": "open"
+            },
+            {
+              "name": "updated_until",
+              "value": "={{ new Date(Date.now() - 15 * 60 * 1000).toISOString().split('.')[0] + 'Z' }}"
+            },
+            {
+              "name": "stage_id",
+              "value": "=128"
+            },
+            {
+              "name": "updated_since",
+              "value": "={{ new Date(Date.now() - 20 * 60 * 1000).toISOString().split('.')[0] + 'Z' }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9bb82bb1-5df8-4947-9b43-d6873ca40319",
+      "name": "createDealPipeLine",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        -16
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "pipedriveOAuth2Api": {
+          "id": "y8O0rqLgOCkuE8hK",
+          "name": "Pipedrive - evoluamidia@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $item(\"0\").$node[\"createDealPipeLine\"].json[\"data\"];\n\nreturn data;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        464,
+        -16
+      ],
+      "id": "da25d78e-1cbc-427a-8eba-1d3810c99abc",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "content": "Ativa a cada 3 minutos",
+        "height": 80,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -160,
+        -128
+      ],
+      "typeVersion": 1,
+      "id": "ba1f5668-8d2a-4475-9444-95a73c763c24",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "get",
+        "dealId": 6721
+      },
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [
+        368,
+        -304
+      ],
+      "id": "fb23a92e-d77e-40ed-b26a-62337dd23e3c",
+      "name": "Get a deal",
+      "credentials": {
+        "pipedriveOAuth2Api": {
+          "id": "y8O0rqLgOCkuE8hK",
+          "name": "Pipedrive - evoluamidia@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        720,
+        -16
+      ],
+      "id": "1d1f767d-9abb-4673-8ef8-0177643dd8be",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        800,
+        -368
+      ],
+      "id": "2a23610a-5c14-4989-b61a-627da1074830"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3422c289-67e8-427a-bd92-80fdcdef2d24",
+              "leftValue": "={{ $item(\"0\").$node[\"Loop Over Items\"].json[\"label_ids\"][\"0\"].toString() }}",
+              "rightValue": "108",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        992,
+        112
+      ],
+      "id": "55cda410-4972-498a-990b-bffb928c321d",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3181bb4f-ffe3-4f34-939d-433c468036bb",
+              "name": "origem",
+              "value": "parcial",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1232,
+        64
+      ],
+      "id": "bccd2763-e69a-41ec-901e-b965659b9012",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "gTkwd0N0FUTUzo9q",
+          "mode": "list",
+          "cachedResultName": "Distribuição de Leads - Pipedrive"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1440,
+        64
+      ],
+      "id": "794b34a1-3a54-4d66-a4da-6b5dbf1b22a4",
+      "name": "Execute Workflow"
+    },
+    {
+      "parameters": {
+        "url": "https://harmonizapro2.pipedrive.com/api/v1/users/find",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "pipedriveOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "search_by_email",
+              "value": "=true"
+            },
+            {
+              "name": "term",
+              "value": "={{ $item(\"0\").$node[\"Execute Workflow\"].json[\"responsável\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fd647514-ba55-43fa-8fc9-dcd4ead85906",
+      "name": "createDealPipeLine1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1680,
+        64
+      ],
+      "credentials": {
+        "pipedriveOAuth2Api": {
+          "id": "y8O0rqLgOCkuE8hK",
+          "name": "Pipedrive - evoluamidia@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "dealId": "={{ $item(\"0\").$node[\"Loop Over Items\"].json[\"id\"] }}",
+        "updateFields": {
+          "user_id": "={{ $item(\"0\").$node[\"createDealPipeLine1\"].json[\"data\"][\"0\"][\"id\"] }}",
+          "stage_id": 81
+        }
+      },
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [
+        1952,
+        64
+      ],
+      "id": "574f60f2-3386-4fde-8d9d-61f591af22ce",
+      "name": "Update a deal",
+      "credentials": {
+        "pipedriveOAuth2Api": {
+          "id": "y8O0rqLgOCkuE8hK",
+          "name": "Pipedrive - evoluamidia@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "iW5VeKzMhlHTiLTF",
+          "mode": "list",
+          "cachedResultName": "Typeform - Envio de mensagem Parcial"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2400,
+        64
+      ],
+      "id": "cfd79e49-e329-4dd5-ae9d-4b1368db1da6",
+      "name": "Execute Workflow1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3181bb4f-ffe3-4f34-939d-433c468036bb",
+              "name": "round_user",
+              "value": "={{ $item(\"0\").$node[\"createDealPipeLine1\"].json[\"data\"][\"0\"][\"id\"] }}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2160,
+        64
+      ],
+      "id": "2141d2e0-5ddc-44d6-88a1-0423eb375821",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "events": [
+          "update"
+        ]
+      },
+      "type": "n8n-nodes-base.n8nTrigger",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -752
+      ],
+      "id": "39615f25-ace1-40ce-82d9-84f5fdd4bd18",
+      "name": "Dados Cadastro Workflow",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e3c3eb3-253b-4434-9f68-f12806e90433",
+              "name": "Pasta Cliente",
+              "value": "901312698708",
+              "type": "string"
+            },
+            {
+              "id": "f5017427-6e91-4ce3-adfb-1f26db53104e",
+              "name": "Fluxos com Erro",
+              "value": "901319151056",
+              "type": "string"
+            },
+            {
+              "id": "69e95a88-9ca8-46ae-8016-ca15db383fd7",
+              "name": "Fluxos Cadastrados",
+              "value": "901319151049",
+              "type": "string"
+            },
+            {
+              "id": "d1a157b0-9836-4758-92bf-6fa81eff1a26",
+              "name": "Link N8N",
+              "value": "={{ \"https://workflows.\" + $execution.resumeUrl.split('/')[2].split('.').slice(1).join('.') + \"/workflow/\" + $workflow.id }}",
+              "type": "string"
+            },
+            {
+              "id": "a8a396de-7e97-4833-8520-dd5af4bb0baf",
+              "name": "Tarefa Cliente ID",
+              "value": "86ac2h7bc",
+              "type": "string"
+            },
+            {
+              "id": "1bca2025-d73c-4f0d-abee-0abf3d328f2a",
+              "name": "Campo Relacionamento Fluxo Cadastrado",
+              "value": "de89a9e9-7831-4b3e-90f4-0114797d4e6b",
+              "type": "string"
+            },
+            {
+              "id": "bc48d677-8f44-45a4-b66a-e5a671a74128",
+              "name": "Campo Relacionamento Reportar Erro",
+              "value": "6d2dbdb6-40dd-4c2a-a42b-f6e4b5536261",
+              "type": "string"
+            },
+            {
+              "id": "90c1b11d-2707-4db7-b02f-3ca053887764",
+              "name": "Nome do Fluxo",
+              "value": "={{ $workflow.name }}",
+              "type": "string"
+            },
+            {
+              "id": "c4f8fea6-e31a-4023-b56c-58e217565f7c",
+              "name": "ID Página Fluxos",
+              "value": "c9pay-8513",
+              "type": "string"
+            },
+            {
+              "id": "8e2f5c9a-6b3d-4e7f-a1c8-9d4e6f2b7a5c",
+              "name": "ID Documento",
+              "value": "c9pay-15913",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        192,
+        -752
+      ],
+      "id": "d2da12e7-5726-4fa3-b54e-93cecbbc636c",
+      "name": "Variaveis do Cliente1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $workflow.id }}",
+          "mode": "id"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        464,
+        -752
+      ],
+      "id": "0707e70a-40a7-4f18-8eb3-57b8281850df",
+      "name": "Get a workflow",
+      "credentials": {
+        "n8nApi": {
+          "id": "F1ykyghOg9lLGBLd",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://webhooks.autotrackable.com.br/webhook/receber_cadastro_dos_clientes",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n(() => {\n  const err = $item(\"0\").$node[\"Dados Cadastro Workflow\"].json;\n  const cli = $item(\"0\").$node[\"Variaveis do Cliente1\"].json;\n  const workflow = $item(\"0\").$node[\"Get a workflow\"].json;\n  return { ...err, info_cliente: cli, workflow: workflow };\n})()\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        736,
+        -752
+      ],
+      "id": "417a9e4d-727e-4d56-a7ac-260e20ca77ae",
+      "name": "Encaminhar Erro para TrackAble1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "createDealPipeLine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "createDealPipeLine": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow": {
+      "main": [
+        [
+          {
+            "node": "createDealPipeLine1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "createDealPipeLine1": {
+      "main": [
+        [
+          {
+            "node": "Update a deal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a deal": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados Cadastro Workflow": {
+      "main": [
+        [
+          {
+            "node": "Variaveis do Cliente1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Variaveis do Cliente1": {
+      "main": [
+        [
+          {
+            "node": "Get a workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a workflow": {
+      "main": [
+        [
+          {
+            "node": "Encaminhar Erro para TrackAble1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "ByxX1TqYfyvlgp2T"
+  },
+  "versionId": "4d69777f-4d06-40a1-b471-1f6759d115e6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "KTWEvow3Z8rGab9H",
+  "tags": [
+    {
+      "updatedAt": "2025-10-03T18:16:37.959Z",
+      "createdAt": "2025-10-03T18:16:37.959Z",
+      "id": "olakFEXRFPPNeevi",
+      "name": "Cadastrado"
+    },
+    {
+      "updatedAt": "2025-11-17T13:43:22.843Z",
+      "createdAt": "2025-11-17T13:43:22.843Z",
+      "id": "xDu8TyrW6g7HiKXS",
+      "name": "Documentado"
+    }
+  ]
+}

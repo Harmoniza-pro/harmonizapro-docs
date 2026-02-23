@@ -1,0 +1,1272 @@
+{
+  "name": "003.003 - Retroativo - Adicionar Respostas do Banco no Clickup",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        976
+      ],
+      "id": "fc9ba47a-44ee-451b-81ac-7f90b5681063",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "pre_vendas_sdr",
+          "mode": "list",
+          "cachedResultName": "pre_vendas_sdr"
+        },
+        "returnAll": true,
+        "sort": {
+          "values": [
+            {
+              "column": "id"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        208,
+        0
+      ],
+      "id": "02833e2d-ea2e-4b4d-bdce-6fb53d625841",
+      "name": "Select rows from a table",
+      "credentials": {
+        "postgres": {
+          "id": "LVCJiRba2gV4yM7S",
+          "name": "Metricas - Clientes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        512,
+        0
+      ],
+      "id": "5d610487-5798-4081-9756-59d4452433f2",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "team": "90132992412",
+        "space": "901313008712",
+        "folderless": true,
+        "list": "901324890821",
+        "name": "=Retroativo - ID: {{ $item(\"0\").$node[\"Loop Over Items\"].json[\"id\"] }}",
+        "additionalFields": {
+          "customFieldsJson": "=[\n  {\n    \"id\": \"{{ $item(\"0\").$node[\"Edit Fields\"].json[\"sdr\"] }}\",\n    \"value\": \"{{ $item(\"0\").$node[\"Code in JavaScript\"].json[\"sdr\"] }}\"\n  },\n  {\n    \"id\": \"{{ $item(\"0\").$node[\"Edit Fields\"].json[\"closer\"] }}\",\n    \"value\": \"{{ $item(\"0\").$node[\"Code in JavaScript\"].json[\"closer\"] }}\"\n  },\n  {\n    \"id\": \"{{ $item(\"0\").$node[\"Edit Fields\"].json[\"data\"] }}\",\n    \"value\": \"{{ new Date($item(\"0\").$node[\"Loop Over Items\"].json[\"data\"]).getTime() }}\"\n  },\n  {\n    \"id\": \"{{ $item(\"0\").$node[\"Edit Fields\"].json[\"calls agendadas\"] }}\",\n    \"value\": \"{{ $item(\"0\").$node[\"Loop Over Items\"].json[\"calls_agendadas\"] }}\"\n  },\n  {\n    \"id\": \"{{ $item(\"0\").$node[\"Edit Fields\"].json[\"calls realizadas\"] }}\",\n    \"value\": \"{{ $item(\"0\").$node[\"Loop Over Items\"].json[\"calls_realizadas_closer\"] }}\"\n  },\n  {\n    \"id\": \"{{ $item(\"0\").$node[\"Edit Fields\"].json[\"obs\"] }}\",\n    \"value\": {{ JSON.stringify($item(\"0\").$node[\"Loop Over Items\"].json[\"observacoes\"]) }}\n  }\n]"
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        176
+      ],
+      "id": "b6d65c75-bb60-46a4-88e9-72a029a5dfdf",
+      "name": "Create a task",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7ff451f3-5b78-493f-a100-9443a8ed75ce",
+              "name": "obs",
+              "value": "a9ec501b-31b6-4470-942a-73f4a98f99c0",
+              "type": "string"
+            },
+            {
+              "id": "4bb0b927-0584-4333-8729-9f72564f98a7",
+              "name": "data",
+              "value": "55f43567-3f92-4c5c-a07d-877056e10be9",
+              "type": "string"
+            },
+            {
+              "id": "aca4a892-0935-434a-9514-7d19a0f17880",
+              "name": "closer",
+              "value": "2744b400-287c-4863-99e7-7460ced6b4c9",
+              "type": "string"
+            },
+            {
+              "id": "e83ff430-dc04-4782-9b81-7040c20b3e34",
+              "name": "sdr",
+              "value": "1ed4889c-9f9d-4537-80a3-b24875723c66",
+              "type": "string"
+            },
+            {
+              "id": "1bed8999-f11e-4926-8536-34eb9047c885",
+              "name": "calls agendadas",
+              "value": "a822f099-1acc-4c20-8c2e-d1e3d6ff8963",
+              "type": "string"
+            },
+            {
+              "id": "e896fcfa-82c7-4d54-b896-ab17a343c956",
+              "name": "calls realizadas",
+              "value": "74ad42d7-2e0f-4f14-a934-de82fa9e985e",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -96,
+        0
+      ],
+      "id": "f0895a5f-1f7a-4d77-9706-9267f72cc77f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "get",
+        "id": "86aeywp8d"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        -336
+      ],
+      "id": "54831d27-09b6-41c4-8e39-abf01bbec17f",
+      "name": "Get a task",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonData = items[0].json;\nconst customFields = jsonData.custom_fields;\nconst result = {\n  task_id: jsonData.id,\n  name: jsonData.name,\n  status: jsonData.status.status\n};\n\ncustomFields.forEach(field => {\n  const fieldId = field.id;\n  let fieldValue;\n  let fieldObject = {\n    id: fieldId,\n    name: field.name\n  };\n\n  // Tratamento do valor do campo\n  if (field.type === 'users' && Array.isArray(field.value)) {\n    const allIds = field.value.map(user => user.id).join(',');\n    const userDetails = {};\n    field.value.forEach(user => {\n      userDetails[user.id] = {\n        id: user.id,\n        name: user.username,\n        email: user.email\n      };\n    });\n    fieldValue = {\n      geral: allIds,\n      ...userDetails\n    };\n  } else if (field.type === 'drop_down' && field.value !== undefined && field.value !== null) {\n    const selectedOption = field.type_config.options.find(opt => opt.orderindex === field.value);\n    if (selectedOption) {\n      fieldValue = {\n        id: selectedOption.id,\n        name: selectedOption.name,\n        value: selectedOption.orderindex\n      };\n    } else {\n      fieldValue = '';\n    }\n  } else if (field.type === 'labels' && Array.isArray(field.value)) {\n    fieldValue = field.value.map(optionId => {\n      const option = field.type_config.options.find(opt => opt.id === optionId);\n      if (option) {\n        return {\n          id: option.id,\n          name: option.label,\n          color: option.color\n        };\n      }\n      return null;\n    }).filter(Boolean);\n  } else if (field.type === 'tasks' && Array.isArray(field.value)) {\n    fieldValue = field.value.map(task => ({\n      id: task.id,\n      name: task.name,\n      status: task.status\n    }));\n  } else if (field.type === 'emoji') {\n    fieldValue = field.value || '';\n  } else {\n    fieldValue = field.value !== undefined && field.value !== null ? field.value : '';\n  }\n\n  fieldObject.value = fieldValue;\n\n  // Apenas adiciona options se o campo tiver opções configuradas\n  if (field.type_config && field.type_config.options) {\n    const options = {};\n    field.type_config.options.forEach(opt => {\n      options[opt.id] = {\n        id: opt.id,\n        name: opt.label || opt.name\n      };\n    });\n    if (Object.keys(options).length > 0) {\n      fieldObject.options = options;\n    }\n  }\n\n  result[fieldId] = fieldObject;\n});\n\nreturn [{ json: result }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -128,
+        -336
+      ],
+      "id": "53c06cb7-3035-4227-b542-937c7fab9828",
+      "name": "OrganizarClickUp"
+    },
+    {
+      "parameters": {
+        "jsCode": "const sdr = {\n  \"Louise\": \"adc9c64a-fcc8-4d28-8736-15052b94ca86\",\n  \"Andrew\": \"c4f166fb-144c-409c-9b12-cf6c066b196f\",\n  \"Gabriele\": \"027ca66c-ae45-43b6-a034-a69ce1c60498\",\n  \"Wemelly\": \"adce8bac-4687-4c41-bef5-e0fa75c44a87\"\n}\n\nconst closer = {\n  \"Rafaela\": \"704772fa-f6b6-49da-9f10-9a2e3c8dac87\",\n  \"Lucas\": \"27d7463c-b7a2-4625-b3f9-54137d2b826b\",\n  \"Andrew\": \"2d2b62b8-23f5-40c9-8987-e4aa6de05e86\",\n  \"Leonardo\": \"97df2ffe-5176-450e-91cc-2db67ae5c686\",\n  \"Outro\": \"21274709-c6b0-4509-aef3-fa1dba6a63fb\"\n}\n\nconst nome_sdr = $item(\"0\").$node[\"Loop Over Items\"].json[\"nome_sdr\"]\nconst nome_closer = $item(\"0\").$node[\"Loop Over Items\"].json[\"nome_closer\"]\n\nconst sdr_final = sdr[nome_sdr]\nconst closer_final = closer[nome_closer]\n\nreturn [{\n  sdr: sdr_final,\n  closer: closer_final\n}]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        784,
+        176
+      ],
+      "id": "3786dc1f-d54c-40de-b58f-98a52c1215d3",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "vendas_closer",
+          "mode": "list",
+          "cachedResultName": "vendas_closer"
+        },
+        "returnAll": true,
+        "sort": {
+          "values": [
+            {
+              "column": "id"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        224,
+        512
+      ],
+      "id": "72f3e717-8326-4817-8b66-ce12ecf308fe",
+      "name": "Select rows from a table1",
+      "credentials": {
+        "postgres": {
+          "id": "LVCJiRba2gV4yM7S",
+          "name": "Metricas - Clientes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        528,
+        512
+      ],
+      "id": "76b752da-67a5-47ae-bf84-4f63442fa5c7",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "team": "90132992412",
+        "space": "901313008712",
+        "folderless": true,
+        "list": "901324890858",
+        "name": "=Retroativo - ID: {{ $item(\"0\").$node[\"Loop Over Items1\"].json[\"id\"] }}",
+        "additionalFields": {
+          "customFieldsJson": "=[\n  {\n    \"id\": \"{{ $item(\"0\").$node[\"Edit Fields1\"].json[\"closer\"] }}\",\n    \"value\": \"{{ $item(\"0\").$node[\"Code in JavaScript1\"].json[\"closer\"] }}\"\n  },\n  {\n    \"id\": \"{{ $item(\"0\").$node[\"Edit Fields1\"].json[\"data\"] }}\",\n    \"value\": \"{{ new Date($item(\"0\").$node[\"Loop Over Items1\"].json[\"data\"]).getTime() }}\"\n  },\n  {\n    \"id\": \"{{ $item(\"0\").$node[\"Edit Fields1\"].json[\"lead\"] }}\",\n    \"value\": \"{{ $item(\"0\").$node[\"Loop Over Items1\"].json[\"nome_lead\"] }}\"\n  },\n  {\n    \"id\": \"{{ $item(\"0\").$node[\"Edit Fields1\"].json[\"calls realizadas\"] }}\",\n    \"value\": \"{{ $item(\"0\").$node[\"Loop Over Items1\"].json[\"valor_recebido\"] }}\"\n  }\n]"
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        688
+      ],
+      "id": "c989f8c8-6647-4ae6-b95e-e7899e538f5f",
+      "name": "Create a task1",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4bb0b927-0584-4333-8729-9f72564f98a7",
+              "name": "data",
+              "value": "55f43567-3f92-4c5c-a07d-877056e10be9",
+              "type": "string"
+            },
+            {
+              "id": "aca4a892-0935-434a-9514-7d19a0f17880",
+              "name": "closer",
+              "value": "2744b400-287c-4863-99e7-7460ced6b4c9",
+              "type": "string"
+            },
+            {
+              "id": "1bed8999-f11e-4926-8536-34eb9047c885",
+              "name": "lead",
+              "value": "2f93504c-adb8-4968-a9fc-cd649ffcd1a8",
+              "type": "string"
+            },
+            {
+              "id": "e896fcfa-82c7-4d54-b896-ab17a343c956",
+              "name": "calls realizadas",
+              "value": "bca6bfc8-d08b-4fa2-b9fd-1f8689d19bd7",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -80,
+        512
+      ],
+      "id": "a612ad33-5569-49ad-aad8-48f738b3fc52",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const closer = {\n  \"Rafaela\": \"704772fa-f6b6-49da-9f10-9a2e3c8dac87\",\n  \"Lucas\": \"27d7463c-b7a2-4625-b3f9-54137d2b826b\",\n  \"Andrew\": \"2d2b62b8-23f5-40c9-8987-e4aa6de05e86\",\n  \"Leonardo\": \"97df2ffe-5176-450e-91cc-2db67ae5c686\",\n  \"Outro\": \"21274709-c6b0-4509-aef3-fa1dba6a63fb\"\n}\n\nconst nome_closer = $item(\"0\").$node[\"Loop Over Items1\"].json[\"nome_closer\"]\n\nconst closer_final = closer[nome_closer]\n\nreturn [{\n  closer: closer_final\n}]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        688
+      ],
+      "id": "b013e663-96ca-4874-a914-7033cf223414",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "pre_vendas_sdr",
+          "mode": "list",
+          "cachedResultName": "pre_vendas_sdr"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $item(\"0\").$node[\"Loop Over Items\"].json[\"id\"] }}",
+            "task_id": "={{ $item(\"0\").$node[\"Create a task\"].json[\"id\"] }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "nome_sdr",
+              "displayName": "nome_sdr",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "calls_agendadas",
+              "displayName": "calls_agendadas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "calls_realizadas_closer",
+              "displayName": "calls_realizadas_closer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "observacoes",
+              "displayName": "observacoes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nome_closer",
+              "displayName": "nome_closer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "task_id",
+              "displayName": "task_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1328,
+        176
+      ],
+      "id": "c2c603d7-e85d-4090-b354-a6e0bff68f9e",
+      "name": "Update rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "LVCJiRba2gV4yM7S",
+          "name": "Metricas - Clientes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "dados_sdr",
+          "mode": "list",
+          "cachedResultName": "dados_sdr"
+        },
+        "returnAll": true,
+        "sort": {
+          "values": [
+            {
+              "column": "id"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        224,
+        976
+      ],
+      "id": "91d5eaa3-3e2b-48ab-a6cf-d39a2565d47f",
+      "name": "Select rows from a table2",
+      "credentials": {
+        "postgres": {
+          "id": "LVCJiRba2gV4yM7S",
+          "name": "Metricas - Clientes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        528,
+        976
+      ],
+      "id": "7ece9fdc-d740-4d86-ab3a-294a4c1c4da4",
+      "name": "Loop Over Items2"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "team": "90132992412",
+        "space": "901313008712",
+        "folderless": true,
+        "list": "901324890867",
+        "name": "=Retroativo - ID: {{ $item(\"0\").$node[\"Loop Over Items2\"].json[\"id\"] }}",
+        "additionalFields": {
+          "customFieldsJson": "=[\n  {\n    \"id\": \"{{ $item(0).$node['Edit Fields2'].json['data'] }}\",\n    \"value\": \"{{ new Date($item(0).$node['Loop Over Items2'].json['data']).getTime() }}\"\n  },\n  {\n    \"id\": \"{{ $item(0).$node['Edit Fields2'].json['leads'] }}\",\n    \"value\": {{ $item(0).$node['Loop Over Items2'].json['qnt_leads'] }}\n  },\n  {\n    \"id\": \"{{ $item(0).$node['Edit Fields2'].json['agendamentos'] }}\",\n    \"value\": {{ $item(0).$node['Loop Over Items2'].json['agendamentos'] }}\n  },\n  {\n    \"id\": \"{{ $item(0).$node['Edit Fields2'].json['comparecimentos'] }}\",\n    \"value\": {{ $item(0).$node['Loop Over Items2'].json['comparecimentos'] }}\n  },\n  {\n    \"id\": \"{{ $item(0).$node['Edit Fields2'].json['follow up'] }}\",\n    \"value\": {{ $item(0).$node['Loop Over Items2'].json['follow_up'] }}\n  },\n  {\n    \"id\": \"{{ $item(0).$node['Edit Fields2'].json['ligações'] }}\",\n    \"value\": {{ $item(0).$node['Loop Over Items2'].json['ligacoes'] }}\n  },\n  {\n    \"id\": \"{{ $item(0).$node['Edit Fields2'].json['indicações'] }}\",\n    \"value\": {{ $item(0).$node['Loop Over Items2'].json['indicacoes'] }}\n  },\n  {\n    \"id\": \"{{ $item(0).$node['Edit Fields2'].json['fechamento'] }}\",\n    \"value\": {{ $item(0).$node['Loop Over Items2'].json['fechamento'] }}\n  },\n  {\n    \"id\": \"{{ $item(0).$node['Edit Fields2'].json['qnt_vendas'] }}\",\n    \"value\": {{ $item(0).$node['Loop Over Items2'].json['qnt_vendas'] }}\n  },\n  {\n    \"id\": \"{{ $item(0).$node['Edit Fields2'].json['cliente'] }}\",\n    \"value\": \"{{ $item(\"0\").$node[\"Select rows from a table3\"].json[\"nome\"] }}\"\n  },\n  {\n    \"id\": \"{{ $item(0).$node['Edit Fields2'].json['obs'] }}\",\n    \"value\": {{ JSON.stringify($item(0).$node['Loop Over Items2'].json['observacoes']) }}\n  },\n  {\n    \"id\": \"{{ $item(\"0\").$node[\"Edit Fields2\"].json[\"hunter\"] }}\",\n    \"value\": \"{{ $item(\"0\").$node[\"Loop Over Items2\"].json[\"nome_sdr\"].trim() }}\"\n  }\n]"
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        1152
+      ],
+      "id": "561bd57a-cf35-4bf8-968b-1cc51f9f2df3",
+      "name": "Create a task2",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7ff451f3-5b78-493f-a100-9443a8ed75ce",
+              "name": "obs",
+              "value": "a9ec501b-31b6-4470-942a-73f4a98f99c0",
+              "type": "string"
+            },
+            {
+              "id": "4bb0b927-0584-4333-8729-9f72564f98a7",
+              "name": "data",
+              "value": "55f43567-3f92-4c5c-a07d-877056e10be9",
+              "type": "string"
+            },
+            {
+              "id": "aca4a892-0935-434a-9514-7d19a0f17880",
+              "name": "agendamentos",
+              "value": "3c1b337f-75c5-460f-a51b-50c47b8a9351",
+              "type": "string"
+            },
+            {
+              "id": "e83ff430-dc04-4782-9b81-7040c20b3e34",
+              "name": "comparecimentos",
+              "value": "cbc85196-0554-4151-be1a-a4c063a4a00a",
+              "type": "string"
+            },
+            {
+              "id": "1bed8999-f11e-4926-8536-34eb9047c885",
+              "name": "fechamento",
+              "value": "2722ca04-fce0-4690-a212-32b0ce1a6afd",
+              "type": "string"
+            },
+            {
+              "id": "e896fcfa-82c7-4d54-b896-ab17a343c956",
+              "name": "follow up",
+              "value": "121c1e61-baee-4612-9fce-e1fed3ec473a",
+              "type": "string"
+            },
+            {
+              "id": "d77d208c-9fb9-4a55-ad05-7af0586dbb6f",
+              "name": "indicações",
+              "value": "547ded6c-b1f9-48ed-8ebc-5dca8e2886e9",
+              "type": "string"
+            },
+            {
+              "id": "9ba3ab2f-1444-43c6-ae5b-bbe282b47ea3",
+              "name": "leads",
+              "value": "e42d2fd1-a262-46b2-9029-c02ddc2fdf8b",
+              "type": "string"
+            },
+            {
+              "id": "cbed5723-f8fe-400c-a157-4b98f0bca551",
+              "name": "ligações",
+              "value": "432c8473-e8ce-4c6b-9f37-46824a2eeb2e",
+              "type": "string"
+            },
+            {
+              "id": "28dad3ba-169e-4437-a6bc-5b8b95b41c1f",
+              "name": "qnt_vendas",
+              "value": "945a462d-cc24-4772-b1e9-0cf2b0e7f6ef",
+              "type": "string"
+            },
+            {
+              "id": "61829d70-f9c3-4ebd-901e-0767585fdb62",
+              "name": "cliente",
+              "value": "d35cef29-4de8-407b-b048-e1066ef2d0b9",
+              "type": "string"
+            },
+            {
+              "id": "244c6f06-ed3c-4429-a538-8e82a3f3c4cc",
+              "name": "hunter",
+              "value": "d3b34fb7-90d6-445e-9b86-0b3e2c681dd3",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -80,
+        976
+      ],
+      "id": "54a83a0f-6739-44b8-8dba-8cd37a88b55d",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const sdr = {\n  \"Louise\": \"adc9c64a-fcc8-4d28-8736-15052b94ca86\",\n  \"Andrew\": \"c4f166fb-144c-409c-9b12-cf6c066b196f\",\n  \"Gabriele\": \"027ca66c-ae45-43b6-a034-a69ce1c60498\",\n  \"Wemelly\": \"adce8bac-4687-4c41-bef5-e0fa75c44a87\"\n}\n\nconst closer = {\n  \"Rafaela\": \"704772fa-f6b6-49da-9f10-9a2e3c8dac87\",\n  \"Lucas\": \"27d7463c-b7a2-4625-b3f9-54137d2b826b\",\n  \"Andrew\": \"2d2b62b8-23f5-40c9-8987-e4aa6de05e86\",\n  \"Leonardo\": \"97df2ffe-5176-450e-91cc-2db67ae5c686\",\n  \"Outro\": \"21274709-c6b0-4509-aef3-fa1dba6a63fb\"\n}\n\nconst nome_sdr = $item(\"0\").$node[\"Loop Over Items2\"].json[\"nome_sdr\"]\nconst nome_closer = $item(\"0\").$node[\"Loop Over Items2\"].json[\"nome_closer\"]\n\nconst sdr_final = sdr[nome_sdr]\nconst closer_final = closer[nome_closer]\n\nreturn [{\n  sdr: sdr_final,\n  closer: closer_final\n}]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        1152
+      ],
+      "id": "b259fe95-b011-40ab-8af9-0c9df31193b2",
+      "name": "Code in JavaScript2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "dados_sdr",
+          "mode": "list",
+          "cachedResultName": "dados_sdr"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $item(\"0\").$node[\"Loop Over Items2\"].json[\"id\"] }}",
+            "task_id": "={{ $item(\"0\").$node[\"Create a task2\"].json[\"id\"] }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "nome_sdr",
+              "displayName": "nome_sdr",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "calls_agendadas",
+              "displayName": "calls_agendadas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "calls_realizadas_closer",
+              "displayName": "calls_realizadas_closer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "observacoes",
+              "displayName": "observacoes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nome_closer",
+              "displayName": "nome_closer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "task_id",
+              "displayName": "task_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1680,
+        1152
+      ],
+      "id": "3c4adb94-1bf2-4a92-ba44-6029149f8933",
+      "name": "Update rows in a table1",
+      "credentials": {
+        "postgres": {
+          "id": "LVCJiRba2gV4yM7S",
+          "name": "Metricas - Clientes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "cliente",
+          "mode": "list",
+          "cachedResultName": "cliente"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $item(\"0\").$node[\"Loop Over Items2\"].json[\"cliente_id\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1104,
+        1152
+      ],
+      "id": "6768a18d-a729-4394-9681-5844f92e1dff",
+      "name": "Select rows from a table3",
+      "credentials": {
+        "postgres": {
+          "id": "LVCJiRba2gV4yM7S",
+          "name": "Metricas - Clientes"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Get a task": [
+      {
+        "json": {
+          "id": "86aeywp8d",
+          "custom_id": null,
+          "custom_item_id": 0,
+          "name": "Form Submission - #2026-01-30T14:37:59-03:00",
+          "text_content": "",
+          "description": "",
+          "status": {
+            "id": "sc901324890858_mhaCKM7c",
+            "status": "registro",
+            "color": "#87909e",
+            "orderindex": 0,
+            "type": "open"
+          },
+          "orderindex": "120489536.00000000000000000000000000000000",
+          "date_created": "1769794679935",
+          "date_updated": "1769811926519",
+          "date_closed": null,
+          "date_done": null,
+          "archived": false,
+          "creator": {
+            "id": 278505381,
+            "username": "Ferramentas Harmoniza",
+            "color": "#595d66",
+            "email": "ferramentas@harmoniza.pro",
+            "profilePicture": null
+          },
+          "assignees": [],
+          "group_assignees": [],
+          "watchers": [
+            {
+              "id": 278505381,
+              "username": "Ferramentas Harmoniza",
+              "color": "#595d66",
+              "initials": "FH",
+              "email": "ferramentas@harmoniza.pro",
+              "profilePicture": null
+            }
+          ],
+          "checklists": [],
+          "tags": [],
+          "parent": null,
+          "top_level_parent": null,
+          "priority": null,
+          "due_date": null,
+          "start_date": null,
+          "points": null,
+          "time_estimate": null,
+          "time_spent": 0,
+          "custom_fields": [
+            {
+              "id": "2744b400-287c-4863-99e7-7460ced6b4c9",
+              "name": "Closer",
+              "type": "drop_down",
+              "type_config": {
+                "sorting": "manual",
+                "new_drop_down": true,
+                "options": [
+                  {
+                    "id": "704772fa-f6b6-49da-9f10-9a2e3c8dac87",
+                    "name": "Rafaela",
+                    "color": "#FF4081",
+                    "orderindex": 0
+                  },
+                  {
+                    "id": "27d7463c-b7a2-4625-b3f9-54137d2b826b",
+                    "name": "Lucas",
+                    "color": "#7C4DFF",
+                    "orderindex": 1
+                  },
+                  {
+                    "id": "2d2b62b8-23f5-40c9-8987-e4aa6de05e86",
+                    "name": "Andrew",
+                    "color": "#fff",
+                    "orderindex": 2
+                  },
+                  {
+                    "id": "97df2ffe-5176-450e-91cc-2db67ae5c686",
+                    "name": "Leonardo",
+                    "color": "#f9d900",
+                    "orderindex": 3
+                  },
+                  {
+                    "id": "21274709-c6b0-4509-aef3-fa1dba6a63fb",
+                    "name": "Outro",
+                    "color": "#800000",
+                    "orderindex": 4
+                  }
+                ]
+              },
+              "date_created": "1769778988425",
+              "hide_from_guests": false,
+              "value": 0,
+              "value_richtext": null,
+              "required": false
+            },
+            {
+              "id": "55f43567-3f92-4c5c-a07d-877056e10be9",
+              "name": "Data",
+              "type": "date",
+              "type_config": {},
+              "date_created": "1769779052079",
+              "hide_from_guests": false,
+              "value": "1769756400000",
+              "value_richtext": null,
+              "required": false
+            },
+            {
+              "id": "2f93504c-adb8-4968-a9fc-cd649ffcd1a8",
+              "name": "Nome do Lead",
+              "type": "short_text",
+              "type_config": {},
+              "date_created": "1769794103827",
+              "hide_from_guests": false,
+              "value": "Gabriel",
+              "value_richtext": null,
+              "required": false
+            },
+            {
+              "id": "bca6bfc8-d08b-4fa2-b9fd-1f8689d19bd7",
+              "name": "Valor Recebido",
+              "type": "currency",
+              "type_config": {
+                "default": null,
+                "precision": 2,
+                "currency_type": "USD"
+              },
+              "date_created": "1769794688485",
+              "hide_from_guests": false,
+              "value": "20000",
+              "value_richtext": null,
+              "required": false
+            }
+          ],
+          "dependencies": [],
+          "linked_tasks": [],
+          "locations": [],
+          "team_id": "90132992412",
+          "url": "https://app.clickup.com/t/86aeywp8d",
+          "sharing": {
+            "public": false,
+            "public_share_expires_on": null,
+            "public_fields": [
+              "assignees",
+              "priority",
+              "due_date",
+              "content",
+              "comments",
+              "attachments",
+              "customFields",
+              "subtasks",
+              "tags",
+              "checklists",
+              "coverimage"
+            ],
+            "token": null,
+            "seo_optimized": false
+          },
+          "permission_level": "create",
+          "list": {
+            "id": "901324890858",
+            "name": "Vendas",
+            "access": true
+          },
+          "project": {
+            "id": "901316733125",
+            "name": "hidden",
+            "hidden": true,
+            "access": true
+          },
+          "folder": {
+            "id": "901316733125",
+            "name": "hidden",
+            "hidden": true,
+            "access": true
+          },
+          "space": {
+            "id": "901313008712"
+          },
+          "attachments": []
+        }
+      }
+    ],
+    "OrganizarClickUp": [
+      {
+        "json": {
+          "task_id": "86aeywp8d",
+          "name": "Form Submission - #2026-01-30T14:37:59-03:00",
+          "status": "registro",
+          "2744b400-287c-4863-99e7-7460ced6b4c9": {
+            "id": "2744b400-287c-4863-99e7-7460ced6b4c9",
+            "name": "Closer",
+            "value": {
+              "id": "704772fa-f6b6-49da-9f10-9a2e3c8dac87",
+              "name": "Rafaela",
+              "value": 0
+            },
+            "options": {
+              "704772fa-f6b6-49da-9f10-9a2e3c8dac87": {
+                "id": "704772fa-f6b6-49da-9f10-9a2e3c8dac87",
+                "name": "Rafaela"
+              },
+              "27d7463c-b7a2-4625-b3f9-54137d2b826b": {
+                "id": "27d7463c-b7a2-4625-b3f9-54137d2b826b",
+                "name": "Lucas"
+              },
+              "2d2b62b8-23f5-40c9-8987-e4aa6de05e86": {
+                "id": "2d2b62b8-23f5-40c9-8987-e4aa6de05e86",
+                "name": "Andrew"
+              },
+              "97df2ffe-5176-450e-91cc-2db67ae5c686": {
+                "id": "97df2ffe-5176-450e-91cc-2db67ae5c686",
+                "name": "Leonardo"
+              },
+              "21274709-c6b0-4509-aef3-fa1dba6a63fb": {
+                "id": "21274709-c6b0-4509-aef3-fa1dba6a63fb",
+                "name": "Outro"
+              }
+            }
+          },
+          "55f43567-3f92-4c5c-a07d-877056e10be9": {
+            "id": "55f43567-3f92-4c5c-a07d-877056e10be9",
+            "name": "Data",
+            "value": "1769756400000"
+          },
+          "2f93504c-adb8-4968-a9fc-cd649ffcd1a8": {
+            "id": "2f93504c-adb8-4968-a9fc-cd649ffcd1a8",
+            "name": "Nome do Lead",
+            "value": "Gabriel"
+          },
+          "bca6bfc8-d08b-4fa2-b9fd-1f8689d19bd7": {
+            "id": "bca6bfc8-d08b-4fa2-b9fd-1f8689d19bd7",
+            "name": "Valor Recebido",
+            "value": "20000"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a task": {
+      "main": [
+        [
+          {
+            "node": "OrganizarClickUp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Create a task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a task": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a task1": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Create a task1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a task2": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update rows in a table1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table3": {
+      "main": [
+        [
+          {
+            "node": "Create a task2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ee70714e-83f0-4b39-b8a5-acf7be8311c1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "Dz3o1dy9UZ0fb4ez",
+  "tags": []
+}

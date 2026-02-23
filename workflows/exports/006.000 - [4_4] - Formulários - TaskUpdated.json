@@ -1,0 +1,735 @@
+{
+  "name": "006.000 - [4/4] - Formulários - TaskUpdated",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "get",
+        "id": "={{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"task_id\"] }}"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        16
+      ],
+      "id": "9c9d520c-ead4-4120-bce1-a88fa3dd2c15",
+      "name": "Get a task",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -496,
+        16
+      ],
+      "id": "c7f0c327-a9bf-4c2b-a0cb-0919f73f1b65",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonData = items[0].json;\nconst customFields = jsonData.custom_fields;\nconst result = {\n  task_id: jsonData.id,\n  name: jsonData.name,\n  status: jsonData.status.status\n};\n\ncustomFields.forEach(field => {\n  const fieldId = field.id;\n  let fieldValue;\n  let fieldObject = {\n    id: fieldId,\n    name: field.name\n  };\n\n  // Tratamento do valor do campo\n  if (field.type === 'users' && Array.isArray(field.value)) {\n    const allIds = field.value.map(user => user.id).join(',');\n    const userDetails = {};\n    field.value.forEach(user => {\n      userDetails[user.id] = {\n        id: user.id,\n        name: user.username,\n        email: user.email\n      };\n    });\n    fieldValue = {\n      geral: allIds,\n      ...userDetails\n    };\n  } else if (field.type === 'drop_down' && field.value !== undefined && field.value !== null) {\n    const selectedOption = field.type_config.options.find(opt => opt.orderindex === field.value);\n    if (selectedOption) {\n      fieldValue = {\n        id: selectedOption.id,\n        name: selectedOption.name,\n        value: selectedOption.orderindex\n      };\n    } else {\n      fieldValue = '';\n    }\n  } else if (field.type === 'labels' && Array.isArray(field.value)) {\n    fieldValue = field.value.map(optionId => {\n      const option = field.type_config.options.find(opt => opt.id === optionId);\n      if (option) {\n        return {\n          id: option.id,\n          name: option.label,\n          color: option.color\n        };\n      }\n      return null;\n    }).filter(Boolean);\n  } else if (field.type === 'tasks' && Array.isArray(field.value)) {\n    fieldValue = field.value.map(task => ({\n      id: task.id,\n      name: task.name,\n      status: task.status\n    }));\n  } else if (field.type === 'emoji') {\n    fieldValue = field.value || '';\n  } else {\n    fieldValue = field.value !== undefined && field.value !== null ? field.value : '';\n  }\n\n  fieldObject.value = fieldValue;\n\n  // Apenas adiciona options se o campo tiver opções configuradas\n  if (field.type_config && field.type_config.options) {\n    const options = {};\n    field.type_config.options.forEach(opt => {\n      options[opt.id] = {\n        id: opt.id,\n        name: opt.label || opt.name\n      };\n    });\n    if (Object.keys(options).length > 0) {\n      fieldObject.options = options;\n    }\n  }\n\n  result[fieldId] = fieldObject;\n});\n\nreturn [{ json: result }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        96,
+        16
+      ],
+      "id": "42a6a3fd-db49-4e20-bd29-ce09bd22acbb",
+      "name": "OrganizarClickUp"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $item(\"0\").$node[\"Get a task\"].json[\"list\"][\"name\"] }}",
+                    "rightValue": "Pré-vendas",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "d8ffe1f3-7feb-4877-82e9-90e7cd79d6e4"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Pré-Vendas"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "6a5191aa-28a7-4908-aef9-464c90059c6b",
+                    "leftValue": "={{ $item(\"0\").$node[\"Get a task\"].json[\"list\"][\"name\"] }}",
+                    "rightValue": "Vendas",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Vendas"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d4176100-3cef-47bc-ab88-18fc6903ea61",
+                    "leftValue": "={{ $item(\"0\").$node[\"Get a task\"].json[\"list\"][\"name\"] }}",
+                    "rightValue": "Clientes",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Clientes"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        736,
+        0
+      ],
+      "id": "ac79f6f3-2127-41a4-bc17-cf4134666f68",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "cliente",
+          "mode": "list",
+          "cachedResultName": "cliente"
+        },
+        "limit": 1,
+        "where": {
+          "values": [
+            {
+              "column": "nome",
+              "value": "={{ $item(\"0\").$node[\"Switch\"].json[\"d35cef29-4de8-407b-b048-e1066ef2d0b9\"][\"value\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1040,
+        384
+      ],
+      "id": "12e3b3b3-fc57-4beb-b5c7-a9b0e5e2f35c",
+      "name": "Select rows from a table",
+      "credentials": {
+        "postgres": {
+          "id": "LVCJiRba2gV4yM7S",
+          "name": "Metricas - Clientes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "pre_vendas_sdr",
+          "mode": "list",
+          "cachedResultName": "pre_vendas_sdr"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "calls_agendadas": "={{ Number($item(\"0\").$node[\"OrganizarClickUp\"].json[\"a822f099-1acc-4c20-8c2e-d1e3d6ff8963\"][\"value\"]) }}",
+            "calls_realizadas_closer": "={{ Number($item(\"0\").$node[\"OrganizarClickUp\"].json[\"74ad42d7-2e0f-4f14-a934-de82fa9e985e\"][\"value\"]) }}",
+            "nome_closer": "={{ $item(\"0\").$node[\"OrganizarClickUp\"].json[\"2744b400-287c-4863-99e7-7460ced6b4c9\"][\"value\"][\"name\"] }}",
+            "task_id": "={{ $item(\"0\").$node[\"OrganizarClickUp\"].json[\"task_id\"] }}",
+            "observacoes": "={{ $item(\"0\").$node[\"OrganizarClickUp\"].json[\"a9ec501b-31b6-4470-942a-73f4a98f99c0\"][\"value\"] }}",
+            "data": "={{ new Date(Number($item(0).$node[\"OrganizarClickUp\"].json[\"55f43567-3f92-4c5c-a07d-877056e10be9\"][\"value\"])).toISOString() }}",
+            "nome_sdr": "={{ $item(\"0\").$node[\"OrganizarClickUp\"].json[\"1ed4889c-9f9d-4537-80a3-b24875723c66\"][\"value\"][\"name\"] }}"
+          },
+          "matchingColumns": [
+            "task_id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nome_sdr",
+              "displayName": "nome_sdr",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "calls_agendadas",
+              "displayName": "calls_agendadas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "calls_realizadas_closer",
+              "displayName": "calls_realizadas_closer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "observacoes",
+              "displayName": "observacoes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nome_closer",
+              "displayName": "nome_closer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "task_id",
+              "displayName": "task_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1040,
+        -384
+      ],
+      "id": "2a5714b0-c06e-45cb-be8f-4f94a51a2512",
+      "name": "Update rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "LVCJiRba2gV4yM7S",
+          "name": "Metricas - Clientes"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "vendas_closer",
+          "mode": "list",
+          "cachedResultName": "vendas_closer"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nome_closer": "={{ $item(\"0\").$node[\"Switch\"].json[\"2744b400-287c-4863-99e7-7460ced6b4c9\"][\"value\"][\"name\"] }}",
+            "task_id": "={{ $item(\"0\").$node[\"OrganizarClickUp\"].json[\"task_id\"] }}",
+            "data": "={{ new Date(Number($item(\"0\").$node[\"OrganizarClickUp\"].json[\"55f43567-3f92-4c5c-a07d-877056e10be9\"][\"value\"])).toISOString() }}",
+            "valor_recebido": "={{ Number($item(\"0\").$node[\"OrganizarClickUp\"].json[\"bca6bfc8-d08b-4fa2-b9fd-1f8689d19bd7\"][\"value\"]) }}",
+            "nome_lead": "={{ $item(\"0\").$node[\"OrganizarClickUp\"].json[\"2f93504c-adb8-4968-a9fc-cd649ffcd1a8\"][\"value\"] }}"
+          },
+          "matchingColumns": [
+            "task_id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nome_closer",
+              "displayName": "nome_closer",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nome_lead",
+              "displayName": "nome_lead",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "valor_recebido",
+              "displayName": "valor_recebido",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "task_id",
+              "displayName": "task_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1040,
+        16
+      ],
+      "id": "62b8940e-53db-4d2f-b335-c14ab51558a4",
+      "name": "Update rows in a table1",
+      "credentials": {
+        "postgres": {
+          "id": "LVCJiRba2gV4yM7S",
+          "name": "Metricas - Clientes"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "dados_sdr",
+          "mode": "list",
+          "cachedResultName": "dados_sdr"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "agendamentos": "={{ $item(\"0\").$node[\"OrganizarClickUp\"].json[\"3c1b337f-75c5-460f-a51b-50c47b8a9351\"][\"value\"] }}",
+            "comparecimentos": "={{ $item(\"0\").$node[\"OrganizarClickUp\"].json[\"cbc85196-0554-4151-be1a-a4c063a4a00a\"][\"value\"] }}",
+            "cliente_id": "={{ $item(\"0\").$node[\"Select rows from a table\"].json[\"id\"] }}",
+            "qnt_leads": "={{ $item(\"0\").$node[\"OrganizarClickUp\"].json[\"e42d2fd1-a262-46b2-9029-c02ddc2fdf8b\"][\"value\"] }}",
+            "follow_up": "={{ $item(\"0\").$node[\"OrganizarClickUp\"].json[\"121c1e61-baee-4612-9fce-e1fed3ec473a\"][\"value\"] }}",
+            "ligacoes": "=0",
+            "indicacoes": "=0",
+            "fechamento": "={{ $item(\"0\").$node[\"OrganizarClickUp\"].json[\"2722ca04-fce0-4690-a212-32b0ce1a6afd\"][\"value\"] }}",
+            "qnt_vendas": "={{ $item(\"0\").$node[\"OrganizarClickUp\"].json[\"945a462d-cc24-4772-b1e9-0cf2b0e7f6ef\"][\"value\"] }}",
+            "data": "={{ new Date(Number($item(\"0\").$node[\"OrganizarClickUp\"].json[\"55f43567-3f92-4c5c-a07d-877056e10be9\"][\"value\"])).toISOString() }}",
+            "observacoes": "={{ $item(\"0\").$node[\"OrganizarClickUp\"].json[\"a9ec501b-31b6-4470-942a-73f4a98f99c0\"][\"value\"] }}",
+            "nome_sdr": "={{ $item(\"0\").$node[\"OrganizarClickUp\"].json[\"d3b34fb7-90d6-445e-9b86-0b3e2c681dd3\"][\"value\"] }}",
+            "task_id": "={{ $item(\"0\").$node[\"OrganizarClickUp\"].json[\"task_id\"] }}"
+          },
+          "matchingColumns": [
+            "task_id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "cliente_id",
+              "displayName": "cliente_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "qnt_leads",
+              "displayName": "qnt_leads",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "agendamentos",
+              "displayName": "agendamentos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "comparecimentos",
+              "displayName": "comparecimentos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "follow_up",
+              "displayName": "follow_up",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ligacoes",
+              "displayName": "ligacoes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "indicacoes",
+              "displayName": "indicacoes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fechamento",
+              "displayName": "fechamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nome_sdr",
+              "displayName": "nome_sdr",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "observacoes",
+              "displayName": "observacoes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "qnt_vendas",
+              "displayName": "qnt_vendas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "task_id",
+              "displayName": "task_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1312,
+        384
+      ],
+      "id": "b1e9b08a-5e94-4705-8e31-3ecf3e98efa5",
+      "name": "Update rows in a table2",
+      "credentials": {
+        "postgres": {
+          "id": "LVCJiRba2gV4yM7S",
+          "name": "Metricas - Clientes"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        16
+      ],
+      "id": "335725c6-688d-4546-aa45-46f256ab7441",
+      "name": "Wait",
+      "webhookId": "10f58388-685c-4381-8c62-e3a77f3c02b3"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "event": "taskUpdated",
+          "task_id": "86af3bft0"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Get a task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a task": {
+      "main": [
+        [
+          {
+            "node": "OrganizarClickUp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update rows in a table1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OrganizarClickUp": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update rows in a table2": {
+      "main": [
+        [],
+        []
+      ]
+    },
+    "Update rows in a table1": {
+      "main": [
+        [],
+        []
+      ]
+    },
+    "Update rows in a table": {
+      "main": [
+        [],
+        []
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e8972aec-c0fa-4fd3-81a6-28efec25aa1f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "HVMQTCfVDbSFnQJt",
+  "tags": []
+}

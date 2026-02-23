@@ -1,0 +1,1305 @@
+{
+  "name": "Tráfego - [2/2] - Desempenho Meta Ads",
+  "nodes": [
+    {
+      "parameters": {
+        "queue": "trafego_desempenho",
+        "options": {
+          "arguments": {
+            "argument": [
+              {
+                "key": "x-queue-type",
+                "value": "quorum"
+              }
+            ]
+          },
+          "acknowledge": "executionFinishesSuccessfully",
+          "jsonParseBody": true,
+          "onlyContent": false,
+          "parallelMessages": 1
+        }
+      },
+      "id": "5654b6b4-3da8-4eb7-a456-f95d181ce0ed",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.rabbitmqTrigger",
+      "typeVersion": 1,
+      "position": [
+        -432,
+        720
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v24.0/{{ $item(\"0\").$node[\"Edit Fields2\"].json[\"Act Meta Ads\"] }}/insights",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "spend,adset_id,adset_name,campaign_name"
+            },
+            {
+              "name": "date_preset",
+              "value": "yesterday"
+            },
+            {
+              "name": "level",
+              "value": "adset"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "id": "7baeb65e-c850-41d8-8ce6-c0cd067ae397",
+      "name": "HTTP Request4",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        640,
+        736
+      ],
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "nw4HXwowAoePh1TI",
+          "name": "Facebook Graph"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "body.data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        720
+      ],
+      "id": "34cee1a2-ff39-450d-b537-3e0d7114d547",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1584,
+        720
+      ],
+      "id": "24463e7a-a932-466c-a647-bf67e9ac7fc3",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v24.0/{{ $item(\"0\").$node[\"Loop Over Items\"].json[\"adset_id\"] }}/insights",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "optimization_goal,spend,actions,conversions"
+            },
+            {
+              "name": "date_preset",
+              "value": "yesterday"
+            },
+            {
+              "name": "level",
+              "value": "adset"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "id": "3e491a47-58ee-4f26-9899-c91e8d542915",
+      "name": "HTTP Request5",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1872,
+        1136
+      ],
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "nw4HXwowAoePh1TI",
+          "name": "Facebook Graph"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// === Entradas ===\n// \"HTTP Request\": node com a resposta da API (body.data)\n// \"Loop Over Items\": node com adset_id/adset_name/date_start/date_stop\n\nconst bodyData = $item(0).$node[\"HTTP Request5\"].json.body?.data || [];\nconst loopData = $item(0).$node[\"Loop Over Items\"].json || [];\n\nconst results = [];\n\nfor (const loop of (Array.isArray(loopData) ? loopData : [loopData])) {\n  const adsetId = loop.adset_id;\n  const adsetName = loop.adset_name;\n  const dateStart = loop.date_start;\n  const dateStop  = loop.date_stop;\n  const campaign_name = loop.campaign_name;\n\n  const insight = bodyData.find(\n    i => i.date_start === dateStart && i.date_stop === dateStop\n  );\n\n  let valor = 0;\n  let resultado = 0;\n  let objetivo = '';\n\n  if (insight) {\n    valor = parseFloat(insight.spend || 0);\n    objetivo = String(insight.optimization_goal || '');\n\n    // ====== Regras de cálculo do resultado ======\n    if (objetivo === 'REPLIES') {\n      const act = (insight.actions || []).find(\n        a => a.action_type === 'onsite_conversion.total_messaging_connection'\n      );\n      resultado = act ? parseFloat(act.value || 0) : 0;\n    }\n\n    else if (objetivo === 'PROFILE_VISIT') {\n      const act = (insight.actions || []).find(\n        a => a.action_type === 'link_click'\n      );\n      resultado = act ? parseFloat(act.value || 0) : 0;\n    }\n  }\n\n  // ====== Custo por resultado ======\n  const custoPorResultado = resultado > 0 ? valor / resultado : 0;\n\n  results.push({\n    json: {\n      data: dateStart,           // loop over items .date_start\n      adset_id: adsetId,         // loop over items .adset_id\n      adset_name: adsetName,     // loop over items .adset_name\n      campaign_name: campaign_name,\n      valor: valor,              // spend\n      resultado: resultado,      // métrica alvo\n      objetivo: objetivo,        // optimization_goal\n      custo_por_resultado: custoPorResultado // novo campo\n    },\n  });\n}\n\nreturn results;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2432,
+        1264
+      ],
+      "id": "4b007071-51ef-404b-8bb9-4606416a7e9f",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cd55a021-2e7f-4b84-91d1-c4924847eb7a",
+              "leftValue": "={{ $item(\"0\").$node[\"HTTP Request5\"].json[\"body\"][\"data\"][\"0\"][\"optimization_goal\"] }}",
+              "rightValue": "OFFSITE_CONVERSIONS",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2192,
+        1120
+      ],
+      "id": "497b075e-1ddc-4c66-b95e-4b35e850e5bc",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v24.0/{{ $item(\"0\").$node[\"Loop Over Items\"].json[\"adset_id\"] }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "promoted_object"
+            },
+            {
+              "name": "date_preset",
+              "value": "yesterday"
+            },
+            {
+              "name": "level",
+              "value": "adset"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "id": "681c4c47-cfa1-45fa-856d-cd018b48ee01",
+      "name": "HTTP Request6",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2432,
+        944
+      ],
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "nw4HXwowAoePh1TI",
+          "name": "Facebook Graph"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// === Entradas ===\n// \"HTTP Request5\": node com a resposta da API (body.data)\n// \"HTTP Request6\": node com custom_event_type\n// \"Loop Over Items\": node com adset_id/adset_name/date_start/date_stop\n\nconst bodyData = $item(0).$node[\"HTTP Request5\"].json.body?.data || [];\nconst loopData = $item(0).$node[\"Loop Over Items\"].json || [];\n\n// Captura o custom_event_type do outro node\nconst customEventType = String(\n  $item(0).$node[\"HTTP Request6\"].json?.body?.promoted_object?.custom_event_type || ''\n).toUpperCase();\n\nconst results = [];\n\nfor (const loop of (Array.isArray(loopData) ? loopData : [loopData])) {\n  const adsetId = loop.adset_id;\n  const adsetName = loop.adset_name;\n  const dateStart = loop.date_start;\n  const dateStop  = loop.date_stop;\n  const campaign_name = loop.campaign_name;\n\n  const insight = bodyData.find(\n    i => i.date_start === dateStart && i.date_stop === dateStop\n  );\n\n  let valor = 0;\n  let resultado = 0;\n  let objetivo = '';\n\n  if (insight) {\n    valor = parseFloat(insight.spend || 0);\n    objetivo = String(insight.optimization_goal || '');\n\n    // ====== Regras de seleção ======\n    const actions = insight.actions || [];\n    const conversions = insight.conversions || [];\n\n    if (customEventType === 'CONTACT') {\n      const act = actions.find(a => a.action_type === 'offsite_conversion.fb_pixel_custom');\n      resultado = act ? parseFloat(act.value || 0) : 0;\n    }\n\n    else if (customEventType === 'PURCHASE') {\n      let act = actions.find(a => a.action_type === 'offsite_conversion.purchase');\n      if (!act) act = actions.find(a => a.action_type === 'offsite_conversion.fb_pixel_purchase');\n      resultado = act ? parseFloat(act.value || 0) : 0;\n    }\n\n    else if (['LEAD', 'GENERATE_LEAD', 'GENERATELEAD'].includes(customEventType)) {\n      const act = actions.find(a => a.action_type === 'offsite_conversion.lead');\n      resultado = act ? parseFloat(act.value || 0) : 0;\n    }\n      \n    else if (customEventType === 'OTHER') {\n      const con = conversions.find(\n        a => a.action_type === 'offsite_conversion.fb_pixel_custom.TypeformSubmit'\n      );\n      resultado = con ? parseFloat(con.value || 0) : 0;\n    }\n  }\n\n  // custo_por_resultado = valor / resultado (proteção contra divisão por zero)\n  const custoPorResultado =\n    Number.isFinite(valor) && resultado > 0 ? valor / resultado : null;\n\n  results.push({\n    json: {\n      data: dateStart,                    // Data do insight\n      adset_id: adsetId,                  // ID do conjunto\n      adset_name: adsetName,              // Nome do conjunto\n      campaign_name: campaign_name,\n      valor: valor,                       // Spend (investimento)\n      resultado: resultado,               // Métrica (varia por custom_event_type)\n      objetivo: $item(0).$node[\"HTTP Request6\"].json?.body?.promoted_object?.custom_event_str,                 // optimization_goal\n      custom_event_type: customEventType, // rastreamento do tipo de evento\n      custo_por_resultado: custoPorResultado\n    },\n  });\n}\n\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2768,
+        928
+      ],
+      "id": "033bd472-eaaf-4379-8be2-12a26be138ab",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2064,
+        1264
+      ],
+      "id": "45c694b1-442b-4912-bb6e-a2f78d64bd16",
+      "name": "Wait",
+      "webhookId": "db877992-b6bc-4730-8684-60854ea773dc"
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1104,
+        864
+      ],
+      "id": "774a73ff-12c5-44aa-9b45-63a7853fdcbb",
+      "name": "Wait1",
+      "webhookId": "db877992-b6bc-4730-8684-60854ea773dc"
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2576,
+        1040
+      ],
+      "id": "0b94cc4b-9c41-495d-a66a-ddb61428b782",
+      "name": "Wait2",
+      "webhookId": "db877992-b6bc-4730-8684-60854ea773dc"
+    },
+    {
+      "parameters": {
+        "operation": "deleteMessage"
+      },
+      "id": "d56b3536-27c8-4648-958a-d76c3c535fb7",
+      "name": "RabbitMQ",
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        496
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "ac294f23-e2e4-4b77-aa36-6c690f09dba6",
+              "leftValue": "={{ $json.fields.redelivered}}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "98a87ee5-a220-4e66-9d89-52379c92d065",
+      "name": "If1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c3447929-4691-4263-9b47-9b7130b1e6d8",
+              "name": "Act Meta Ads",
+              "value": "=act_{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"ID Conta de Anuncio\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "0ce31bda-f9d2-4446-809d-37a35f0df464",
+              "name": "Token",
+              "value": "EAAHvVASlCO0BPTorMZBhp0UIDpuoZA4S0bBdB5Coj0CsALi9cp3qaAZAQuaN1LK8gsUcBxZBpniqZB3gjpDr0K0QyVZC8T4ToiIjDln5xbHCE1I2ahIbaZC9OcKEq4Xs5nWZBFvFlHnKqCeLtmMTxmZCQbCUChbmwj8MzFk3ZBGfoKEfQJaRqzHA7WQ8PldDu0mafACAZDZD",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        304,
+        736
+      ],
+      "id": "1b4ea10a-26ff-4ecc-b6b9-d80cc4f90852",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"ID Planilha\"] }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Dados Meta",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_FCVCA4TA2tVl6CdhniP5ESiR3Ri_qd243MB3HQAeeA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Data": "={{ $now.toString().split(\"T\")[0] }}",
+            "Investimento": "=R$ {{ $json[\"valor\"].toString().replace(\".\",\",\") }}",
+            "Resultado": "={{ $json[\"resultado\"] }}",
+            "Objetivo": "={{ $json[\"objetivo\"] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Investimento",
+              "displayName": "Investimento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Resultado",
+              "displayName": "Resultado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Objetivo",
+              "displayName": "Objetivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3232,
+        1264
+      ],
+      "id": "c9531689-11d0-41c1-8307-22e8290a0476",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "yteecAEQtmTNmkCM",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3488,
+        1408
+      ],
+      "id": "6b156308-d335-49a8-92f2-c63ac1e13a77",
+      "name": "Wait3",
+      "webhookId": "db877992-b6bc-4730-8684-60854ea773dc"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3eeb11b3-a1a6-4215-bc1d-aab3c5abcba4",
+              "leftValue": "={{ $item(\"0\").$node[\"HTTP Request4\"].json[\"error\"][\"message\"] }}",
+              "rightValue": "Forbidden - perhaps check your credentials?",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        864,
+        848
+      ],
+      "id": "ec878100-eee2-44e8-966a-0f8bcc3cbbae",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "dados_meta",
+          "mode": "list",
+          "cachedResultName": "dados_meta"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "cliente_id": "={{ $item(\"0\").$node[\"Select rows from a table\"].json[\"id\"] }}",
+            "data": "={{ $item(\"0\").$node[\"HTTP Request5\"].json[\"body\"][\"data\"][\"0\"][\"date_start\"] }}",
+            "investimento": "={{ $item(\"0\").$node[\"Append row in sheet1\"].json[\"Investimento\"].replace(\"R$ \",\"\").replace(\",\",\".\") }}",
+            "resultado": "={{ $item(\"0\").$node[\"Append row in sheet1\"].json[\"Resultado\"] }}",
+            "objetivo": "={{ $item(\"0\").$node[\"Append row in sheet1\"].json[\"Objetivo\"] }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "cliente_id",
+              "displayName": "cliente_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "investimento",
+              "displayName": "investimento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "resultado",
+              "displayName": "resultado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "objetivo",
+              "displayName": "objetivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        3984,
+        1248
+      ],
+      "id": "fbfbbea2-fb36-4765-b99f-6b4c6eb07c73",
+      "name": "Insert rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "LVCJiRba2gV4yM7S",
+          "name": "Metricas - Clientes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "cliente",
+          "mode": "list",
+          "cachedResultName": "cliente"
+        },
+        "limit": 1,
+        "where": {
+          "values": [
+            {
+              "column": "id_planilha",
+              "value": "={{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"ID Planilha\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        3712,
+        1248
+      ],
+      "id": "7573af80-aafd-4220-9d97-4b9bc5714326",
+      "name": "Select rows from a table",
+      "credentials": {
+        "postgres": {
+          "id": "LVCJiRba2gV4yM7S",
+          "name": "Metricas - Clientes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "cliente",
+          "mode": "list",
+          "cachedResultName": "cliente"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $item(\"0\").$node[\"Select rows from a table\"].json[\"id\"] }}",
+            "ultima_atualizacao": "={{ $now }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "id_planilha",
+              "displayName": "id_planilha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "id_conta_anuncio",
+              "displayName": "id_conta_anuncio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ultima_atualizacao",
+              "displayName": "ultima_atualizacao",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        4240,
+        1248
+      ],
+      "id": "f51439b5-67a7-4ce5-a0bf-03b4e6e113fb",
+      "name": "Update rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "LVCJiRba2gV4yM7S",
+          "name": "Metricas - Clientes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.facebook.com/v24.0/act_991977078896462/insights",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "spend,adset_id,adset_name,campaign_name"
+            },
+            {
+              "name": "date_preset",
+              "value": "yesterday"
+            },
+            {
+              "name": "level",
+              "value": "adset"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "id": "4b8931fa-65b4-43b8-b5e4-3982a122854d",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        576,
+        1472
+      ],
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "nw4HXwowAoePh1TI",
+          "name": "Facebook Graph"
+        }
+      },
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "pinData": {
+    "HTTP Request5": [
+      {
+        "json": {
+          "body": {
+            "data": [
+              {
+                "optimization_goal": "LINK_CLICKS",
+                "spend": "13.65",
+                "actions": [
+                  {
+                    "action_type": "link_click",
+                    "value": "780"
+                  },
+                  {
+                    "action_type": "page_engagement",
+                    "value": "5546"
+                  },
+                  {
+                    "action_type": "onsite_conversion.post_unlike",
+                    "value": "1"
+                  },
+                  {
+                    "action_type": "post_engagement",
+                    "value": "5545"
+                  },
+                  {
+                    "action_type": "like",
+                    "value": "1"
+                  },
+                  {
+                    "action_type": "post_interaction_gross",
+                    "value": "3"
+                  },
+                  {
+                    "action_type": "onsite_conversion.post_net_like",
+                    "value": "2"
+                  },
+                  {
+                    "action_type": "video_view",
+                    "value": "4762"
+                  },
+                  {
+                    "action_type": "post_reaction",
+                    "value": "3"
+                  }
+                ],
+                "date_start": "2026-01-04",
+                "date_stop": "2026-01-04"
+              }
+            ],
+            "paging": {
+              "cursors": {
+                "before": "MAZDZD",
+                "after": "MAZDZD"
+              }
+            }
+          },
+          "headers": {
+            "etag": "\"e6f08d28045be70004e771d48f4ec15da3d2e827\"",
+            "content-type": "application/json",
+            "vary": "Origin, Accept-Encoding",
+            "x-fb-aed": "700",
+            "x-business-use-case-usage": "{\"1345641460264051\":[{\"type\":\"ads_insights\",\"call_count\":0,\"total_cputime\":1,\"total_time\":0,\"estimated_time_to_regain_access\":0,\"ads_api_access_tier\":\"development_access\"}]}",
+            "x-fb-ads-insights-throttle": "{\"app_id_util_pct\":0,\"acc_id_util_pct\":0,\"ads_api_access_tier\":\"development_access\"}",
+            "access-control-allow-origin": "*",
+            "facebook-api-version": "v24.0",
+            "strict-transport-security": "max-age=15552000; preload",
+            "pragma": "no-cache",
+            "cache-control": "private, no-cache, no-store, must-revalidate",
+            "expires": "Sat, 01 Jan 2000 00:00:00 GMT",
+            "x-fb-request-id": "AEKyJdpmc-ePrx-BJ3Wj2zw",
+            "x-fb-trace-id": "FuttBmWUQqc",
+            "x-fb-rev": "1031620744",
+            "x-fb-debug": "kvpAevtUeYVGEEO+ohVyEijXk+3xTQgyboRvOEN8CMWw9L0Bb0oIiuhGjsgOFX0WepzeGmx7qep1fesG7MdZfw==",
+            "date": "Mon, 05 Jan 2026 10:10:07 GMT",
+            "x-fb-connection-quality": "GOOD; q=0.7, rtt=88, rtx=0, c=10, mss=1380, tbw=3461, tp=-1, tpl=-1, uplat=514, ullat=0",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "connection": "close",
+            "content-length": "267"
+          },
+          "statusCode": 200,
+          "statusMessage": "OK"
+        }
+      }
+    ],
+    "Code": [
+      {
+        "json": {
+          "data": "2026-01-04",
+          "adset_id": "120235903083700564",
+          "adset_name": "Novo conjunto de anúncios de Engajamento",
+          "campaign_name": "Campanha Procedimentos",
+          "valor": 13.65,
+          "resultado": 0,
+          "objetivo": "LINK_CLICKS",
+          "custo_por_resultado": 0
+        }
+      }
+    ],
+    "HTTP Request6": [
+      {
+        "json": {
+          "body": {
+            "promoted_object": {
+              "pixel_id": "1353529549095133",
+              "custom_event_type": "OTHER",
+              "custom_event_str": "TypeformSubmit"
+            },
+            "id": "120236145435610564"
+          },
+          "headers": {
+            "etag": "\"e4401ac7fe9efbe0800f17cdd92d0981fe3a87ce\"",
+            "content-type": "application/json",
+            "vary": "Origin",
+            "x-fb-aed": "700",
+            "x-business-use-case-usage": "{\"1345641460264051\":[{\"type\":\"ads_management\",\"call_count\":0,\"total_cputime\":0,\"total_time\":0,\"estimated_time_to_regain_access\":0,\"ads_api_access_tier\":\"development_access\"}]}",
+            "access-control-allow-origin": "*",
+            "facebook-api-version": "v24.0",
+            "strict-transport-security": "max-age=15552000; preload",
+            "pragma": "no-cache",
+            "cache-control": "private, no-cache, no-store, must-revalidate",
+            "expires": "Sat, 01 Jan 2000 00:00:00 GMT",
+            "x-fb-request-id": "Ahik7WPjxNXN_wWgqdFFfpc",
+            "x-fb-trace-id": "D3o/4VIGt2N",
+            "x-fb-rev": "1031620744",
+            "x-fb-debug": "yROUndvjE76PW2B51rPKUphZs4ekr5h+BBpruzPRNnMay0L6Uj6cwctQFIOUitLIz0vE7Cx3ubUp0mnbaBEBgw==",
+            "date": "Mon, 05 Jan 2026 10:10:10 GMT",
+            "x-fb-connection-quality": "GOOD; q=0.7, rtt=87, rtx=0, c=10, mss=1380, tbw=3461, tp=-1, tpl=-1, uplat=253, ullat=0",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "connection": "close",
+            "content-length": "141"
+          },
+          "statusCode": 200,
+          "statusMessage": "OK"
+        }
+      }
+    ],
+    "Code1": [
+      {
+        "json": {
+          "data": "2026-01-04",
+          "adset_id": "120236145435610564",
+          "adset_name": "[Mulheres] [35+]",
+          "campaign_name": "Pré-qualificação | Anti-Curioso",
+          "valor": 24.13,
+          "resultado": 12,
+          "objetivo": "TypeformSubmit",
+          "custom_event_type": "OTHER",
+          "custo_por_resultado": 2.0108333333333333
+        }
+      }
+    ],
+    "Append row in sheet1": [
+      {
+        "json": {
+          "Data": "2026-01-05",
+          "Investimento": "R$ 13,65",
+          "Resultado": 0,
+          "Objetivo": "LINK_CLICKS"
+        }
+      }
+    ],
+    "Insert rows in a table": [
+      {
+        "json": {
+          "id": 322,
+          "cliente_id": 22,
+          "data": "2026-01-05T00:00:00.000Z",
+          "investimento": "13.65",
+          "resultado": 0,
+          "objetivo": "LINK_CLICKS"
+        }
+      }
+    ],
+    "Select rows from a table": [
+      {
+        "json": {
+          "id": 22,
+          "nome": "Viviane Assad",
+          "id_planilha": "1zM3AywxtdDsuuvbisttMqYXvqyUxeUwHmbJRo1Gyd_M",
+          "id_conta_anuncio": "1345641460264051",
+          "ultima_atualizacao": "2025-12-22T00:00:00.000Z",
+          "status": "Ativo"
+        }
+      }
+    ],
+    "Update rows in a table": [
+      {
+        "json": {
+          "id": 22,
+          "nome": "Viviane Assad",
+          "id_planilha": "1zM3AywxtdDsuuvbisttMqYXvqyUxeUwHmbJRo1Gyd_M",
+          "id_conta_anuncio": "1345641460264051",
+          "ultima_atualizacao": "2026-01-05T00:00:00.000Z",
+          "status": "Ativo"
+        }
+      }
+    ],
+    "Webhook": [
+      {
+        "json": {
+          "fields": {
+            "consumerTag": "amq.ctag-3VFbK9lLhbZ-nT7OwIKbXw",
+            "deliveryTag": 406,
+            "redelivered": false,
+            "exchange": "",
+            "routingKey": "trafego_desempenho"
+          },
+          "properties": {
+            "headers": {}
+          },
+          "content": {
+            "row_number": 39,
+            "ID Planilha": "13mmMhhgi5hRUSUdiT82Ndv5EGIqvi8X1hB4VdV9oX2g",
+            "Status Cliente": "Ativo",
+            "ID Conta de Anuncio": "1277157720150309",
+            "col_4": "Mirian de Paula",
+            "col_5": "",
+            "col_6": "Coleta de Dados | Mirian de Paula"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request5": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request6": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "RabbitMQ",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": 180
+  },
+  "versionId": "948f5e1c-4d09-4f77-bfcc-dc3aac66d1ed",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "lI8UCdSfpy7Z9ZpU",
+  "tags": []
+}

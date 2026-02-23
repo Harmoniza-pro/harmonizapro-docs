@@ -1,0 +1,362 @@
+{
+  "name": "006.000 - [1/4] - Formulários - Central de Automações",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "response_clickup",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -432,
+        160
+      ],
+      "id": "4253e82d-1941-4a7e-a8ab-46df5db0b16f",
+      "name": "Webhook",
+      "webhookId": "f58d06ed-456b-4470-b64e-d2c74aba6923"
+    },
+    {
+      "parameters": {
+        "url": "https://api.clickup.com/api/v2/team/90132992412/webhook",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "clickUpOAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -400,
+        -160
+      ],
+      "id": "d01fc2e0-b983-4a74-8340-435a7baf39b1",
+      "name": "HTTP Request1",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8bae7036-678c-4153-a146-32e45be06981",
+              "name": "event",
+              "value": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"event\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "6125c085-41fd-40fb-8003-5c4ac4390c9f",
+              "name": "task_id",
+              "value": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"task_id\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "include": "selected",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -112,
+        160
+      ],
+      "id": "6c128f7c-daa0-4e9d-9484-2d5c3e3f41d5",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $item(\"0\").$node[\"Edit Fields\"].json[\"event\"] }}",
+                    "rightValue": "taskCreated",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "c8573372-ce39-4b64-b4a7-b39ec1dfd930"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "taskCreated"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d74cb8a0-3e5e-4f26-a81e-d71bfe22a749",
+                    "leftValue": "={{ $item(\"0\").$node[\"Edit Fields\"].json[\"event\"] }}",
+                    "rightValue": "taskUpdated",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "taskUpdated"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "47cd6fca-ed1d-4db0-bb98-53a7950284dd",
+                    "leftValue": "={{ $item(\"0\").$node[\"Edit Fields\"].json[\"event\"] }}",
+                    "rightValue": "taskDeleted",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "taskDeleted"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        208,
+        144
+      ],
+      "id": "8ac209db-4380-425f-a344-fe7b2c26cba0",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "kastfiC5DE6IdNUd",
+          "mode": "list",
+          "cachedResultName": "Clickup - Formulários - TaskCreated"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        512,
+        -32
+      ],
+      "id": "0f9c05a9-5231-487f-b4e4-b05a93abb4da",
+      "name": "Call 'Clickup - Formulários - TaskCreated'"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "jGfoGDdLSD7uJlww",
+          "mode": "list",
+          "cachedResultName": "Clickup - Formulários - TaskDeleted"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        512,
+        352
+      ],
+      "id": "2882d2d8-c402-48c7-9ae0-87aed7ce3026",
+      "name": "Call 'Clickup - Formulários - TaskCreated'1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "HVMQTCfVDbSFnQJt",
+          "mode": "list",
+          "cachedResultName": "Clickup - Formulários - TaskUpdated"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        512,
+        160
+      ],
+      "id": "70377ccf-0f66-42f3-9bec-100d73e24e8a",
+      "name": "Call 'Clickup - Formulários - TaskCreated'2"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhooks.goldeletra.pro",
+            "user-agent": "axios/0.24.0",
+            "content-length": "140",
+            "accept": "application/json, text/plain, */*",
+            "b3": "697da34c000000003a3af3523e4cf748-69f97ea61c1d0546-0-3a3af3523e4cf748",
+            "content-type": "application/json",
+            "traceparent": "00-697da34c000000003a3af3523e4cf748-69f97ea61c1d0546-00",
+            "tracestate": "dd=t.tid:697da34c00000000;t.dm:-3;s:-1;p:69f97ea61c1d0546",
+            "x-b3-parentspanid": "3a3af3523e4cf748",
+            "x-b3-sampled": "0",
+            "x-b3-spanid": "69f97ea61c1d0546",
+            "x-b3-traceid": "697da34c000000003a3af3523e4cf748",
+            "x-datadog-parent-id": "7636273895084721478",
+            "x-datadog-sampling-priority": "-1",
+            "x-datadog-tags": "_dd.p.tid=697da34c00000000",
+            "x-datadog-trace-id": "4195933537407137608",
+            "x-forwarded-for": "18.221.30.114",
+            "x-forwarded-host": "webhooks.goldeletra.pro",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik_traefik.1",
+            "x-real-ip": "18.221.30.114",
+            "x-signature": "9cf4dc4c0d4d8e7bd40100c8f8d244140bb29120fa45e221a99bdbd987af5b8c",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "event": "taskDeleted",
+            "history_items": [],
+            "task_id": "86aezekv5",
+            "team_id": "90132992412",
+            "webhook_id": "1570b56c-3763-489b-9b4c-90e03796505f"
+          },
+          "webhookUrl": "https://webhooks.goldeletra.pro/webhook/response_clickup",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Call 'Clickup - Formulários - TaskCreated'",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call 'Clickup - Formulários - TaskCreated'2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call 'Clickup - Formulários - TaskCreated'1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "44d59622-a018-4c97-a0a6-c2b571e2a488",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "pbG9ISoQItocO8A6",
+  "tags": []
+}

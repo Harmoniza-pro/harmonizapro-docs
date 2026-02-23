@@ -1,0 +1,553 @@
+{
+  "name": "001.012 - Typeform - Banco de Dados",
+  "nodes": [
+    {
+      "parameters": {
+        "queue": "typeform_banco_de_dados",
+        "options": {
+          "arguments": {
+            "argument": [
+              {
+                "key": "x-queue-type",
+                "value": "quorum"
+              }
+            ]
+          },
+          "acknowledge": "executionFinishesSuccessfully",
+          "jsonParseBody": true,
+          "onlyContent": false,
+          "parallelMessages": 1
+        }
+      },
+      "id": "bfa1a0c5-79dd-47a2-b1da-926122dd63b2",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.rabbitmqTrigger",
+      "typeVersion": 1,
+      "position": [
+        144,
+        -80
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "061a3450-d817-46e1-8fdd-c04db9d3a310",
+              "leftValue": "={{ $json.fields.redelivered }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a42412ed-a72a-4c07-a4ed-abe1c3ecda2c",
+      "name": "checkQueue",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        368,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "deleteMessage"
+      },
+      "id": "0d43a44c-be5b-4f93-89e6-b65a404651bb",
+      "name": "deleteQueue",
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1.1,
+      "position": [
+        688,
+        -256
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "82f7f54a-3b81-4390-89fc-d84b92e29f46",
+              "leftValue": "={{$json.id}}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        992,
+        80
+      ],
+      "id": "3bb9164d-2ef0-4f72-923e-85143bf660ce",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id \n  FROM leads\nWHERE\n  telefone = '{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Telefone\"] }}'\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        688,
+        80
+      ],
+      "id": "ec699ef5-d4bc-403d-b15d-dec83015991b",
+      "name": "Execute a SQL query",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO leads_responses (\n  lead_id,\n  area_de_atuacao,\n  investimento_anuncio,\n  urgencia,\n  faturamento,\n  case_um,\n  case_dois,\n  case_tres,\n  breve_descricao\n)\nVALUES (\n  {{ $json[\"id\"] }}, -- lead_id vindo do retorno anterior (RETURNING id)\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Nicho\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Nicho\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"InsvestimentoAnuncio\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"InsvestimentoAnuncio\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Urgencia\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Urgencia\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Faturamento\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Faturamento\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Case1\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Case1\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Case2\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Case2\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Case3\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Case3\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"BreveDescricao\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"BreveDescricao\"]}'` : 'NULL' }}\n);\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1440,
+        -64
+      ],
+      "id": "a0427a2b-18b0-46c7-8ae4-1ab8738791fc",
+      "name": "Execute a SQL query1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE leads_responses\nSET\n  area_de_atuacao = {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Nicho\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Nicho\"]}'` : 'NULL' }},\n  investimento_anuncio = {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"InsvestimentoAnuncio\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"InsvestimentoAnuncio\"]}'` : 'NULL' }},\n  urgencia = {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Urgencia\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Urgencia\"]}'` : 'NULL' }},\n  faturamento = {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Faturamento\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Faturamento\"]}'` : 'NULL' }},\n  case_um = {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Case1\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Case1\"]}'` : 'NULL' }},\n  case_dois = {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Case2\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Case2\"]}'` : 'NULL' }},\n  case_tres = {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Case3\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Case3\"]}'` : 'NULL' }},\n  breve_descricao = {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"BreveDescricao\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"BreveDescricao\"]}'` : 'NULL' }}\nWHERE lead_id = {{ $json[\"id\"] }};\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1440,
+        224
+      ],
+      "id": "ef7fc9cf-3669-4ba3-868d-e2d86d15f8ae",
+      "name": "Execute a SQL query2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO leads (\n  nome,\n  email,\n  telefone,\n  id_negocio,\n  status,\n  instagram,\n  created,\n  updated_at,\n  deleted_at\n)\nVALUES (\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Nome\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Nome\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Email\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Email\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Telefone\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Telefone\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"id_negocio\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"id_negocio\"].toString()}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"typeform\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"typeform\"]}'` : 'NULL' }},\n  {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Instagram\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Instagram\"]}'` : 'NULL' }},\n  (NOW() AT TIME ZONE 'America/Sao_Paulo'),\n  (NOW() AT TIME ZONE 'America/Sao_Paulo'),\n  NULL\n)\nRETURNING id;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1232,
+        -64
+      ],
+      "id": "4a5ec150-2ae7-4923-b92f-7215180351d8",
+      "name": "Execute a SQL query3",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE leads\nSET\n  nome = {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Nome\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Nome\"]}'` : 'NULL' }},\n  email = {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Email\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Email\"]}'` : 'NULL' }},\n  telefone = {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Telefone\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Telefone\"]}'` : 'NULL' }},\n  id_negocio = {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"id_negocio\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"id_negocio\"].toString()}'` : 'NULL' }},\n  status = {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"typeform\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"typeform\"]}'` : 'NULL' }},\n  instagram = {{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Instagram\"] ? `'${$item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Instagram\"]}'` : 'NULL' }},\n  updated_at = (NOW() AT TIME ZONE 'America/Sao_Paulo')\nWHERE id = {{ $json[\"id\"] }}\n  RETURNING id;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1200,
+        224
+      ],
+      "id": "33f8196b-951b-4b6a-9f9e-19f333901e4c",
+      "name": "Execute a SQL query4",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "events": [
+          "update"
+        ]
+      },
+      "type": "n8n-nodes-base.n8nTrigger",
+      "typeVersion": 1,
+      "position": [
+        160,
+        -496
+      ],
+      "id": "92f9a664-8928-46f8-83c5-3fc87778345c",
+      "name": "Dados Cadastro Workflow",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e3c3eb3-253b-4434-9f68-f12806e90433",
+              "name": "Pasta Cliente",
+              "value": "901312698708",
+              "type": "string"
+            },
+            {
+              "id": "f5017427-6e91-4ce3-adfb-1f26db53104e",
+              "name": "Fluxos com Erro",
+              "value": "901319151056",
+              "type": "string"
+            },
+            {
+              "id": "69e95a88-9ca8-46ae-8016-ca15db383fd7",
+              "name": "Fluxos Cadastrados",
+              "value": "901319151049",
+              "type": "string"
+            },
+            {
+              "id": "d1a157b0-9836-4758-92bf-6fa81eff1a26",
+              "name": "Link N8N",
+              "value": "={{ \"https://workflows.\" + $execution.resumeUrl.split('/')[2].split('.').slice(1).join('.') + \"/workflow/\" + $workflow.id }}",
+              "type": "string"
+            },
+            {
+              "id": "a8a396de-7e97-4833-8520-dd5af4bb0baf",
+              "name": "Tarefa Cliente ID",
+              "value": "86ac2h7bc",
+              "type": "string"
+            },
+            {
+              "id": "1bca2025-d73c-4f0d-abee-0abf3d328f2a",
+              "name": "Campo Relacionamento Fluxo Cadastrado",
+              "value": "de89a9e9-7831-4b3e-90f4-0114797d4e6b",
+              "type": "string"
+            },
+            {
+              "id": "bc48d677-8f44-45a4-b66a-e5a671a74128",
+              "name": "Campo Relacionamento Reportar Erro",
+              "value": "6d2dbdb6-40dd-4c2a-a42b-f6e4b5536261",
+              "type": "string"
+            },
+            {
+              "id": "90c1b11d-2707-4db7-b02f-3ca053887764",
+              "name": "Nome do Fluxo",
+              "value": "={{ $workflow.name }}",
+              "type": "string"
+            },
+            {
+              "id": "c4f8fea6-e31a-4023-b56c-58e217565f7c",
+              "name": "ID Página Fluxos",
+              "value": "c9pay-8513",
+              "type": "string"
+            },
+            {
+              "id": "8e2f5c9a-6b3d-4e7f-a1c8-9d4e6f2b7a5c",
+              "name": "ID Documento",
+              "value": "c9pay-15913",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        432,
+        -496
+      ],
+      "id": "27afccb5-1af8-4e7d-b2f5-15a23d847645",
+      "name": "Variaveis do Cliente1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $workflow.id }}",
+          "mode": "id"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        704,
+        -496
+      ],
+      "id": "fd840f3a-2a28-4e3d-9af5-90cb891fba3f",
+      "name": "Get a workflow",
+      "credentials": {
+        "n8nApi": {
+          "id": "F1ykyghOg9lLGBLd",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://webhooks.autotrackable.com.br/webhook/receber_cadastro_dos_clientes",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n(() => {\n  const err = $item(\"0\").$node[\"Dados Cadastro Workflow\"].json;\n  const cli = $item(\"0\").$node[\"Variaveis do Cliente1\"].json;\n  const workflow = $item(\"0\").$node[\"Get a workflow\"].json;\n  return { ...err, info_cliente: cli, workflow: workflow };\n})()\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        976,
+        -496
+      ],
+      "id": "afd838e7-d700-4d37-800a-6be15b390fc6",
+      "name": "Encaminhar Erro para TrackAble1"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "fields": {
+            "consumerTag": "amq.ctag-urCln1CxcCqN7PnCMQBP_A",
+            "deliveryTag": 27,
+            "redelivered": false,
+            "exchange": "",
+            "routingKey": "typeform_banco_de_dados"
+          },
+          "properties": {
+            "headers": {
+              "x-delivery-count": 1
+            }
+          },
+          "content": {
+            "Nicho": "Ainda não faturo com Harmonização",
+            "Case1": "É isso que eu preciso também!",
+            "Urgencia": "Muito urgente",
+            "InsvestimentoAnuncio": "Menos de R$1000",
+            "Faturamento": "Entre R$13 e R$25 mil por mês",
+            "Case2": "Quero resultados como esse!",
+            "Nome": "Teste",
+            "Telefone": "+5554999999999",
+            "Instagram": "teste@gmail.com",
+            "LinkInstagram": "https://instagram.com/testegmail.com",
+            "Pipeline": "12",
+            "id_negocio": 3391,
+            "typeform": "parcial"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "checkQueue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "checkQueue": {
+      "main": [
+        [
+          {
+            "node": "deleteQueue",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute a SQL query4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query3": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query4": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados Cadastro Workflow": {
+      "main": [
+        [
+          {
+            "node": "Variaveis do Cliente1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Variaveis do Cliente1": {
+      "main": [
+        [
+          {
+            "node": "Get a workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a workflow": {
+      "main": [
+        [
+          {
+            "node": "Encaminhar Erro para TrackAble1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "ByxX1TqYfyvlgp2T"
+  },
+  "versionId": "d789e2d5-3dfe-4a3c-a885-79e21ae2eb28",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "nZU47kosH8E2FkJ5",
+  "tags": [
+    {
+      "updatedAt": "2025-07-16T01:17:20.453Z",
+      "createdAt": "2025-07-16T01:17:20.453Z",
+      "id": "NaaSNhB5hEdSZaTh",
+      "name": "OK"
+    },
+    {
+      "updatedAt": "2025-10-03T18:16:37.959Z",
+      "createdAt": "2025-10-03T18:16:37.959Z",
+      "id": "olakFEXRFPPNeevi",
+      "name": "Cadastrado"
+    },
+    {
+      "updatedAt": "2025-11-17T13:43:22.843Z",
+      "createdAt": "2025-11-17T13:43:22.843Z",
+      "id": "xDu8TyrW6g7HiKXS",
+      "name": "Documentado"
+    }
+  ]
+}

@@ -1,0 +1,1359 @@
+{
+  "name": "001.010 - Pipedrive - Evento Pixel Lead Score",
+  "nodes": [
+    {
+      "parameters": {
+        "queue": "pipedrive_leadscore_pixel",
+        "options": {
+          "arguments": {
+            "argument": [
+              {
+                "key": "x-queue-type",
+                "value": "quorum"
+              }
+            ]
+          },
+          "acknowledge": "executionFinishesSuccessfully",
+          "jsonParseBody": true,
+          "onlyContent": false,
+          "parallelMessages": 1
+        }
+      },
+      "id": "a1e04787-f329-4d4a-8883-b5460c4fd8bf",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.rabbitmqTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1376,
+        112
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/{{ $('set').item.json.version }}/{{ $('set').item.json.pixel }}/events",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "data",
+              "value": "=[ \n  { \n   \"event_name\": \"{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"resultado\"][\"84790c2f40e7c276ed45d00ed1e00f873cd74bea\"][\"valueLabel\"] }}\",\n   \"event_time\": {{ Number((new Date($item(\"0\").$node[\"Execute a SQL query\"].json[\"created\"]).getTime() / 1000).toString().split('.')[0]) }},\n   \"event_id\": \"{{ new Date($item(\"0\").$node[\"Execute a SQL query\"].json[\"created\"]).getTime() }}\",\n   \"user_data\": {  \n       \"ph\": [ \"{{ $item(\"0\").$node[\"checkFbc\"].json[\"TelefoneHash\"] }}\"],\n       \"fn\": [ \"{{ $item(\"0\").$node[\"checkFbc\"].json[\"NomeHash\"] }}\"],\n       \"ln\": [ \"{{ $item(\"0\").$node[\"checkFbc\"].json[\"SobrenomeHash\"] }}\"],\n       \"em\": [ \"{{ $item(\"0\").$node[\"checkFbc\"].json[\"EmailHash\"] }}\"],\n       \"client_ip_address\": \"{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"ip\"] }}\",\n       \"client_user_agent\": \"{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"agent\"] }}\",\n       \"fbc\": \"{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"fbc\"] }}\",\n       \"fbp\": \"{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"fbp\"] }}\"\n          }, \n    \"custom_data\": { \n    },\n   \"event_source_url\": \"{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"url\"] }}\",\n   \"action_source\": \"website\"\n  }\n]"
+            },
+            {
+              "name": "access_token",
+              "value": "={{ $('set').item.json.token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fa9f9b16-8611-4c7a-91a8-0be98cb237de",
+      "name": "site",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1680,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "813c771d-b2a9-4677-b159-8fb31a47f61c",
+              "name": "version",
+              "value": "v20.0",
+              "type": "string"
+            },
+            {
+              "id": "576ecc3f-06a0-46cc-adf9-a3460399d2d2",
+              "name": "pixel",
+              "value": "990312855338010",
+              "type": "string"
+            },
+            {
+              "id": "fd90d8a5-c4e3-40bd-8ea4-667f3bef3eb2",
+              "name": "token",
+              "value": "EAAFcFeKmPtMBPE148BUYUpR2spBIq2v1l9AqHaEkzZCpkZBsOujZBJwfe8zkGmx86WI6h2YkCZB81ydoOnqu5N1eRMlEjNJPK2tcLHjwdClmLNZCr2bbHKOZB4CF2i3foh09WbpUB4oSFZCpMgDsKSjzwZCa0DItsEqtZAe8FbSiIcsHsVHAIBfZAijcfxRINHYwZDZD",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fd9ec801-5e18-4c2b-8609-07ae0594e5d5",
+      "name": "set",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        464,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "type": "SHA256",
+        "value": "={{ $item(\"0\").$node[\"Execute a SQL query\"].json[\"telefone\"].toString() }}",
+        "dataPropertyName": "TelefoneHash"
+      },
+      "id": "045a8e19-fcf1-46f6-83f7-21bc1b6d7fec",
+      "name": "Telefone",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 1,
+      "position": [
+        1248,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "04db64c7-4688-4d94-bf4c-51b962b8559f",
+              "leftValue": "={{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"fbc\"] }}",
+              "rightValue": "{",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "c5a0c1f1-eb0a-4bae-a166-cf8b06167df3",
+      "name": "checkFbc",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1424,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "061a3450-d817-46e1-8fdd-c04db9d3a310",
+              "leftValue": "={{ $json.fields.redelivered }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "55fc0a9b-b314-4d38-8b81-f11131816c5c",
+      "name": "checkQueue",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -1136,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "deleteMessage"
+      },
+      "id": "47171976-85e1-4272-9080-41e7f182159a",
+      "name": "deleteQueue",
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1.1,
+      "position": [
+        -880,
+        -160
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "177a0426-1bd1-4e6d-bacb-0eff0f895f58",
+              "leftValue": "={{ $item(\"0\").$node[\"Execute a SQL query\"].json[\"nome\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        128,
+        144
+      ],
+      "id": "a0e03d60-6703-43ca-b8c4-244dfe195d97",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "type": "SHA256",
+        "value": "={{ $item(\"0\").$node[\"Execute a SQL query\"].json[\"nome\"].split(' ')[0].toLowerCase() }}",
+        "dataPropertyName": "NomeHash"
+      },
+      "id": "8dfb7c96-e016-4135-96da-14e84569ac9a",
+      "name": "nome",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 1,
+      "position": [
+        672,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "type": "SHA256",
+        "value": "={{ $item(\"0\").$node[\"Execute a SQL query\"].json[\"email\"].trim().toLowerCase() }}",
+        "dataPropertyName": "EmailHash"
+      },
+      "id": "0b5b5b60-158d-4b6f-84e0-77780d311f9a",
+      "name": "email",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/{{ $('set').item.json.version }}/{{ $('set').item.json.pixel }}/events",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "data",
+              "value": "=[ \n  { \n   \"event_name\": \"Lead\",\n   \"event_time\": {{ Number((new Date($item(\"0\").$node[\"Execute a SQL query\"].json[\"created\"]).getTime() / 1000).toString().split('.')[0]) }},\n   \"event_id\": \"{{ new Date($item(\"0\").$node[\"Execute a SQL query\"].json[\"created\"]).getTime() }}\",\n   \"user_data\": {  \n       \"ph\": [ \"{{ $item(\"0\").$node[\"checkFbc\"].json[\"TelefoneHash\"] }}\"],\n       \"fn\": [ \"{{ $item(\"0\").$node[\"checkFbc\"].json[\"NomeHash\"] }}\"],\n       \"ln\": [ \"{{ $item(\"0\").$node[\"checkFbc\"].json[\"SobrenomeHash\"] }}\"],\n       \"em\": [ \"{{ $item(\"0\").$node[\"checkFbc\"].json[\"EmailHash\"] }}\"],\n       \"client_ip_address\": \"{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"ip\"] }}\",\n       \"client_user_agent\": \"{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"agent\"] }}\",\n       \"fbp\": \"{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"fbp\"] }}\"\n          }, \n    \"custom_data\": { \n    },\n   \"event_source_url\": \"{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"url\"] }}\",\n   \"action_source\": \"website\"\n  }\n]"
+            },
+            {
+              "name": "access_token",
+              "value": "={{ $('set').item.json.token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "491e0b60-d088-42a8-b5e7-34affa9a94f7",
+      "name": "site1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1680,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "type": "SHA256",
+        "value": "={{ $item(\"0\").$node[\"Execute a SQL query\"].json[\"nome\"].replace($item(\"0\").$node[\"Execute a SQL query\"].json[\"nome\"].split(' ')[0],'').trim().toLowerCase() }}",
+        "dataPropertyName": "SobrenomeHash"
+      },
+      "id": "43a07893-06f3-436f-8399-6d00fffc7df4",
+      "name": "Sobrenome",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 1,
+      "position": [
+        864,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT nome, email, telefone, created\n  FROM leads\nWHERE\n  id_negocio = '{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"dealId\"] }}'\n  AND {{ ({\n  \"Proposta Assessoria\": \"evento_proposta_assessoria\",\n  \"Proposta Mentoria\": \"evento_mentoria\",\n  \"Descartado\": \"evento_descartado\"\n})[$item(\"0\").$node[\"Execute Workflow\"].json[\"resultado\"][\"84790c2f40e7c276ed45d00ed1e00f873cd74bea\"][\"valueLabel\"]] }}\n IS DISTINCT FROM true;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -96,
+        144
+      ],
+      "id": "bdc03c03-493b-4a19-a161-8d9a783dadd8",
+      "name": "Execute a SQL query",
+      "alwaysOutputData": false,
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "aaae2dc8-4ab9-41d1-a1a8-cd4c5fb7cee7",
+              "name": "origem_campo",
+              "value": "get_deal",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -656,
+        144
+      ],
+      "id": "36bbf227-fa6f-465d-bbb2-78141b89a84c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "1ZOJnFDLY7e8hV8j",
+          "mode": "list",
+          "cachedResultName": "PipeDrive - Conversão de Campos"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -416,
+        144
+      ],
+      "id": "74434b7d-e2ef-46ea-bbdd-8a02d15ab59a",
+      "name": "Execute Workflow"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "get",
+        "dealId": "={{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"dealId\"] }}"
+      },
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [
+        -864,
+        144
+      ],
+      "id": "2dfb3f52-0d37-4601-a885-79024343b8e3",
+      "name": "Get a deal",
+      "credentials": {
+        "pipedriveOAuth2Api": {
+          "id": "y8O0rqLgOCkuE8hK",
+          "name": "Pipedrive - evoluamidia@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE leads\nSET\n  {{ ({\n  \"Proposta Assessoria\": \"evento_proposta_assessoria\",\n  \"Proposta Mentoria\": \"evento_mentoria\",\n  \"Descartado\": \"evento_descartado\"\n})[$item(\"0\").$node[\"Execute Workflow\"].json[\"resultado\"][\"84790c2f40e7c276ed45d00ed1e00f873cd74bea\"][\"valueLabel\"]] }} = true\n\nWHERE id_negocio = '{{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"dealId\"] }}';\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1984,
+        -16
+      ],
+      "id": "e3e5bebf-ca55-41a7-8fa6-2d013b22b0c1",
+      "name": "Execute a SQL query1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "events": [
+          "update"
+        ]
+      },
+      "type": "n8n-nodes-base.n8nTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1216,
+        -768
+      ],
+      "id": "c49a848f-2c3f-48d4-a3fc-e1d73977a0e8",
+      "name": "Dados Cadastro Workflow",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e3c3eb3-253b-4434-9f68-f12806e90433",
+              "name": "Pasta Cliente",
+              "value": "901312698708",
+              "type": "string"
+            },
+            {
+              "id": "f5017427-6e91-4ce3-adfb-1f26db53104e",
+              "name": "Fluxos com Erro",
+              "value": "901319151056",
+              "type": "string"
+            },
+            {
+              "id": "69e95a88-9ca8-46ae-8016-ca15db383fd7",
+              "name": "Fluxos Cadastrados",
+              "value": "901319151049",
+              "type": "string"
+            },
+            {
+              "id": "d1a157b0-9836-4758-92bf-6fa81eff1a26",
+              "name": "Link N8N",
+              "value": "={{ \"https://workflows.\" + $execution.resumeUrl.split('/')[2].split('.').slice(1).join('.') + \"/workflow/\" + $workflow.id }}",
+              "type": "string"
+            },
+            {
+              "id": "a8a396de-7e97-4833-8520-dd5af4bb0baf",
+              "name": "Tarefa Cliente ID",
+              "value": "86ac2h7bc",
+              "type": "string"
+            },
+            {
+              "id": "1bca2025-d73c-4f0d-abee-0abf3d328f2a",
+              "name": "Campo Relacionamento Fluxo Cadastrado",
+              "value": "de89a9e9-7831-4b3e-90f4-0114797d4e6b",
+              "type": "string"
+            },
+            {
+              "id": "bc48d677-8f44-45a4-b66a-e5a671a74128",
+              "name": "Campo Relacionamento Reportar Erro",
+              "value": "6d2dbdb6-40dd-4c2a-a42b-f6e4b5536261",
+              "type": "string"
+            },
+            {
+              "id": "90c1b11d-2707-4db7-b02f-3ca053887764",
+              "name": "Nome do Fluxo",
+              "value": "={{ $workflow.name }}",
+              "type": "string"
+            },
+            {
+              "id": "c4f8fea6-e31a-4023-b56c-58e217565f7c",
+              "name": "ID Página Fluxos",
+              "value": "c9pay-8513",
+              "type": "string"
+            },
+            {
+              "id": "8e2f5c9a-6b3d-4e7f-a1c8-9d4e6f2b7a5c",
+              "name": "ID Documento",
+              "value": "c9pay-15913",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -944,
+        -768
+      ],
+      "id": "63472ce4-4354-43f9-966f-ba655675488f",
+      "name": "Variaveis do Cliente1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $workflow.id }}",
+          "mode": "id"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        -672,
+        -768
+      ],
+      "id": "fe06b202-7d91-42d3-8e4f-265f7b943ea0",
+      "name": "Get a workflow",
+      "credentials": {
+        "n8nApi": {
+          "id": "F1ykyghOg9lLGBLd",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://webhooks.autotrackable.com.br/webhook/receber_cadastro_dos_clientes",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n(() => {\n  const err = $item(\"0\").$node[\"Dados Cadastro Workflow\"].json;\n  const cli = $item(\"0\").$node[\"Variaveis do Cliente1\"].json;\n  const workflow = $item(\"0\").$node[\"Get a workflow\"].json;\n  return { ...err, info_cliente: cli, workflow: workflow };\n})()\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -400,
+        -768
+      ],
+      "id": "07b646cb-c471-477b-b73a-3780e9cb42a6",
+      "name": "Encaminhar Erro para TrackAble1"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "fields": {
+            "deliveryTag": 1,
+            "redelivered": false,
+            "exchange": "",
+            "routingKey": "pipedrive_leadscore_pixel",
+            "messageCount": 25
+          },
+          "properties": {
+            "headers": {}
+          },
+          "content": {
+            "dealId": "3393",
+            "resultado": {
+              "value": {
+                "field_type": "monetary",
+                "name": "Valor",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              },
+              "currency": {
+                "field_type": "varchar",
+                "name": "Moeda",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              },
+              "probability": {
+                "field_type": "int",
+                "name": "Probabilidade",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              },
+              "org_id": {
+                "field_type": "org",
+                "name": "Organização",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              },
+              "person_id": {
+                "field_type": "people",
+                "name": "Pessoa de contato",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              },
+              "label": {
+                "field_type": "set",
+                "name": "Etiqueta",
+                "valueLabel": "",
+                "valueId": null,
+                "options": [
+                  {
+                    "id": 15,
+                    "label": "Low Ticket",
+                    "color": "orange"
+                  },
+                  {
+                    "id": 16,
+                    "label": "High Ticket",
+                    "color": "orange"
+                  },
+                  {
+                    "id": 17,
+                    "label": "Mentoria",
+                    "color": "yellow"
+                  },
+                  {
+                    "id": 18,
+                    "label": "Assessoria",
+                    "color": "yellow"
+                  },
+                  {
+                    "id": 19,
+                    "label": "Implementação",
+                    "color": "yellow"
+                  },
+                  {
+                    "id": 50,
+                    "label": "Consultoria",
+                    "color": "yellow"
+                  },
+                  {
+                    "id": 20,
+                    "label": "Typeform",
+                    "color": "dark-gray"
+                  },
+                  {
+                    "id": 26,
+                    "label": "Stories",
+                    "color": "dark-gray"
+                  },
+                  {
+                    "id": 21,
+                    "label": "Mini treinamento",
+                    "color": "dark-gray"
+                  },
+                  {
+                    "id": 22,
+                    "label": "Social Seller",
+                    "color": "dark-gray"
+                  },
+                  {
+                    "id": 27,
+                    "label": "Indicação",
+                    "color": "dark-gray"
+                  },
+                  {
+                    "id": 56,
+                    "label": "Atendeu a ligação",
+                    "color": "green"
+                  },
+                  {
+                    "id": 57,
+                    "label": "Não atendeu",
+                    "color": "red"
+                  },
+                  {
+                    "id": 58,
+                    "label": "Follow up 3",
+                    "color": "brown"
+                  },
+                  {
+                    "id": 59,
+                    "label": "Follow Up 4",
+                    "color": "brown"
+                  },
+                  {
+                    "id": 61,
+                    "label": "Reagendamento",
+                    "color": "red"
+                  },
+                  {
+                    "id": 62,
+                    "label": "Forecast",
+                    "color": "blue"
+                  }
+                ]
+              },
+              "expected_close_date": {
+                "field_type": "date",
+                "name": "Data de fechamento esperada",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              },
+              "a4fb9cf6d7d3f450d3c620e9d432642145d728f5": {
+                "field_type": "enum",
+                "name": "Nicho que atua",
+                "valueLabel": "Harmonização Facial",
+                "valueId": 80,
+                "options": [
+                  {
+                    "id": 79,
+                    "label": "Ainda não faturo com Harmonização"
+                  },
+                  {
+                    "id": 80,
+                    "label": "Harmonização Facial"
+                  },
+                  {
+                    "id": 81,
+                    "label": "Harmonização Corporal"
+                  },
+                  {
+                    "id": 82,
+                    "label": "Outro"
+                  }
+                ]
+              },
+              "83a2907425bd02810f3541a1da13970fb4cad28a": {
+                "field_type": "enum",
+                "name": "Case Dra Carol",
+                "valueLabel": "É isso que eu preciso também!",
+                "valueId": 83,
+                "options": [
+                  {
+                    "id": 83,
+                    "label": "É isso que eu preciso também!"
+                  },
+                  {
+                    "id": 84,
+                    "label": "Quero bater minha meta!"
+                  }
+                ]
+              },
+              "28ee073609b17fd1f8b337721e40442435eb0792": {
+                "field_type": "enum",
+                "name": "Urgência",
+                "valueLabel": "Muito urgente",
+                "valueId": 85,
+                "options": [
+                  {
+                    "id": 85,
+                    "label": "Muito urgente"
+                  },
+                  {
+                    "id": 86,
+                    "label": "Médio"
+                  },
+                  {
+                    "id": 87,
+                    "label": "Não muito urgente"
+                  }
+                ]
+              },
+              "601a5412a8553515d5da895a5b00cdc02c681b6f": {
+                "field_type": "enum",
+                "name": "Quanto investe em anúncio",
+                "valueLabel": "Menos de R$1000",
+                "valueId": 89,
+                "options": [
+                  {
+                    "id": 88,
+                    "label": "Nunca investi"
+                  },
+                  {
+                    "id": 89,
+                    "label": "Menos de R$1000"
+                  },
+                  {
+                    "id": 90,
+                    "label": "R$1000 a R$2000"
+                  },
+                  {
+                    "id": 91,
+                    "label": "R$2000 a R$4000"
+                  },
+                  {
+                    "id": 92,
+                    "label": "R$4000 a R$6000"
+                  },
+                  {
+                    "id": 93,
+                    "label": "Mais de R$6000"
+                  }
+                ]
+              },
+              "d1dd416e967fdc2e3dc3e862586961b12de8d9ff": {
+                "field_type": "enum",
+                "name": "Média de Faturamento",
+                "valueLabel": "Até R$12 mil por mês",
+                "valueId": 95,
+                "options": [
+                  {
+                    "id": 94,
+                    "label": "Ainda não faturo"
+                  },
+                  {
+                    "id": 95,
+                    "label": "Até R$12 mil por mês"
+                  },
+                  {
+                    "id": 96,
+                    "label": "Entre R$13 e R$25 mil por mês"
+                  },
+                  {
+                    "id": 97,
+                    "label": "Entre R$25 e R$50 mil por mês"
+                  },
+                  {
+                    "id": 98,
+                    "label": "Entre R$50 e R$100 mil por mês"
+                  },
+                  {
+                    "id": 99,
+                    "label": "Entre R$100 e R$200 mil por mês"
+                  },
+                  {
+                    "id": 100,
+                    "label": "Mais de R$200 mil por mês"
+                  }
+                ]
+              },
+              "d540737cfbd1ff9ff2185e46e5ac9abae70a7f92": {
+                "field_type": "enum",
+                "name": "Case Dra. Jacinta",
+                "valueLabel": "Quero resultados como esse!",
+                "valueId": 101,
+                "options": [
+                  {
+                    "id": 101,
+                    "label": "Quero resultados como esse!"
+                  },
+                  {
+                    "id": 102,
+                    "label": "Quero saber mais sobre a HarmonizaPRO"
+                  }
+                ]
+              },
+              "27b0161724fac21d46132e9d327222c0c5563fd4": {
+                "field_type": "varchar",
+                "name": "Nome",
+                "valueLabel": "TIA NANA TONINHO ME COME TODA SEMANA",
+                "valueId": null,
+                "options": null
+              },
+              "842e0381bd316ebe2ef1141093b15e97310da42b": {
+                "field_type": "phone",
+                "name": "❌Telefone",
+                "valueLabel": "+5511965207024",
+                "valueId": null,
+                "options": null
+              },
+              "7202d18e20ba4c0b03441ac9ec028ab4491990a9": {
+                "field_type": "varchar",
+                "name": "Instagram",
+                "valueLabel": "cadela.vadiavagaba",
+                "valueId": null,
+                "options": null
+              },
+              "13c9cd4cb4ffa5312edfda20039bed37337e0941": {
+                "field_type": "varchar",
+                "name": "Link do Instagram",
+                "valueLabel": "https://instagram.com/cadela.vadiavagaba",
+                "valueId": null,
+                "options": null
+              },
+              "b6ce2593ce42ab171496deeb7ee6c4a65c8b3934": {
+                "field_type": "varchar",
+                "name": "Email",
+                "valueLabel": "arqkey1904@gmail.com",
+                "valueId": null,
+                "options": null
+              },
+              "2afb629678ee7fbe687e6cf7c88b529f090c7f28": {
+                "field_type": "text",
+                "name": "Situação Atual",
+                "valueLabel": "VADIA VAGABA CADELA",
+                "valueId": null,
+                "options": null
+              },
+              "81b0d9efdce5f2776dfd6c3d3cb180ecb8a372d2": {
+                "field_type": "enum",
+                "name": "Case Dra. Mariana",
+                "valueLabel": "Quero transformar minha clínica!",
+                "valueId": 103,
+                "options": [
+                  {
+                    "id": 103,
+                    "label": "Quero transformar minha clínica!"
+                  },
+                  {
+                    "id": 104,
+                    "label": "Quero saber como você pode me ajudar"
+                  }
+                ]
+              },
+              "9d279e9c5f3f047c191100b7dd3ce645623068fb": {
+                "field_type": "varchar",
+                "name": "Instagram",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              },
+              "695916a9baffe8f2c7e2c90c00ead5dbe07b0448": {
+                "field_type": "text",
+                "name": "Ele falou algo importante para ser ressaltado?",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              },
+              "9313043eb15c882d138a0136d61d29674305cd33": {
+                "field_type": "text",
+                "name": "Qual cenário administrativo do negócio?",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              },
+              "499d66a95d8a944ac9091e2ba1238cb0b41d6585": {
+                "field_type": "varchar",
+                "name": "Percepção sobre a personalidade",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              },
+              "f41ec8c6ccea9deaf81d7b0e83ad7d5a6dbd8c32": {
+                "field_type": "text",
+                "name": "Posição individual interna da clínica? (sócio, administrador, executivo...)",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              },
+              "7af7e2c9ac65ac7f34f39d8f277695d57c52c9e6": {
+                "field_type": "text",
+                "name": "1 ou mais decisores? Quais seus níveis de poder?",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              },
+              "fa4385adfdf0db42cec5e9b9ba91d85325810db9": {
+                "field_type": "text",
+                "name": "Desses decisores, quem são nossos alidados e outros possíveis opositores?",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              },
+              "e3424c16643b0e4ea0a97d658eb8cfacf7de0d30": {
+                "field_type": "text",
+                "name": "Campo aberto para detalhes importantes",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              },
+              "f411adfb5c1ccd6968627615551f614fe248c254": {
+                "field_type": "text",
+                "name": "utm_content",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              },
+              "c17646917ef46d09e21e5523d02ec8506861f0e8": {
+                "field_type": "varchar",
+                "name": "Faturamento",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              },
+              "84790c2f40e7c276ed45d00ed1e00f873cd74bea": {
+                "field_type": "enum",
+                "name": "Lead scoring",
+                "valueLabel": "",
+                "valueId": null,
+                "options": [
+                  {
+                    "id": 105,
+                    "label": "Proposta Assessoria"
+                  },
+                  {
+                    "id": 106,
+                    "label": "Proposta Mentoria"
+                  },
+                  {
+                    "id": 107,
+                    "label": "Descartado"
+                  }
+                ]
+              },
+              "87dc85a0ca5e5af5b64cefc3d2bde86d0309c258": {
+                "field_type": "enum",
+                "name": "Qual foi o humor do lead na chamada?",
+                "valueLabel": "",
+                "valueId": null,
+                "options": [
+                  {
+                    "id": 76,
+                    "label": "Muito engajada"
+                  },
+                  {
+                    "id": 77,
+                    "label": "Pouco engajada"
+                  },
+                  {
+                    "id": 78,
+                    "label": "Tanto faz, tanto fez"
+                  }
+                ]
+              },
+              "4177cb3cab5d0eea8c7f94f7ef145126cebfe6a5": {
+                "field_type": "enum",
+                "name": "Nível de urgência",
+                "valueLabel": "",
+                "valueId": null,
+                "options": [
+                  {
+                    "id": 73,
+                    "label": "Só curiosa"
+                  },
+                  {
+                    "id": 74,
+                    "label": "Em dúvida"
+                  },
+                  {
+                    "id": 75,
+                    "label": "Quer resolver agora"
+                  }
+                ]
+              },
+              "71191bc0d10d21b8213604ea00c52bb771cd05fb": {
+                "field_type": "enum",
+                "name": "Fez ligação de pré vendas?",
+                "valueLabel": "",
+                "valueId": null,
+                "options": [
+                  {
+                    "id": 71,
+                    "label": "Sim"
+                  },
+                  {
+                    "id": 72,
+                    "label": "Não"
+                  }
+                ]
+              },
+              "f475fd5c0b6d98e4d0b7c8f21936a0a689ff0cb7": {
+                "field_type": "varchar",
+                "name": "Maior dor da clínica?",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              },
+              "98c23f53854a205bb9e1b9f1d17a5459e0dc7d16": {
+                "field_type": "text",
+                "name": "utm_source",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              },
+              "e5ae032d7fda4523edaf73cae9dbff166e1861fe": {
+                "field_type": "text",
+                "name": "utm_medium",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              },
+              "1154d85b97ab799ecb95476c040eef165f8eca98": {
+                "field_type": "text",
+                "name": "utm_campaign",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              },
+              "378430a5c3e70492a2e705aa5818052a6504407a": {
+                "field_type": "text",
+                "name": "utm_content",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              },
+              "c83c89258b135c08b44d80a76eb69cf56fe41f99": {
+                "field_type": "text",
+                "name": "utm_term",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              },
+              "a3a4cd5a4cdeff61454f4b72aa0796d0fcb62cb7": {
+                "field_type": "text",
+                "name": "utm_id",
+                "valueLabel": "",
+                "valueId": null,
+                "options": null
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "checkQueue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "site": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set": {
+      "main": [
+        [
+          {
+            "node": "nome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telefone": {
+      "main": [
+        [
+          {
+            "node": "checkFbc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "checkFbc": {
+      "main": [
+        [
+          {
+            "node": "site",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "site1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "checkQueue": {
+      "main": [
+        [
+          {
+            "node": "deleteQueue",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a deal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "nome": {
+      "main": [
+        [
+          {
+            "node": "Sobrenome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "email": {
+      "main": [
+        [
+          {
+            "node": "Telefone",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "site1": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sobrenome": {
+      "main": [
+        [
+          {
+            "node": "email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a deal": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados Cadastro Workflow": {
+      "main": [
+        [
+          {
+            "node": "Variaveis do Cliente1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Variaveis do Cliente1": {
+      "main": [
+        [
+          {
+            "node": "Get a workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a workflow": {
+      "main": [
+        [
+          {
+            "node": "Encaminhar Erro para TrackAble1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "ByxX1TqYfyvlgp2T"
+  },
+  "versionId": "1ab9f8f3-baef-4eef-be79-a9916d18f1a9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "QEPP7Y3zLwbeOxta",
+  "tags": [
+    {
+      "updatedAt": "2025-10-03T18:16:37.959Z",
+      "createdAt": "2025-10-03T18:16:37.959Z",
+      "id": "olakFEXRFPPNeevi",
+      "name": "Cadastrado"
+    },
+    {
+      "updatedAt": "2025-11-17T13:43:22.843Z",
+      "createdAt": "2025-11-17T13:43:22.843Z",
+      "id": "xDu8TyrW6g7HiKXS",
+      "name": "Documentado"
+    }
+  ]
+}

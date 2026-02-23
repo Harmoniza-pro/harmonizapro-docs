@@ -1,0 +1,412 @@
+{
+  "name": "002.004 - Hunters - Perda",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "ac294f23-e2e4-4b77-aa36-6c690f09dba6",
+              "leftValue": "={{ $json.fields.redelivered}}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "24019b7f-22aa-41c1-958c-05d506c7fb5c",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -480,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "queue": "clickup_hunter_perda",
+        "options": {
+          "arguments": {
+            "argument": [
+              {
+                "key": "x-queue-type",
+                "value": "quorum"
+              }
+            ]
+          },
+          "acknowledge": "executionFinishesSuccessfully",
+          "jsonParseBody": true,
+          "onlyContent": false,
+          "parallelMessages": 1
+        }
+      },
+      "id": "974316ac-db41-495a-bf51-68bbdabe471f",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.rabbitmqTrigger",
+      "typeVersion": 1,
+      "position": [
+        -768,
+        416
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "deleteMessage"
+      },
+      "id": "6b0b631b-a901-487e-becc-dc8d4d7b729e",
+      "name": "RabbitMQ1",
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1.1,
+      "position": [
+        -176,
+        192
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "get",
+        "id": "={{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"task_id\"] }}"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        432
+      ],
+      "id": "7c7149e6-e93a-4c8b-ab89-87c7febd8511",
+      "name": "Get a task",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonData = items[0].json;\nconst customFields = jsonData.custom_fields;\nconst result = {\n  task_id: jsonData.id,\n  name: jsonData.name,\n  status: jsonData.status.status\n};\n\ncustomFields.forEach(field => {\n  const fieldId = field.id;\n  let fieldValue;\n  let fieldObject = {\n    id: fieldId,\n    name: field.name\n  };\n\n  // Tratamento do valor do campo\n  if (field.type === 'users' && Array.isArray(field.value)) {\n    const allIds = field.value.map(user => user.id).join(',');\n    const userDetails = {};\n    field.value.forEach(user => {\n      userDetails[user.id] = {\n        id: user.id,\n        name: user.username,\n        email: user.email\n      };\n    });\n    fieldValue = {\n      geral: allIds,\n      ...userDetails\n    };\n  } else if (field.type === 'drop_down' && field.value !== undefined && field.value !== null) {\n    const selectedOption = field.type_config.options.find(opt => opt.orderindex === field.value);\n    if (selectedOption) {\n      fieldValue = {\n        id: selectedOption.id,\n        name: selectedOption.name,\n        value: selectedOption.orderindex\n      };\n    } else {\n      fieldValue = '';\n    }\n  } else if (field.type === 'labels' && Array.isArray(field.value)) {\n    fieldValue = field.value.map(optionId => {\n      const option = field.type_config.options.find(opt => opt.id === optionId);\n      if (option) {\n        return {\n          id: option.id,\n          name: option.label,\n          color: option.color\n        };\n      }\n      return null;\n    }).filter(Boolean);\n  } else if (field.type === 'tasks' && Array.isArray(field.value)) {\n    fieldValue = field.value.map(task => ({\n      id: task.id,\n      name: task.name,\n      status: task.status\n    }));\n  } else if (field.type === 'emoji') {\n    fieldValue = field.value || '';\n  } else {\n    fieldValue = field.value !== undefined && field.value !== null ? field.value : '';\n  }\n\n  fieldObject.value = fieldValue;\n\n  // Apenas adiciona options se o campo tiver opções configuradas\n  if (field.type_config && field.type_config.options) {\n    const options = {};\n    field.type_config.options.forEach(opt => {\n      options[opt.id] = {\n        id: opt.id,\n        name: opt.label || opt.name\n      };\n    });\n    if (Object.keys(options).length > 0) {\n      fieldObject.options = options;\n    }\n  }\n\n  result[fieldId] = fieldObject;\n});\n\nreturn [{ json: result }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        192,
+        432
+      ],
+      "id": "35e99c5f-1d31-44d5-b18a-e0c6c59ec729",
+      "name": "OrganizarClickUp"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "setCustomField",
+        "task": "={{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"task_id\"] }}",
+        "field": "={{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Campo Automações\"] }}",
+        "value": "={{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Campo Perda Recusada\"] }}"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        624
+      ],
+      "id": "ecea6fcc-7f2f-4ad4-8766-76b7b62a900d",
+      "name": "Alterar Tag - Reprovado",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "comment",
+        "commentOn": "task",
+        "id": "={{ $item(\"0\").$node[\"OrganizarClickUp\"].json[\"task_id\"] }}",
+        "commentText": "={{ $item(\"0\").$node[\"Code4\"].json[\"mensagem\"] }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        1472,
+        624
+      ],
+      "id": "7677699b-1a3a-4c12-bedc-a6f2ecb7f3eb",
+      "name": "Create a comment",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obter o corpo da requisição\nconst body = $('OrganizarClickUp').first().json;\n\n// Função para verificar se um campo está vazio\nfunction campoVazio(valor) {\n    return valor === null || valor === undefined || valor.toString().trim() === '';\n}\n\n// Mapeamento de chaves internas do body para nomes reais\nconst nomesReais = {\n  \"21511f56-6349-45bd-af6b-7fc2883c575f\": \"Motivo da Perda\"\n};\n\n// Verifica quais campos estão vazios e retorna os nomes reais\nconst camposReprovados = Object.keys(nomesReais)\n    .filter(fieldId => campoVazio(body[fieldId]?.value))\n    .map(fieldId => nomesReais[fieldId]);\n\n// Se houver campos reprovados\nif (camposReprovados.length > 0) {\n    const mensagemFormatada = `❌ Reprovado!\\n\\n📋 Necessário preencher os seguintes campos:\\n\\n🔸 ${camposReprovados.join('\\n🔸 ')}`;\n\n    return [\n        {\n            json: {\n                dados: 'Reprovado',\n                camposReprovados,\n                mensagem: mensagemFormatada\n            }\n        }\n    ];\n}\n\n// Caso contrário, retorna o corpo original\nreturn [\n    {\n        json: body\n    }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        512,
+        432
+      ],
+      "id": "5a01605a-d5f1-43b4-9b1d-0f0c89d98537",
+      "name": "Code4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "749f13f6-5920-4fa4-a5fd-edbba5dce191",
+              "leftValue": "={{ $json.dados }}",
+              "rightValue": "Reprovado",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        432
+      ],
+      "id": "f5738b23-e00d-4514-9165-4f26d72ba58c",
+      "name": "If4"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "id": "={{ $item(\"0\").$node[\"OrganizarClickUp\"].json[\"task_id\"] }}",
+        "updateFields": {
+          "status": "perdido"
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        1472,
+        416
+      ],
+      "id": "39e01836-b4e1-49b4-8a73-08ded8b45a2d",
+      "name": "Update a task",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "setCustomField",
+        "task": "={{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"task_id\"] }}",
+        "field": "={{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Campo Automações\"] }}",
+        "value": "={{ $item(\"0\").$node[\"Webhook\"].json[\"content\"][\"Campo Perda Aprovada\"] }}"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        416
+      ],
+      "id": "cd1b1b7e-90d7-4094-8fc1-cbe0ad36ae8a",
+      "name": "Alterar Tag - Aprovado",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "fields": {
+            "consumerTag": "amq.ctag-KFMLj7AV_7IddaghWOLT8A",
+            "deliveryTag": 3,
+            "redelivered": false,
+            "exchange": "",
+            "routingKey": "clickup_hunter_perda"
+          },
+          "properties": {
+            "headers": {}
+          },
+          "content": {
+            "Campo Automações": "79a04869-f666-42c7-8f93-2cf7a313d22d",
+            "Campo Ganho": "310977e6-9d21-48d6-ba20-37258a360246",
+            "Campo Perda": "b56ff4d6-eb48-42f5-b113-8384e5c2e3a0",
+            "task_id": "86af2b16q",
+            "Campo Ganho Aprovado": "90a90c44-5bdb-414d-a3d5-fae43c5cfe46",
+            "Campo Ganho Recusado": "98ea8f40-0989-4fc8-9aab-2122f0e59d91",
+            "Campo Motivo Perda": "21511f56-6349-45bd-af6b-7fc2883c575f",
+            "Campo Perda Aprovada": "9538ca8f-c96b-40c7-8d35-2c75afff27fc",
+            "Campo Perda Recusada": "efaced45-d55f-454e-bcab-04ede697075a"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "RabbitMQ1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a task": {
+      "main": [
+        [
+          {
+            "node": "OrganizarClickUp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OrganizarClickUp": {
+      "main": [
+        [
+          {
+            "node": "Code4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alterar Tag - Reprovado": {
+      "main": [
+        [
+          {
+            "node": "Create a comment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code4": {
+      "main": [
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [
+          {
+            "node": "Alterar Tag - Aprovado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alterar Tag - Reprovado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alterar Tag - Aprovado": {
+      "main": [
+        [
+          {
+            "node": "Update a task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "dbedc378-6040-42b7-9831-3588bf5a3ffb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "3JKcrR9LtP31Lh0r",
+  "tags": []
+}

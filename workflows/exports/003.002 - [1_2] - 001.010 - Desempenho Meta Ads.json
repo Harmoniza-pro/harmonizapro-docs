@@ -1,0 +1,810 @@
+{
+  "name": "003.002 - [1/2] - 001.010 - Desempenho Meta Ads",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1gKfaabHWubEUWkUGfqw7UwdCW4e2sKWOO80Y0ysfu6U",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Central de Contas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gKfaabHWubEUWkUGfqw7UwdCW4e2sKWOO80Y0ysfu6U/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status Cliente",
+              "lookupValue": "Ativo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        304,
+        0
+      ],
+      "id": "f376d0d9-796a-4903-b331-6707616a46ca",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DHgktmNQ0OWZiYho",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        640,
+        0
+      ],
+      "id": "79b7af08-3afe-42ab-b671-44325afc8a40",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": 8
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1280,
+        160
+      ],
+      "id": "d8078486-1e27-42ff-a588-956dffc2a0b2",
+      "name": "Wait",
+      "webhookId": "bd90a771-8c23-43f5-b466-9f35ed93c777"
+    },
+    {
+      "parameters": {
+        "queue": "trafego_desempenho",
+        "options": {
+          "arguments": {
+            "argument": [
+              {
+                "key": "x-queue-type",
+                "value": "quorum"
+              }
+            ]
+          },
+          "durable": true
+        }
+      },
+      "id": "70fd9a84-0f0d-42ca-bdfc-99c6eabe6a1a",
+      "name": "Consultar Desempenho",
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1.1,
+      "position": [
+        976,
+        160
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -16,
+        0
+      ],
+      "id": "bed03739-2e56-4382-8af8-b5c9d2180242",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $item(\"0\").$node[\"Loop Over Items\"].json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1584,
+        160
+      ],
+      "id": "24ef24e7-58eb-48fb-93da-f63ded71e3e1",
+      "name": "Edit Fields",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "queue": "dados_sdr",
+        "options": {
+          "arguments": {
+            "argument": [
+              {
+                "key": "x-queue-type",
+                "value": "quorum"
+              }
+            ]
+          },
+          "durable": true
+        }
+      },
+      "id": "e055e709-a4b2-49c4-b1fb-639ddadca35c",
+      "name": "Consultar Desempenho1",
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1.1,
+      "position": [
+        1888,
+        160
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2176,
+        160
+      ],
+      "id": "8af09246-915f-44a8-adb6-dd68d2e7c894",
+      "name": "Wait1",
+      "webhookId": "bd90a771-8c23-43f5-b466-9f35ed93c777",
+      "disabled": true
+    }
+  ],
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2025-12-26T07:00:00.017-03:00",
+          "Readable date": "December 26th 2025, 7:00:00 am",
+          "Readable time": "7:00:00 am",
+          "Day of week": "Friday",
+          "Year": "2025",
+          "Month": "December",
+          "Day of month": "26",
+          "Hour": "07",
+          "Minute": "00",
+          "Second": "00",
+          "Timezone": "America/Sao_Paulo (UTC-03:00)"
+        }
+      }
+    ],
+    "Get row(s) in sheet": [
+      {
+        "json": {
+          "row_number": 2,
+          "ID Planilha": "1_FCVCA4TA2tVl6CdhniP5ESiR3Ri_qd243MB3HQAeeA",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "1193789894620645",
+          "col_4": "Ketly",
+          "col_5": "",
+          "col_6": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "ID Planilha": "1YLN_KgubiOsIMNOW0XtglwLRjaacczEOJ7krWhffO3A",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": 519512223735861,
+          "col_4": "Jacinta",
+          "col_5": "SEM SDR",
+          "col_6": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "ID Planilha": "1wJGoI51eTjUDxBylHCaek3guZq671dmnUnMCWBs4z_o",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": 906998541182656,
+          "col_4": "Michele",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Dra. Michele"
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "ID Planilha": "1qFFoxAer36iEDo76FdjsoppcuK7T0NWByolQPkVA0WA",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": 1223622632397900,
+          "col_4": "Caroline",
+          "col_5": "",
+          "col_6": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "ID Planilha": "1_Yse21Kf7wGZKxLejpYW8Wq-hSuOVPkZKbxl4AFe0ic",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "8929492917172352",
+          "col_4": "Sabrina",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Dra. Sabrina"
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "ID Planilha": "1ljUUa_xgyyyQAxRR8JDLzb0x6PlBkWfMjJHM-znY7Ks",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": 827560359153718,
+          "col_4": "Raquel",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Dra. Raquel"
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "ID Planilha": "1nn0VxC_xLG2DsHumeePUXrLoc8xVf3So389H2-X8b5Y",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": 231389049986297,
+          "col_4": "Gabriela Veloso",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Dra. Gabriela Veloso"
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "ID Planilha": "15QLkS0_1vHF3YW-gg3lHAay2ibUUyAHVevBUDLNV84o",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "1148338730423506",
+          "col_4": "Aline Lopes",
+          "col_5": "",
+          "col_6": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 10,
+          "ID Planilha": "1ZESD02raXSw7SMVX7YPZsfnJCR0U3i_AP0mENnnrN9E",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": 131981650214667,
+          "col_4": "Aline Di Toro",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Dra. Aline Di Toro"
+        }
+      },
+      {
+        "json": {
+          "row_number": 11,
+          "ID Planilha": "1kA4QP1T_Cxd30Zc9-M7Kg-D4DRidIMBG_6rE7gUps7Q",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": 1349718125951840,
+          "col_4": "Andressa Migueis",
+          "col_5": "",
+          "col_6": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 12,
+          "ID Planilha": "1wmnE-nBqkYpWXGVQD0v0eiOSGgKniVf4GJUcu8oND_Y",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "2808202569495037",
+          "col_4": "Andrieli",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Dra. Andrielli"
+        }
+      },
+      {
+        "json": {
+          "row_number": 13,
+          "ID Planilha": "1eJuJb0nCyKQCgOFk-tDQ82tUTyC3AFrpV3RhfplsDrI",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": 672524035126830,
+          "col_4": "Karise",
+          "col_5": "",
+          "col_6": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 14,
+          "ID Planilha": "",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": 899625830407581,
+          "col_4": "Silvia",
+          "col_5": "",
+          "col_6": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 15,
+          "ID Planilha": "1y3kI0BCYF2VNOIhsskW8veb-2a7o9VWB9yKzRHHOYZk",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": 645645400038672,
+          "col_4": "Lilian Martins",
+          "col_5": "",
+          "col_6": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 16,
+          "ID Planilha": "1dEpUbRLBz_RfCsWhuhfIQP40AOeepraj13DDRUp1nAM",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "",
+          "col_4": "Mariana Alpino",
+          "col_5": "",
+          "col_6": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 17,
+          "ID Planilha": "1zmoQ1NrGkSuAzmZoxxx11cj0ZB6mzLKyfO0UpTSZEfw",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": 634041142135617,
+          "col_4": "Camille Borga",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Dra. Camille Borga"
+        }
+      },
+      {
+        "json": {
+          "row_number": 18,
+          "ID Planilha": "1AuLu54OH-9gczBYinqdVIAsfsSvyfgWuPjKAX0As-k0",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "2641768102832918",
+          "col_4": "Renata Rezende",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Dra. Renata Rezende"
+        }
+      },
+      {
+        "json": {
+          "row_number": 19,
+          "ID Planilha": "1HJPSXejUtva5EdDo8gE2ddbjWYUXaKB5B9irAWbSXjo",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "",
+          "col_4": "Luciane Naldoni",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Dra. Luciane Naldoni"
+        }
+      },
+      {
+        "json": {
+          "row_number": 20,
+          "ID Planilha": "1DQIHkyHh91UE-JNWjYTi8BAfNmRlTFXcui6Hwk8-RlU",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": 2005187116958260,
+          "col_4": "Adriele Alcantara",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Dra. Adriele Alcantara"
+        }
+      },
+      {
+        "json": {
+          "row_number": 21,
+          "ID Planilha": "1W3MC64spL-9Inz8PPOn_9yy0kkcuLmE359k5XzJplaU",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": 745709712694267,
+          "col_4": "Paula Meireles",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Dra. Paula Meireles"
+        }
+      },
+      {
+        "json": {
+          "row_number": 22,
+          "ID Planilha": "1qbBPa8qUUg4kp_uZa9L3gPnaXtLFHCecNhsuvLefMG8",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": 391740573229436,
+          "col_4": "Matheus Lobato",
+          "col_5": "",
+          "col_6": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 23,
+          "ID Planilha": "1pWtjdKw1gGAUDmheNuk9hMnga4RwOEwlZVJUZKnlTQw",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "3229348410615824",
+          "col_4": "Lucas Favero",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Dra. Lucas Favero"
+        }
+      },
+      {
+        "json": {
+          "row_number": 24,
+          "ID Planilha": "1zM3AywxtdDsuuvbisttMqYXvqyUxeUwHmbJRo1Gyd_M",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "1345641460264051",
+          "col_4": "Viviane Assad",
+          "col_5": "",
+          "col_6": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 25,
+          "ID Planilha": "1vXgevYmyCzM1f1Ry4h2eA1Uuy60JMI7y5-BvooCvivI",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "1798227207677561",
+          "col_4": "Oligoflora",
+          "col_5": "",
+          "col_6": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 26,
+          "ID Planilha": "1Ehv0bQnnZNjAQP5ugIpZzr3AoRU1nm4ieHVSU61LjD4",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "",
+          "col_4": "Simone",
+          "col_5": "",
+          "col_6": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 27,
+          "ID Planilha": "18aL8yG-MjXr5udMlrm2x5A5xgylS68ZyKK-qymVOrAY",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "1540406480432783",
+          "col_4": "Thaiene",
+          "col_5": "",
+          "col_6": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 28,
+          "ID Planilha": "1cp69z4NieEYWKrLXyEKO3g74u67l2cLWWvKCXYX7SrI",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "2565080083868819",
+          "col_4": "Lavi",
+          "col_5": "",
+          "col_6": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 29,
+          "ID Planilha": "10k6iZMkDMXMYf8JXXNHcR5m-HYlBUeKjU1eOrWAKO9U",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "2072574930234777",
+          "col_4": "Cezar",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Cezar"
+        }
+      },
+      {
+        "json": {
+          "row_number": 30,
+          "ID Planilha": "10RBvNnlH84_9NonLhq0Iniqow0676ooXa1XqqiNrRtg",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": 279785931303050,
+          "col_4": "Milena",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Milena"
+        }
+      },
+      {
+        "json": {
+          "row_number": 31,
+          "ID Planilha": "1bMHAgee0RqMYOmnkOOwsDeqi4YK3fx2Ik8FYz4SqC4o",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "1617035245954431",
+          "col_4": "Giulliana",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Giulliana"
+        }
+      },
+      {
+        "json": {
+          "row_number": 32,
+          "ID Planilha": "1bMHAgee0RqMYOmnkOOwsDeqi4YK3fx2Ik8FYz4SqC4o",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": 641913219831202,
+          "col_4": "Vivian Brito",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Vivian Brito"
+        }
+      },
+      {
+        "json": {
+          "row_number": 33,
+          "ID Planilha": "100PEemczNfZQcrnfAUv-HUsgb4KE-T913ES_F8Kj7NE",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "",
+          "col_4": "New Way",
+          "col_5": "",
+          "col_6": "Coleta de Dados | New Way"
+        }
+      },
+      {
+        "json": {
+          "row_number": 34,
+          "ID Planilha": "1jIn8B4w6-ctuN-H83j0DkYsza0Q_sO3XlVQnWpYiSV4",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "1578224533334435",
+          "col_4": "Matheus Cecilio",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Matheus Cecilio"
+        }
+      },
+      {
+        "json": {
+          "row_number": 35,
+          "ID Planilha": "1cxPlrXdN1NUvTEwzXRBNGL_opmzjf6abSqKmmVKdo_8",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "1351111506415535",
+          "col_4": "Aline Cavalcante",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Aline Cavalcante"
+        }
+      },
+      {
+        "json": {
+          "row_number": 36,
+          "ID Planilha": "1DR9Aq9q-YxvO33klVGm7RESE0pmi-ML2Kstz-vP4InY",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "1381668986943655",
+          "col_4": "Pedro Darowish",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Pedro Darowish"
+        }
+      },
+      {
+        "json": {
+          "row_number": 37,
+          "ID Planilha": "1UdxpR_Pr2629tIVMc8fbI6Rx9s3smXjf-PdoEAKqfMk",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "",
+          "col_4": "Maíra",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Maíra"
+        }
+      },
+      {
+        "json": {
+          "row_number": 38,
+          "ID Planilha": "128RsxNv0jwZp5EvYrO3-cZMWvVrrn3bCKU8GrCUxWOY",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "2616604215405926",
+          "col_4": "Julie e Barbara",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Julie e Barbara"
+        }
+      },
+      {
+        "json": {
+          "row_number": 39,
+          "ID Planilha": "13mmMhhgi5hRUSUdiT82Ndv5EGIqvi8X1hB4VdV9oX2g",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "1277157720150309",
+          "col_4": "Mirian de Paula",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Mirian de Paula"
+        }
+      },
+      {
+        "json": {
+          "row_number": 40,
+          "ID Planilha": "1sF00tuS7P6-CRcqCLlGRzv-AlTWG2MEJyU0keDD36HA",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": 991977078896462,
+          "col_4": "Patricia",
+          "col_5": "",
+          "col_6": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 41,
+          "ID Planilha": "1vbtR43i616jiZ-Wg91fzIO3zSGa46Ig20RlMSxnC-5M",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "",
+          "col_4": "Adriane ",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Dra. Adriane"
+        }
+      },
+      {
+        "json": {
+          "row_number": 42,
+          "ID Planilha": "16UDckb4kjpeIEOxBFOItJMs1goBYq_UBYOO0fYaqekc",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "",
+          "col_4": "Eduardo Fonseca",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Dr. Eduardo"
+        }
+      },
+      {
+        "json": {
+          "row_number": 43,
+          "ID Planilha": "1KwgKTC49q7IGDcfYPew6BhUs4dKoFXkS2z2WoFXS17g",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "",
+          "col_4": "Rodrigo Luz",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Dra. Rodrigo Luz"
+        }
+      },
+      {
+        "json": {
+          "row_number": 44,
+          "ID Planilha": "1zxBESb3kIeT_Xm6XqiQllxAQm8dIQp0tYumSH7zkLZg",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "",
+          "col_4": "Egrégora",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Dra. Egrégora"
+        }
+      },
+      {
+        "json": {
+          "row_number": 45,
+          "ID Planilha": "1_Lv5R5yScbw39H-qe24C38Ts378mvaN6Mo2ciA-GgzI",
+          "Status Cliente": "Ativo",
+          "ID Conta de Anuncio": "",
+          "col_4": "Lucas Mortari",
+          "col_5": "",
+          "col_6": "Coleta de Dados | Dr. Lucas Mortari"
+        }
+      }
+    ],
+    "Wait": [
+      {
+        "json": {
+          "success": true
+        }
+      }
+    ],
+    "Consultar Desempenho": [
+      {
+        "json": {
+          "success": true
+        }
+      }
+    ],
+    "Wait1": [
+      {
+        "json": {
+          "success": true
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Consultar Desempenho",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar Desempenho": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Consultar Desempenho1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar Desempenho1": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2d31c881-6e0b-4601-b18c-67a3018d3bf2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "aDQOPpXXYXvwsWGN",
+  "tags": []
+}

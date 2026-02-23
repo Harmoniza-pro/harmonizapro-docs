@@ -1,0 +1,213 @@
+{
+  "name": "001.016 - Retroativo - Atualizar Campos UTM",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        0
+      ],
+      "id": "b25ac4d6-a2f0-437e-a72d-6f6c18d8c136",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT *\nFROM lead_tracking\nWHERE \n  lead_tracking.id BETWEEN 1001 AND 1500\n  AND id_negocio IS NOT NULL\nORDER BY created_at ASC",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        240,
+        0
+      ],
+      "id": "ca06b800-5894-4e3a-81a8-698114ba299e",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "1saLjFEY4a5ZPyFR",
+          "name": "Postgres - Metricas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "dealId": "={{ $item(\"0\").$node[\"Loop Over Items\"].json[\"id_negocio\"] }}",
+        "updateFields": {
+          "customProperties": {
+            "property": [
+              {
+                "name": "98c23f53854a205bb9e1b9f1d17a5459e0dc7d16",
+                "value": "={{ $item(\"0\").$node[\"Loop Over Items\"].json[\"utm_source\"] }}"
+              },
+              {
+                "name": "e5ae032d7fda4523edaf73cae9dbff166e1861fe",
+                "value": "={{ $item(\"0\").$node[\"Loop Over Items\"].json[\"utm_medium\"] }}"
+              },
+              {
+                "name": "1154d85b97ab799ecb95476c040eef165f8eca98",
+                "value": "={{ $item(\"0\").$node[\"Loop Over Items\"].json[\"utm_campaign\"] }}"
+              },
+              {
+                "name": "c83c89258b135c08b44d80a76eb69cf56fe41f99",
+                "value": "={{ $item(\"0\").$node[\"Loop Over Items\"].json[\"utm_term\"] }}"
+              },
+              {
+                "name": "a3a4cd5a4cdeff61454f4b72aa0796d0fcb62cb7",
+                "value": "={{ $item(\"0\").$node[\"Loop Over Items\"].json[\"utm_id\"] }}"
+              },
+              {
+                "name": "f411adfb5c1ccd6968627615551f614fe248c254",
+                "value": "={{ $item(\"0\").$node[\"Loop Over Items\"].json[\"utm_content\"] }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [
+        976,
+        160
+      ],
+      "id": "f8db3694-d999-49f1-a18e-29afad9c1500",
+      "name": "Update a deal",
+      "credentials": {
+        "pipedriveOAuth2Api": {
+          "id": "y8O0rqLgOCkuE8hK",
+          "name": "Pipedrive - evoluamidia@gmail.com"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        496,
+        0
+      ],
+      "id": "79f0e85d-c04b-45ba-9c04-7e73900191ae",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9f86afcb-f28f-463c-991c-5e1aed4d1d39",
+              "leftValue": "={{ $item(\"0\").$node[\"Loop Over Items\"].json[\"id_negocio\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        736,
+        176
+      ],
+      "id": "f0d51c7f-b167-467f-9ad7-9ce5696b4b80",
+      "name": "If"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a deal": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Update a deal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "52da9b06-589b-4db9-a44f-ad18c713fd9c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "a5zLplTyFmXN5lgP",
+  "tags": []
+}

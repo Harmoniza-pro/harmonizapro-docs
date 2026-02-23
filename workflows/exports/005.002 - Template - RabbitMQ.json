@@ -1,0 +1,196 @@
+{
+  "name": "005.002 - Template - RabbitMQ",
+  "nodes": [
+    {
+      "parameters": {
+        "queue": "NOME_DA_FILA_1",
+        "options": {
+          "arguments": {
+            "argument": [
+              {
+                "key": "x-queue-type",
+                "value": "quorum"
+              }
+            ]
+          },
+          "durable": true
+        }
+      },
+      "id": "cc26efbf-fb2b-43e6-bd0e-f7a6b0a9bb5e",
+      "name": "RabbitMQ",
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1.1,
+      "position": [
+        1024,
+        144
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "ac294f23-e2e4-4b77-aa36-6c690f09dba6",
+              "leftValue": "={{ $json.fields.redelivered}}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "0612d039-2d8f-4125-acfe-83147802a0a8",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        112,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "queue": "NOME_DA_FILA",
+        "options": {
+          "arguments": {
+            "argument": [
+              {
+                "key": "x-queue-type",
+                "value": "quorum"
+              }
+            ]
+          },
+          "acknowledge": "executionFinishesSuccessfully",
+          "jsonParseBody": true,
+          "onlyContent": false,
+          "parallelMessages": 1
+        }
+      },
+      "id": "15cd0114-646e-4b5f-b6f0-528cb2bd936f",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.rabbitmqTrigger",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        208
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "deleteMessage"
+      },
+      "id": "33bfedbe-dffe-4332-989b-eb82aca2243d",
+      "name": "RabbitMQ1",
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1.1,
+      "position": [
+        352,
+        48
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Webhook Rabbit MQ\nReceber Dados",
+        "height": 560,
+        "width": 816,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -224,
+        -112
+      ],
+      "typeVersion": 1,
+      "id": "0de15607-b999-46e0-ab46-51b994116da4",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Node Rabbit MQ\nEnviar Dados",
+        "height": 560,
+        "width": 816,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        672,
+        -112
+      ],
+      "typeVersion": 1,
+      "id": "ac4a9b2e-7286-4c60-bc0a-05ee7dae964a",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "RabbitMQ1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b065dfc1-a430-4d31-8fad-c55cd22545c0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "ZYFguW4YlvtptUum",
+  "tags": [
+    {
+      "updatedAt": "2026-02-22T03:31:58.280Z",
+      "createdAt": "2026-02-22T03:31:58.280Z",
+      "id": "Z0ebX08TOx5PgsQ5",
+      "name": "Template"
+    }
+  ]
+}

@@ -1,0 +1,813 @@
+{
+  "name": "002.002 - Clickup - CRM Hunter",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mensagens_hunter",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1744,
+        -16
+      ],
+      "id": "8ef51374-a821-44db-b611-735841700386",
+      "name": "Webhook",
+      "webhookId": "55544167-11b8-4166-a102-8a884f77460e"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2045559d-d9e7-43ca-90b1-2493ea0fa53b",
+              "leftValue": "={{ $json.body.message.isGroup }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1024,
+        -16
+      ],
+      "id": "b2c7faba-954c-4442-a2d9-35a241601dc2",
+      "name": "If isGroup"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $item(\"0\").$node[\"If isGroup\"].json[\"body\"][\"message\"][\"content\"].toLowerCase() }}",
+                    "rightValue": "posso contar com sua presença",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "068d1dc8-0074-4f85-b898-1b2007613dd6"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "agendamento"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "13cc8846-2682-4aa9-b20a-91cc169596a6",
+                    "leftValue": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"message\"][\"fromMe\"] }}",
+                    "rightValue": "={{ 'Conversation' || 'ExtendedTextMessage' || 'ephemeralMessage' || 'AudioMessage' || 'ImageMessage' || 'VideoMessage' || 'DocumentMessage'}}",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "false",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "em conversa"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1392,
+        16
+      ],
+      "id": "23b6c809-804c-4099-b21f-177607fdb98d",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "team": "90132992412",
+        "space": "901313001557",
+        "folder": "901316722259",
+        "list": "901324875324",
+        "filters": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "fieldId": "a52a8a5a-17dd-4fd4-a037-4b59b31bd642",
+                "value": "={{\n(() => {\n  const raw = $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"chat\"][\"phone\"].toString().replace(/\\D/g, \"\");\n\n  const country = raw.slice(0, 2);\n  const ddd = raw.slice(2, 4);\n  let number = raw.slice(4);\n\n  // Se for BR e vier com 8 dígitos (padrão antigo), adiciona o 9 na frente (celular)\n  if (country === \"55\" && number.length === 8) {\n    number = \"9\" + number;\n  }\n\n  // Formatação: 9 dígitos => 5-4 | 8 dígitos => 4-4\n  if (number.length === 9) {\n    return `+${country} ${ddd} ${number.slice(0, 5)} ${number.slice(5)}`;\n  }\n  if (number.length === 8) {\n    return `+${country} (${ddd}) ${number.slice(0, 4)}-${number.slice(4)}`;\n  }\n\n  // fallback (se vier diferente)\n  return `+${country} (${ddd}) ${number}`;\n})()\n}}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        1744,
+        -208
+      ],
+      "id": "64dd592c-3abf-4f54-b71e-ab0c5f902ad0",
+      "name": "Get many tasks",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "id": "={{ $item(\"0\").$node[\"Get many tasks\"].json[\"id\"] }}",
+        "updateFields": {
+          "status": "consulta agendada"
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        2080,
+        -208
+      ],
+      "id": "80a3248e-c47f-47fe-8aac-1b364f7c6091",
+      "name": "Update a task",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "team": "90132992412",
+        "space": "901313001557",
+        "folder": "901316722258",
+        "list": "901324875324",
+        "filters": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "fieldId": "a52a8a5a-17dd-4fd4-a037-4b59b31bd642",
+                "value": "={{\n(() => {\n  const raw = $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"chat\"][\"phone\"].toString().replace(/\\D/g, \"\");\n\n  const country = raw.slice(0, 2);\n  const ddd = raw.slice(2, 4);\n  let number = raw.slice(4);\n\n  // Se for BR e vier com 8 dígitos (padrão antigo), adiciona o 9 na frente (celular)\n  if (country === \"55\" && number.length === 8) {\n    number = \"9\" + number;\n  }\n\n  // Formatação: 9 dígitos => 5-4 | 8 dígitos => 4-4\n  if (number.length === 9) {\n    return `+${country} ${ddd} ${number.slice(0, 5)} ${number.slice(5)}`;\n  }\n  if (number.length === 8) {\n    return `+${country} (${ddd}) ${number.slice(0, 4)}-${number.slice(4)}`;\n  }\n\n  // fallback (se vier diferente)\n  return `+${country} (${ddd}) ${number}`;\n})()\n}}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        1744,
+        32
+      ],
+      "id": "60dd5e98-7c90-445e-82ba-cc682049a55b",
+      "name": "Get many tasks1",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d4506d11-732d-4e26-97e0-16198a592317",
+              "leftValue": "={{ $item(\"0\").$node[\"Get many tasks1\"].json[\"status\"][\"status\"] }}",
+              "rightValue": "entrada do lead",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2080,
+        32
+      ],
+      "id": "a41ecd88-d9e4-4e03-9a85-808aadf5d7e0",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "id": "={{ $item(\"0\").$node[\"Get many tasks1\"].json[\"id\"] }}",
+        "updateFields": {
+          "status": "em conversa"
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        2752,
+        16
+      ],
+      "id": "45ea8c95-ce34-4157-a892-3317e3f67a20",
+      "name": "Update a task1",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2416,
+        16
+      ],
+      "id": "04de6a31-f2c7-443e-b7e2-6ef0fbad781a",
+      "name": "Wait",
+      "webhookId": "068808cd-8303-4378-96bd-ccc7caabd104"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c8a98721-4db6-4837-b3bd-adfc9d6854db",
+              "leftValue": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"EventType\"] }}",
+              "rightValue": "connection",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -656,
+        0
+      ],
+      "id": "72b3ad1f-41b8-4fb7-acd7-5ca01697803d",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "nome",
+              "value": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"chat\"][\"name\"] }}"
+            },
+            {
+              "key": "telefone",
+              "value": "={{\n(() => {\n  const raw = $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"chat\"][\"phone\"].toString().replace(/\\D/g, \"\");\n\n  const country = raw.slice(0, 2);\n  const ddd = raw.slice(2, 4);\n  let number = raw.slice(4);\n\n  // Se for BR e vier com 8 dígitos (padrão antigo), adiciona o 9 na frente (celular)\n  if (country === \"55\" && number.length === 8) {\n    number = \"9\" + number;\n  }\n\n  // Formatação: 9 dígitos => 5-4 | 8 dígitos => 4-4\n  if (number.length === 9) {\n    return `+${country} ${ddd} ${number.slice(0, 5)} ${number.slice(5)}`;\n  }\n  if (number.length === 8) {\n    return `+${country} (${ddd}) ${number.slice(0, 4)}-${number.slice(4)}`;\n  }\n\n  // fallback (se vier diferente)\n  return `+${country} (${ddd}) ${number}`;\n})()\n}}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        -1392,
+        -16
+      ],
+      "id": "fa748ff4-73b0-4187-bf17-be1cddd9e71c",
+      "name": "Execution Data"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "92efc9ac-aeb8-4687-851a-2abf2ee32631",
+              "name": "host",
+              "value": "https://harmonizapro.uazapi.com",
+              "type": "string"
+            },
+            {
+              "id": "198f6743-fcae-4ad4-b3e4-aa5b5b2ae0e3",
+              "name": "token",
+              "value": "=8361ff49-f8be-4bb2-b67d-1976425b3193",
+              "type": "string"
+            },
+            {
+              "id": "8db3ad40-e29a-4c70-8024-6f165ab24be7",
+              "name": "data desconectado",
+              "value": "={{\n  (() => {\n    const date = new Date($item(\"0\").$node[\"Webhook\"].json[\"body\"][\"instance\"][\"lastDisconnect\"]);\n    const br = new Date(date.toLocaleString(\"en-US\", { timeZone: \"America/Sao_Paulo\" }));\n    \n    const dia = String(br.getDate()).padStart(2, '0');\n    const mes = String(br.getMonth() + 1).padStart(2, '0');\n    const ano = br.getFullYear();\n    const hora = String(br.getHours()).padStart(2, '0');\n    const min = String(br.getMinutes()).padStart(2, '0');\n    const seg = String(br.getSeconds()).padStart(2, '0');\n\n    return `${dia}/${mes}/${ano} ${hora}:${min}:${seg}`;\n  })()\n}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        -256
+      ],
+      "id": "9478a9e5-9b57-44c3-92d9-ffbe71f8303d",
+      "name": "SDR 1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $item(\"0\").$node[\"SDR 1\"].json[\"host\"] }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $item(\"0\").$node[\"SDR 1\"].json[\"token\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"5548999278172\",\n  \"text\": \"🚨 Instância Desconectada 🚨\\n\\n*Nome da Instância:* {{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"instance\"][\"name\"] }}\\n*Data:* {{ $item(\"0\").$node[\"SDR 1\"].json[\"data desconectado\"] }}\\n*Motivo:* {{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"instance\"][\"lastDisconnectReason\"] }}\"\n}",
+        "options": {}
+      },
+      "id": "63679176-b708-4a20-b0de-eaf296891788",
+      "name": "Mensagem",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        496,
+        -256
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "amount": 8
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        832,
+        -272
+      ],
+      "id": "c85ea68b-c8e1-4d35-9bd2-489ae46f5fcd",
+      "name": "Wait3",
+      "webhookId": "8e3c3990-5769-4f63-8613-f82dc25a6be7"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $item(\"0\").$node[\"SDR 1\"].json[\"host\"] }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $item(\"0\").$node[\"SDR 1\"].json[\"token\"] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"5561995661157\",\n  \"text\": \"🚨 Instância Desconectada 🚨\\n\\n*Nome da Instância:* {{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"instance\"][\"name\"] }}\\n*Data:* {{ $item(\"0\").$node[\"SDR 1\"].json[\"data desconectado\"] }}\\n*Motivo:* {{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"instance\"][\"lastDisconnectReason\"] }}\"\n}",
+        "options": {}
+      },
+      "id": "edd7c66b-1dcc-4609-8707-cc8973017ca2",
+      "name": "Mensagem1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1120,
+        -272
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "dc391d89-f703-4353-8ac7-5b4f58e695a8",
+              "leftValue": "={{ $item(\"0\").$node[\"If isGroup\"].json[\"body\"][\"instance\"][\"status\"] }}",
+              "rightValue": "disconnected",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -32,
+        -240
+      ],
+      "id": "7454fccb-5cdd-4789-b6b5-62a60980f5b0",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "type",
+              "value": "instance_disconnected"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        -320,
+        -240
+      ],
+      "id": "cbad711a-879e-4aa5-9acf-0e490ee9b12d",
+      "name": "Execution Data1"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "type",
+              "value": "agendamento"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        2384,
+        -208
+      ],
+      "id": "f0cae29f-46c0-4aff-be57-75a8e7538e92",
+      "name": "Execution Data2"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "type",
+              "value": "em_conversa"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        3056,
+        16
+      ],
+      "id": "559d83f6-fc8f-4dac-ac82-4443ab0354ef",
+      "name": "Execution Data3"
+    }
+  ],
+  "pinData": {
+    "Wait3": [
+      {
+        "json": {
+          "chatid": "5512974086912@s.whatsapp.net",
+          "content": {
+            "text": "Aqui é a Gabi da HarmonizaPRO! - bit.ly/instaharmonizaPRO.  Tudo bem?",
+            "contextInfo": {}
+          },
+          "convertOptions": "",
+          "edited": "",
+          "fromMe": true,
+          "id": "5547936185929:3EB00B7A52BC85C532EB8A",
+          "isGroup": false,
+          "messageTimestamp": 1771608286852,
+          "messageType": "ExtendedTextMessage",
+          "messageid": "3EB00B7A52BC85C532EB8A",
+          "owner": "5547936185929",
+          "quoted": "",
+          "reaction": "",
+          "readChatAttempted": false,
+          "sender": "5547936185929@s.whatsapp.net",
+          "senderName": "Gabe Linhares",
+          "source": "web",
+          "status": "Pending",
+          "text": "Aqui é a Gabi da HarmonizaPRO! - bit.ly/instaharmonizaPRO.  Tudo bem?",
+          "track_id": "",
+          "track_source": ""
+        }
+      }
+    ],
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhooks.goldeletra.pro",
+            "user-agent": "uazapiGO-Webhook/1.0",
+            "content-length": "216",
+            "accept-encoding": "gzip",
+            "content-type": "application/json",
+            "x-forwarded-for": "186.227.197.42",
+            "x-forwarded-host": "webhooks.goldeletra.pro",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik_traefik.1",
+            "x-real-ip": "186.227.197.42"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "BaseUrl": "https://harmonizapro.uazapi.com",
+            "EventType": "connection",
+            "instance": {
+              "name": "jacinta",
+              "status": "connected"
+            },
+            "instanceName": "jacinta",
+            "owner": "557399671761",
+            "token": "fa2f2974-6c37-4d57-8942-7c479b2313f6"
+          },
+          "webhookUrl": "https://webhooks.goldeletra.pro/webhook/mensagens_hunter",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Execution Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If isGroup": {
+      "main": [
+        [],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Get many tasks",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get many tasks1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many tasks": {
+      "main": [
+        [
+          {
+            "node": "Update a task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many tasks1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Update a task1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Execution Data1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execution Data": {
+      "main": [
+        [
+          {
+            "node": "If isGroup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SDR 1": {
+      "main": [
+        [
+          {
+            "node": "Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensagem": {
+      "main": [
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Mensagem1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "SDR 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execution Data1": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a task": {
+      "main": [
+        [
+          {
+            "node": "Execution Data2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a task1": {
+      "main": [
+        [
+          {
+            "node": "Execution Data3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0cfdc11a-c559-44fb-b848-6182b4728330",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "PdKhXuFuVERax1A6",
+  "tags": []
+}

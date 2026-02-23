@@ -1,0 +1,451 @@
+{
+  "name": "002.000 - Hunters - Central de Automação",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "team": "90132992412",
+        "events": [
+          "taskUpdated"
+        ],
+        "filters": {
+          "listId": "901324875324"
+        }
+      },
+      "type": "n8n-nodes-base.clickUpTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "60a0fef9-a22c-49e5-b9e7-b9febde921cf",
+      "name": "ClickUp Trigger",
+      "webhookId": "76809ef5-79dc-46b9-844b-154e0d229953",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "33ae137d-88cb-4b90-a83e-92dd229bf1ef",
+              "name": "Campo Automações",
+              "value": "79a04869-f666-42c7-8f93-2cf7a313d22d",
+              "type": "string"
+            },
+            {
+              "id": "28ed45bc-6e8c-4c47-a45b-4c1c4e70d9f2",
+              "name": "Campo Ganho",
+              "value": "310977e6-9d21-48d6-ba20-37258a360246",
+              "type": "string"
+            },
+            {
+              "id": "927e60dd-59b1-4228-a398-3e97c4e4d638",
+              "name": "Campo Perda",
+              "value": "b56ff4d6-eb48-42f5-b113-8384e5c2e3a0",
+              "type": "string"
+            },
+            {
+              "id": "dba070cb-a9bb-44eb-8cdb-da6f9eaafb3d",
+              "name": "task_id",
+              "value": "={{ $item(\"0\").$node[\"ClickUp Trigger\"].json[\"task_id\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "1a3613e5-87eb-4ddd-8bb8-52a4ff09f4d5",
+              "name": "Campo Ganho Aprovado",
+              "value": "90a90c44-5bdb-414d-a3d5-fae43c5cfe46",
+              "type": "string"
+            },
+            {
+              "id": "384364bc-1b12-4e2e-91ac-ec40f0774148",
+              "name": "Campo Ganho Recusado",
+              "value": "98ea8f40-0989-4fc8-9aab-2122f0e59d91",
+              "type": "string"
+            },
+            {
+              "id": "65978976-af2a-40cc-85a7-755cb6cd1d4f",
+              "name": "Campo Motivo Perda",
+              "value": "21511f56-6349-45bd-af6b-7fc2883c575f",
+              "type": "string"
+            },
+            {
+              "id": "d36a7f3e-714a-40b7-91eb-ad70fa772950",
+              "name": "Campo Perda Aprovada",
+              "value": "9538ca8f-c96b-40c7-8d35-2c75afff27fc",
+              "type": "string"
+            },
+            {
+              "id": "33f998e8-171e-455e-b8ab-2fc2d06e30b9",
+              "name": "Campo Perda Recusada",
+              "value": "efaced45-d55f-454e-bcab-04ede697075a",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        336,
+        0
+      ],
+      "id": "8ae71538-a459-424f-aed8-1953fb0dbf6c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "get",
+        "id": "86afgcvh4"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        144,
+        -384
+      ],
+      "id": "8bec7709-3709-481c-bfa9-e8fadf629dd4",
+      "name": "Get a task",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "EtTMIW4XByQLEolK",
+          "name": "ClickUp - Ferramentas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonData = items[0].json;\nconst customFields = jsonData.custom_fields;\nconst result = {\n  task_id: jsonData.id,\n  name: jsonData.name,\n  status: jsonData.status.status\n};\n\ncustomFields.forEach(field => {\n  const fieldId = field.id;\n  let fieldValue;\n  let fieldObject = {\n    id: fieldId,\n    name: field.name\n  };\n\n  // Tratamento do valor do campo\n  if (field.type === 'users' && Array.isArray(field.value)) {\n    const allIds = field.value.map(user => user.id).join(',');\n    const userDetails = {};\n    field.value.forEach(user => {\n      userDetails[user.id] = {\n        id: user.id,\n        name: user.username,\n        email: user.email\n      };\n    });\n    fieldValue = {\n      geral: allIds,\n      ...userDetails\n    };\n  } else if (field.type === 'drop_down' && field.value !== undefined && field.value !== null) {\n    const selectedOption = field.type_config.options.find(opt => opt.orderindex === field.value);\n    if (selectedOption) {\n      fieldValue = {\n        id: selectedOption.id,\n        name: selectedOption.name,\n        value: selectedOption.orderindex\n      };\n    } else {\n      fieldValue = '';\n    }\n  } else if (field.type === 'labels' && Array.isArray(field.value)) {\n    fieldValue = field.value.map(optionId => {\n      const option = field.type_config.options.find(opt => opt.id === optionId);\n      if (option) {\n        return {\n          id: option.id,\n          name: option.label,\n          color: option.color\n        };\n      }\n      return null;\n    }).filter(Boolean);\n  } else if (field.type === 'tasks' && Array.isArray(field.value)) {\n    fieldValue = field.value.map(task => ({\n      id: task.id,\n      name: task.name,\n      status: task.status\n    }));\n  } else if (field.type === 'emoji') {\n    fieldValue = field.value || '';\n  } else {\n    fieldValue = field.value !== undefined && field.value !== null ? field.value : '';\n  }\n\n  fieldObject.value = fieldValue;\n\n  // Apenas adiciona options se o campo tiver opções configuradas\n  if (field.type_config && field.type_config.options) {\n    const options = {};\n    field.type_config.options.forEach(opt => {\n      options[opt.id] = {\n        id: opt.id,\n        name: opt.label || opt.name\n      };\n    });\n    if (Object.keys(options).length > 0) {\n      fieldObject.options = options;\n    }\n  }\n\n  result[fieldId] = fieldObject;\n});\n\nreturn [{ json: result }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        -384
+      ],
+      "id": "19e1883f-cc35-4729-ab4f-d721c1ff7aea",
+      "name": "OrganizarClickUp",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $item(\"0\").$node[\"ClickUp Trigger\"].json[\"history_items\"][\"0\"][\"custom_field\"][\"id\"] === $item(\"0\").$node[\"Edit Fields\"].json[\"Campo Automações\"] && $item(\"0\").$node[\"ClickUp Trigger\"].json[\"history_items\"][\"0\"][\"after\"] === $item(\"0\").$node[\"Edit Fields\"].json[\"Campo Ganho\"] }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "a3d26f79-0c4c-4cd1-b1e1-2cee35408d19"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Ganho"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9942f1b3-dd7e-489e-87db-d3b69388a458",
+                    "leftValue": "={{ $item(\"0\").$node[\"ClickUp Trigger\"].json[\"history_items\"][\"0\"][\"custom_field\"][\"id\"] === $item(\"0\").$node[\"Edit Fields\"].json[\"Campo Automações\"] && $item(\"0\").$node[\"ClickUp Trigger\"].json[\"history_items\"][\"0\"][\"after\"] === $item(\"0\").$node[\"Edit Fields\"].json[\"Campo Perda\"] }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Perda"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        688,
+        0
+      ],
+      "id": "81255e9c-3fac-43a4-8a6f-da87f0c7d87e",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "queue": "clickup_hunter_ganho",
+        "options": {
+          "arguments": {
+            "argument": [
+              {
+                "key": "x-queue-type",
+                "value": "quorum"
+              }
+            ]
+          },
+          "durable": true
+        }
+      },
+      "id": "371b3367-1040-4ae4-8071-283bfdea5871",
+      "name": "Ganho",
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        -208
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "queue": "clickup_hunter_perda",
+        "options": {
+          "arguments": {
+            "argument": [
+              {
+                "key": "x-queue-type",
+                "value": "quorum"
+              }
+            ]
+          },
+          "durable": true
+        }
+      },
+      "id": "b697df35-fa55-473a-bf8d-9fca4b151d8d",
+      "name": "Perda",
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        16
+      ],
+      "credentials": {
+        "rabbitmq": {
+          "id": "3rqLP8OStt7TaymP",
+          "name": "RabbitMQ"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "ClickUp Trigger": [
+      {
+        "json": {
+          "event": "taskUpdated",
+          "history_items": [
+            {
+              "id": "4964990310809290489",
+              "type": 1,
+              "date": "1771732623415",
+              "field": "custom_field",
+              "parent_id": "901324875324",
+              "data": {
+                "cf_type": 1,
+                "createTask": false
+              },
+              "source": null,
+              "user": {
+                "id": 278505381,
+                "username": "Ferramentas Harmoniza",
+                "email": "ferramentas@harmoniza.pro",
+                "color": "#595d66",
+                "initials": "FH",
+                "profilePicture": null,
+                "role": 1,
+                "role_subtype": 0
+              },
+              "before": null,
+              "after": "b56ff4d6-eb48-42f5-b113-8384e5c2e3a0",
+              "custom_field": {
+                "id": "79a04869-f666-42c7-8f93-2cf7a313d22d",
+                "name": "Automações",
+                "type": "drop_down",
+                "type_config": {
+                  "sorting": "manual",
+                  "options": [
+                    {
+                      "id": "310977e6-9d21-48d6-ba20-37258a360246",
+                      "name": "Ganho",
+                      "value": "Ganho",
+                      "type": "text",
+                      "color": "#fff",
+                      "orderindex": 0,
+                      "workspace_id": "90132992412"
+                    },
+                    {
+                      "id": "b56ff4d6-eb48-42f5-b113-8384e5c2e3a0",
+                      "name": "Perda",
+                      "value": "Perda",
+                      "type": "text",
+                      "color": "#fff",
+                      "orderindex": 1,
+                      "workspace_id": "90132992412"
+                    },
+                    {
+                      "id": "98ea8f40-0989-4fc8-9aab-2122f0e59d91",
+                      "name": "Ganho Recusado",
+                      "value": "Ganho Recusado",
+                      "type": "text",
+                      "color": "#e5484d",
+                      "orderindex": 2,
+                      "workspace_id": "90132992412"
+                    },
+                    {
+                      "id": "90a90c44-5bdb-414d-a3d5-fae43c5cfe46",
+                      "name": "Ganho Aprovado",
+                      "value": "Ganho Aprovado",
+                      "type": "text",
+                      "color": "#30a46c",
+                      "orderindex": 3,
+                      "workspace_id": "90132992412"
+                    },
+                    {
+                      "id": "efaced45-d55f-454e-bcab-04ede697075a",
+                      "name": "Perda Recusada",
+                      "value": "Perda Recusada",
+                      "type": "text",
+                      "color": "#e5484d",
+                      "orderindex": 4,
+                      "workspace_id": "90132992412"
+                    },
+                    {
+                      "id": "9538ca8f-c96b-40c7-8d35-2c75afff27fc",
+                      "name": "Perda Aprovada",
+                      "value": "Perda Aprovada",
+                      "type": "text",
+                      "color": "#30a46c",
+                      "orderindex": 5,
+                      "workspace_id": "90132992412"
+                    }
+                  ]
+                },
+                "values_set": null,
+                "userid": "278505381",
+                "description": "",
+                "date_created": "1771702116038",
+                "hide_from_guests": false,
+                "team_id": "90132992412",
+                "deleted": false,
+                "deleted_by": null,
+                "pinned": true,
+                "required": false,
+                "private": false,
+                "required_on_subtasks": false,
+                "linked_subcategory": null,
+                "permission_level": null,
+                "default_value": null,
+                "type_id": 1,
+                "automation_count": 0
+              }
+            }
+          ],
+          "task_id": "86af2b16q",
+          "team_id": "90132992412",
+          "webhook_id": "44e37661-5084-464a-9698-d916fcc55698"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "ClickUp Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a task": {
+      "main": [
+        [
+          {
+            "node": "OrganizarClickUp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Ganho",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Perda",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "eb973295-8aa0-4782-9882-a2a124613213",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "TIfgM9x1GvzTTwFH",
+  "tags": []
+}

@@ -1,0 +1,200 @@
+{
+  "name": "001.013 - Typeform - Evcento Lead Clientes",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "d82e2e9f-6f77-47f0-b1a7-4fd92abec1a0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "585175b1-8277-4a73-9d7d-538972003982",
+      "name": "Webhook",
+      "webhookId": "d82e2e9f-6f77-47f0-b1a7-4fd92abec1a0"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "35f9768c-bdd2-4549-9b3a-05ef5043ab8d",
+              "leftValue": "={{ $item(\"0\").$node[\"Webhook\"].json[\"query\"][\"telefone_usuario\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "cf9255e8-517e-46cd-b7e9-38e9015e0972",
+              "leftValue": "={{ $item(\"0\").$node[\"Webhook\"].json[\"query\"][\"telefone_usuario\"] }}",
+              "rightValue": "Não encontrado",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        256,
+        0
+      ],
+      "id": "5511b001-ebbd-43a8-acb8-02624d30d11a",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "type": "SHA256",
+        "value": "=55{{ $item(\"0\").$node[\"Webhook\"].json[\"query\"][\"telefone_usuario\"] }}",
+        "dataPropertyName": "telefone_hash"
+      },
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 1,
+      "position": [
+        480,
+        -16
+      ],
+      "id": "b102d22c-dd47-40ea-8e72-800c619abbe6",
+      "name": "Crypto"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v24.0/{{ $item(\"0\").$node[\"Crypto\"].json[\"query\"][\"pixel_id\"] }}/events",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "data",
+              "value": "=[ \n  { \n   \"event_name\": \"Lead\",\n   \"event_time\": {{ parseFloat((new Date().getTime()/1000).toString().split('.')[0]) }},\n   \"event_id\": \"{{ new Date().getTime() }}\",\n   \"user_data\": {\n       \"ph\": [ \"{{ $item(\"0\").$node[\"Crypto\"].json[\"telefone_hash\"] }}\"],\n       \"client_ip_address\": \"{{ $item(\"0\").$node[\"Crypto\"].json[\"query\"][\"ip\"] }}\",\n       \"client_user_agent\": \"{{ $item(\"0\").$node[\"Crypto\"].json[\"query\"][\"user_agent\"] }}\",\n       \"fbc\": \"{{ $item(\"0\").$node[\"Crypto\"].json[\"query\"][\"_fbc\"] }}\",\n       \"fbp\": \"{{ $item(\"0\").$node[\"Crypto\"].json[\"query\"][\"_fbp\"] }}\"\n          }, \n    \"custom_data\": { \n    },\n   \"event_source_url\": \"{{ $item(\"0\").$node[\"Crypto\"].json[\"query\"][\"page_url\"] }}\",\n   \"action_source\": \"website\"\n  }\n]"
+            },
+            {
+              "name": "access_token",
+              "value": "={{ $item(\"0\").$node[\"Crypto\"].json[\"query\"][\"token\"].replace(\"token_do_pixel\",\"\") }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "18098218-04b2-41ad-b64d-a3e25b0c4a55",
+      "name": "site2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        736,
+        -16
+      ]
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhooks.goldeletra.pro",
+            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+            "accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+            "accept-encoding": "gzip, deflate, br, zstd",
+            "accept-language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
+            "priority": "i",
+            "referer": "https://harmoniza.typeform.com/to/zYQtxtJu?utm_content=xxxxx&utm_term=xxxxx",
+            "sec-ch-ua": "\"Google Chrome\";v=\"143\", \"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"macOS\"",
+            "sec-fetch-dest": "image",
+            "sec-fetch-mode": "no-cors",
+            "sec-fetch-site": "cross-site",
+            "sec-fetch-storage-access": "active",
+            "x-forwarded-for": "177.54.5.145",
+            "x-forwarded-host": "webhooks.goldeletra.pro",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik_traefik.1",
+            "x-real-ip": "177.54.5.145"
+          },
+          "params": {},
+          "query": {
+            "pixel_id": "852708367710421",
+            "token": "token_do_pixelEAAcvgEGBmgsBQMShK62qsSKCrzbfp2wO5ETofmEb653ofSwF2h8t0f5WBsajhY4SJo7697ZBBedVroVw5FKNa5xP0dKEZCj9LWh69ZCimlVtG0nrbaqbPP7kchlDsdgxvEOdJPVMP2BPqwU5JFmEDbEcMIQ2zpZCaXZA1QJr0xH80Y0cUqJLn3lCUdag3iLCuIQZDZD",
+            "telefone_campo": "#a1b75e63-ba0a-4ae5-9418-dc1117aa566d > div.box__Box-sc-56kweq-0.flex__Flex-sc-112t0ht-0.question-answer__Wrapper-sc-1ta7sfs-0.iAvHAz.exdint > div > div > div.box__Box-sc-56kweq-0.flex__Flex-sc-112t0ht-0.gclQoj > div.box__Box-sc-56kweq-0.flex__Flex-sc-112t0ht-0.ccPxks > input",
+            "telefone_usuario": "11965701357",
+            "_fbp": "fb.1.1763583731985.323198772226418410",
+            "_fbc": "fb.1.1763661102196.fbclid",
+            "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+            "page_url": "https://harmoniza.typeform.com/to/zYQtxtJu?utm_content=xxxxx&utm_term=xxxxx",
+            "timestamp": "2025-12-10T14:32:04.401Z",
+            "ip": "177.54.5.145",
+            "cb": "1765377124574"
+          },
+          "body": {},
+          "webhookUrl": "https://webhooks.goldeletra.pro/webhook/d82e2e9f-6f77-47f0-b1a7-4fd92abec1a0",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Crypto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crypto": {
+      "main": [
+        [
+          {
+            "node": "site2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "21e196f6-2c72-43aa-b698-4cc1835b95cd",
+  "meta": {
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "SiBXX9WD2onuqIAR",
+  "tags": []
+}

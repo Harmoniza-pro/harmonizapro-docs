@@ -1,0 +1,398 @@
+{
+  "name": "001.017 - Pipedrive - Leads Parados",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://harmonizapro2.pipedrive.com/api/v2/deals",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "pipedriveOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "pipeline_id",
+              "value": "=21"
+            },
+            {
+              "name": "status",
+              "value": "open"
+            },
+            {
+              "name": "stage_id",
+              "value": "=128"
+            },
+            {
+              "name": "sort_direction",
+              "value": "=desc"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6ca4e878-096c-4b37-b5ee-956808e52762",
+      "name": "createDealPipeLine",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -160,
+        224
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "pipedriveOAuth2Api": {
+          "id": "y8O0rqLgOCkuE8hK",
+          "name": "Pipedrive - evoluamidia@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $item(\"0\").$node[\"createDealPipeLine\"].json[\"data\"];\n\nreturn data;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        128,
+        224
+      ],
+      "id": "9d8083d2-4fd5-4cd3-a3be-33df18cfe377",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        400,
+        224
+      ],
+      "id": "cfc3c6d1-8800-4bad-8248-154dcfc06c66",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3181bb4f-ffe3-4f34-939d-433c468036bb",
+              "name": "origem",
+              "value": "parcial",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        704,
+        304
+      ],
+      "id": "9642c8db-d0af-48e9-92ec-b5e08e8e55be",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "gTkwd0N0FUTUzo9q",
+          "mode": "list",
+          "cachedResultName": "Distribuição de Leads - Pipedrive"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        976,
+        304
+      ],
+      "id": "999234a7-5ec5-4da3-ae93-0cadb35d2a8e",
+      "name": "Execute Workflow"
+    },
+    {
+      "parameters": {
+        "url": "https://harmonizapro2.pipedrive.com/api/v1/users/find",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "pipedriveOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "search_by_email",
+              "value": "=true"
+            },
+            {
+              "name": "term",
+              "value": "={{ $item(\"0\").$node[\"Execute Workflow\"].json[\"responsável\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f320f73a-9f04-426b-bb0c-7351d569413f",
+      "name": "createDealPipeLine1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1264,
+        304
+      ],
+      "credentials": {
+        "pipedriveOAuth2Api": {
+          "id": "y8O0rqLgOCkuE8hK",
+          "name": "Pipedrive - evoluamidia@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "dealId": "={{ $item(\"0\").$node[\"Loop Over Items\"].json[\"id\"] }}",
+        "updateFields": {
+          "user_id": "={{ $item(\"0\").$node[\"createDealPipeLine1\"].json[\"data\"][\"0\"][\"id\"] }}",
+          "stage_id": 81
+        }
+      },
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [
+        1856,
+        -64
+      ],
+      "id": "d3aa706b-a4d3-4b4f-bcd4-44b3fcaf93fe",
+      "name": "Update a deal",
+      "credentials": {
+        "pipedriveOAuth2Api": {
+          "id": "y8O0rqLgOCkuE8hK",
+          "name": "Pipedrive - evoluamidia@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "888c78f0-1586-4cfd-9b39-72aa7049986b",
+              "leftValue": "={{ $item(\"0\").$node[\"Loop Over Items\"].json[\"label_ids\"][\"0\"] }}",
+              "rightValue": 109,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1552,
+        304
+      ],
+      "id": "227e6e65-0d8c-4b8f-9a2a-c0ccc8f07681",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "dealId": "={{ $item(\"0\").$node[\"Loop Over Items\"].json[\"id\"] }}",
+        "updateFields": {
+          "user_id": "={{ $item(\"0\").$node[\"createDealPipeLine1\"].json[\"data\"][\"0\"][\"id\"] }}",
+          "stage_id": 81
+        }
+      },
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [
+        1872,
+        320
+      ],
+      "id": "4df48b0a-6bdb-412a-bc49-5989673987ad",
+      "name": "Update a deal1",
+      "credentials": {
+        "pipedriveOAuth2Api": {
+          "id": "y8O0rqLgOCkuE8hK",
+          "name": "Pipedrive - evoluamidia@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 6 * * *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -512,
+        224
+      ],
+      "id": "98bc9508-d8a2-4468-93bd-0550e7ab2702",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow": {
+      "main": [
+        [
+          {
+            "node": "createDealPipeLine1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "createDealPipeLine1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a deal": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "createDealPipeLine": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Update a deal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update a deal1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a deal1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "createDealPipeLine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f8563eab-6fc2-4e87-8c50-1f9cec11348d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "hUgd3JCAuUFUh5e4",
+  "tags": []
+}

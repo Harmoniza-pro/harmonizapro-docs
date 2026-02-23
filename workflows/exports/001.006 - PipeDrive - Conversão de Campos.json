@@ -1,0 +1,679 @@
+{
+  "name": "001.006 - PipeDrive - Conversão de Campos",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "const dealId = $('Webhook').first().json[\"body\"][\"meta\"][\"entity_id\"];\nconst campos = $('Edit Fields').first().json.data.slice(42);\nconst valoresWebhook = $('Webhook').first().json.body.data.custom_fields;\nconst resultado = {};\n\nfor (const campo of campos) {\n  const key = campo.key;\n  const tipo = campo.field_type;\n  const valorCampo = valoresWebhook[key];\n\n  let valorFinal = \"\";\n  let idValorFinal = null;\n\n  if (valorCampo != null) {\n    if (tipo === \"enum\" && Array.isArray(campo.options)) {\n      const idSelecionado = valorCampo.id ?? valorCampo;\n      const opcao = campo.options.find(opt => opt.id === idSelecionado);\n      valorFinal = opcao ? opcao.label : \"\";\n      idValorFinal = opcao ? opcao.id : null;\n\n    } else if (tipo === \"set\" && Array.isArray(campo.options)) {\n      const idsSelecionados = valorCampo.values?.map(v => v.id) ?? [];\n      const opcoesSelecionadas = campo.options.filter(opt => idsSelecionados.includes(opt.id));\n      valorFinal = opcoesSelecionadas.map(opt => opt.label).join(', ');\n      idValorFinal = idsSelecionados;\n\n    } else if (tipo === \"user\") {\n      const idUser = valorCampo.id ?? valorCampo.value ?? valorCampo;\n\n      // Tenta buscar o nome no campo.options (se vier de Edit Fields)\n      const usuario = campo.options?.find(opt => opt.id === idUser);\n      valorFinal = usuario?.label ?? \"\";\n      idValorFinal = idUser;\n\n    } else {\n      valorFinal = valorCampo?.value ?? valorCampo ?? \"\";\n    }\n  }\n\n  resultado[key] = {\n    field_type: tipo,\n    name: campo.name,\n    valueLabel: valorFinal,\n    valueId: idValorFinal,\n    options: campo.options || null\n  };\n}\n\nreturn [{\n  json: {\n    dealId,\n    resultado\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        864,
+        64
+      ],
+      "id": "b8c5ecc1-137d-4c65-8a30-0f20c893ab29",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -176,
+        144
+      ],
+      "id": "811e1a22-97fb-4f1d-8f1b-c329939472b4",
+      "name": "Webhook"
+    },
+    {
+      "parameters": {
+        "url": "https://harmonizapro2.pipedrive.com/api/v1/dealFields",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "pipedriveOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        144,
+        -240
+      ],
+      "id": "3facee6b-81de-4bc2-bc9b-08ba7d85ac65",
+      "name": "HTTP Request1",
+      "credentials": {
+        "pipedriveOAuth2Api": {
+          "id": "y8O0rqLgOCkuE8hK",
+          "name": "Pipedrive - evoluamidia@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "\n  {\n    \"success\": true,\n    \"data\": [\n      {\n        \"id\": 25,\n        \"key\": \"id\",\n        \"name\": \"ID\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"int\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 1,\n        \"key\": \"title\",\n        \"name\": \"Título\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"varchar\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": \"2025-07-04 08:45:33\",\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        },\n        \"use_field\": \"id\",\n        \"link\": \"/deal/\"\n      },\n      {\n        \"id\": 2,\n        \"key\": \"creator_user_id\",\n        \"name\": \"Criado por\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"user\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 3,\n        \"key\": \"user_id\",\n        \"name\": \"Proprietário\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"user\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": \"2025-07-04 08:45:33\",\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 5,\n        \"key\": \"weighted_value\",\n        \"name\": \"Valor ponderado\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"monetary\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": false,\n        \"sortable_flag\": false,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": null,\n        \"key\": \"weighted_value_currency\",\n        \"name\": \"Moeda do valor ponderado\",\n        \"field_type\": \"varchar\",\n        \"edit_flag\": false,\n        \"active_flag\": true,\n        \"is_subfield\": true,\n        \"mandatory_flag\": true,\n        \"parent_id\": 5,\n        \"id_suffix\": \"currency\"\n      },\n      {\n        \"id\": 8,\n        \"key\": \"pipeline\",\n        \"name\": \"Funil\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"double\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": \"2025-07-04 08:45:33\",\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 10,\n        \"key\": \"stage_id\",\n        \"name\": \"Etapa\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"stage\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": \"2025-07-04 08:45:33\",\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        },\n        \"use_field\": \"stage\"\n      },\n      {\n        \"id\": 12,\n        \"key\": \"status\",\n        \"name\": \"Status\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"status\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        },\n        \"options\": [\n          {\n            \"id\": \"open\",\n            \"label\": \"Aberto\"\n          },\n          {\n            \"id\": \"lost\",\n            \"label\": \"Perdido\"\n          },\n          {\n            \"id\": \"won\",\n            \"label\": \"Ganho\"\n          },\n          {\n            \"id\": \"deleted\",\n            \"label\": \"Excluído\"\n          }\n        ]\n      },\n      {\n        \"id\": 13,\n        \"key\": \"add_time\",\n        \"name\": \"Negócio criado em\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"date\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 14,\n        \"key\": \"update_time\",\n        \"name\": \"Atualizado em\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"date\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 15,\n        \"key\": \"stage_change_time\",\n        \"name\": \"Última alteração de etapa\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"date\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 16,\n        \"key\": \"next_activity_date\",\n        \"name\": \"Próxima atividade em\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"date\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 17,\n        \"key\": \"last_activity_date\",\n        \"name\": \"Data da última atividade\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"date\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 18,\n        \"key\": \"won_time\",\n        \"name\": \"Ganho em\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"date\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": {\n          \"status\": \"=won\"\n        },\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": true,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 19,\n        \"key\": \"last_incoming_mail_time\",\n        \"name\": \"Último e-mail recebido\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"date\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 20,\n        \"key\": \"last_outgoing_mail_time\",\n        \"name\": \"Último e-mail enviado\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"date\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 21,\n        \"key\": \"lost_time\",\n        \"name\": \"Data de perda\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"date\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": {\n          \"status\": \"=lost\"\n        },\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 22,\n        \"key\": \"close_time\",\n        \"name\": \"Negócio fechado em\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"date\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 23,\n        \"key\": \"lost_reason\",\n        \"name\": \"Motivo da perda\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"varchar_options\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": \"2025-07-04 08:45:33\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": {\n          \"status\": \"=lost\"\n        },\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        },\n        \"options\": [\n          {\n            \"id\": 60,\n            \"label\": \"Parou de responder\"\n          },\n          {\n            \"id\": 55,\n            \"label\": \"Desqualificado\"\n          },\n          {\n            \"id\": 54,\n            \"label\": \"Sem interesse\"\n          },\n          {\n            \"id\": 53,\n            \"label\": \"Não é prioridade\"\n          },\n          {\n            \"id\": 52,\n            \"label\": \"Fechou com concorrente\"\n          },\n          {\n            \"id\": 51,\n            \"label\": \"Preço\"\n          }\n        ]\n      },\n      {\n        \"id\": 24,\n        \"key\": \"visible_to\",\n        \"name\": \"Visível para\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"visible_to\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": \"2025-07-04 08:45:33\",\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        },\n        \"options\": [\n          {\n            \"id\": 1,\n            \"label\": \"Proprietário do item\"\n          },\n          {\n            \"id\": 3,\n            \"label\": \"Grupo de visibilidade do proprietário do item\"\n          },\n          {\n            \"id\": 5,\n            \"label\": \"Grupo de visibilidade e subgrupos do proprietário do item\"\n          },\n          {\n            \"id\": 7,\n            \"label\": \"Todos os usuários\"\n          }\n        ]\n      },\n      {\n        \"id\": 26,\n        \"key\": \"activities_count\",\n        \"name\": \"Total de atividades\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"int\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 27,\n        \"key\": \"done_activities_count\",\n        \"name\": \"Atividades concluídas\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"int\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 28,\n        \"key\": \"undone_activities_count\",\n        \"name\": \"Atividades para fazer\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"int\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 29,\n        \"key\": \"email_messages_count\",\n        \"name\": \"Número de mensagens de e-mail\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"int\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 31,\n        \"key\": \"product_quantity\",\n        \"name\": \"Quantidade de produtos\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"double\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": false,\n        \"sortable_flag\": false,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 32,\n        \"key\": \"product_amount\",\n        \"name\": \"Valor de produtos\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"double\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": false,\n        \"sortable_flag\": false,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 33,\n        \"key\": \"product_name\",\n        \"name\": \"Nome do produto\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"varchar\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": false,\n        \"sortable_flag\": false,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 35,\n        \"key\": \"origin\",\n        \"name\": \"Origem\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"enum\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-05-23 12:41:32\",\n        \"update_time\": \"2025-07-04 08:45:33\",\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        },\n        \"options\": [\n          {\n            \"id\": \"ManuallyCreated\",\n            \"label\": \"Criado manualmente\"\n          },\n          {\n            \"id\": \"Import\",\n            \"label\": \"Importação\"\n          },\n          {\n            \"id\": \"API\",\n            \"label\": \"API\"\n          },\n          {\n            \"id\": \"Automation\",\n            \"label\": \"Automação\"\n          },\n          {\n            \"id\": \"Marketplace\",\n            \"label\": \"Marketplace\"\n          },\n          {\n            \"id\": \"Prospector\",\n            \"label\": \"Prospector\"\n          },\n          {\n            \"id\": \"LeadSuggestion\",\n            \"label\": \"Sugestões de leads\"\n          },\n          {\n            \"id\": \"WebForms\",\n            \"label\": \"Formulários digitais\"\n          },\n          {\n            \"id\": \"Chatbot\",\n            \"label\": \"Chatbot\"\n          },\n          {\n            \"id\": \"LiveChat\",\n            \"label\": \"Live Chat\"\n          },\n          {\n            \"id\": \"WebVisitors\",\n            \"label\": \"Visitantes da web\"\n          },\n          {\n            \"id\": \"Campaigns\",\n            \"label\": \"Campaigns\"\n          },\n          {\n            \"id\": \"MessagingInbox\",\n            \"label\": \"Caixa de entrada de mensagens\"\n          }\n        ]\n      },\n      {\n        \"id\": 36,\n        \"key\": \"origin_id\",\n        \"name\": \"ID de origem\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"varchar\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-05-23 12:41:32\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 37,\n        \"key\": \"channel\",\n        \"name\": \"Canal de origem\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"enum\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-05-23 12:41:32\",\n        \"update_time\": \"2025-07-04 08:45:33\",\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        },\n        \"options\": [\n          {\n            \"id\": 31,\n            \"label\": \"Prospector\",\n            \"alt_id\": \"prospector\"\n          },\n          {\n            \"id\": 32,\n            \"label\": \"Lead Suggestions\",\n            \"alt_id\": \"lead_suggestions\"\n          },\n          {\n            \"id\": 33,\n            \"label\": \"Web forms\",\n            \"alt_id\": \"web_forms\"\n          },\n          {\n            \"id\": 34,\n            \"label\": \"Chatbot\",\n            \"alt_id\": \"chatbot\"\n          },\n          {\n            \"id\": 35,\n            \"label\": \"Live chat\",\n            \"alt_id\": \"live_chat\"\n          },\n          {\n            \"id\": 36,\n            \"label\": \"Web visitors\",\n            \"alt_id\": \"web_visitors\"\n          },\n          {\n            \"id\": 37,\n            \"label\": \"Campaigns\",\n            \"alt_id\": \"campaigns\"\n          },\n          {\n            \"id\": 38,\n            \"label\": \"Marketplace\",\n            \"alt_id\": \"marketplace\"\n          },\n          {\n            \"id\": 39,\n            \"label\": \"Messaging Inbox\",\n            \"alt_id\": \"messaging_inbox\"\n          }\n        ]\n      },\n      {\n        \"id\": 38,\n        \"key\": \"channel_id\",\n        \"name\": \"ID do canal de origem\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"varchar\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-05-23 12:41:32\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 51,\n        \"key\": \"is_archived\",\n        \"name\": \"Status de arquivamento\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"enum\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2025-03-28 07:45:06\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        },\n        \"options\": [\n          {\n            \"id\": false,\n            \"label\": \"Não arquivado\"\n          },\n          {\n            \"id\": true,\n            \"label\": \"Arquivado\"\n          }\n        ]\n      },\n      {\n        \"id\": 52,\n        \"key\": \"archive_time\",\n        \"name\": \"Horário do arquivamento\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"date\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2025-03-28 07:45:06\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 57,\n        \"key\": \"mrr\",\n        \"name\": \"MRR\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"monetary\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2025-06-30 22:53:20\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": null,\n        \"key\": \"mrr_currency\",\n        \"name\": \"Moeda de MRR\",\n        \"field_type\": \"varchar\",\n        \"edit_flag\": false,\n        \"active_flag\": true,\n        \"is_subfield\": true,\n        \"mandatory_flag\": true,\n        \"parent_id\": 57,\n        \"id_suffix\": \"currency\"\n      },\n      {\n        \"id\": 58,\n        \"key\": \"arr\",\n        \"name\": \"ARR\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"monetary\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2025-06-30 22:53:20\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": null,\n        \"key\": \"arr_currency\",\n        \"name\": \"Moeda de ARR\",\n        \"field_type\": \"varchar\",\n        \"edit_flag\": false,\n        \"active_flag\": true,\n        \"is_subfield\": true,\n        \"mandatory_flag\": true,\n        \"parent_id\": 58,\n        \"id_suffix\": \"currency\"\n      },\n      {\n        \"id\": 59,\n        \"key\": \"acv\",\n        \"name\": \"ACV\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"monetary\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2025-06-30 22:53:20\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": null,\n        \"key\": \"acv_currency\",\n        \"name\": \"Moeda de ACV\",\n        \"field_type\": \"varchar\",\n        \"edit_flag\": false,\n        \"active_flag\": true,\n        \"is_subfield\": true,\n        \"mandatory_flag\": true,\n        \"parent_id\": 59,\n        \"id_suffix\": \"currency\"\n      },\n      {\n        \"id\": 89,\n        \"key\": \"score\",\n        \"name\": \"Score\",\n        \"group_id\": null,\n        \"order_nr\": 0,\n        \"field_type\": \"double\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2025-11-11 18:54:11\",\n        \"update_time\": null,\n        \"last_updated_by_user_id\": null,\n        \"edit_flag\": false,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 87,\n        \"key\": \"b9e645c6460d1b0c210f47f8dc326933ac6b8f18\",\n        \"name\": \"Reagendamento\",\n        \"group_id\": 1,\n        \"order_nr\": 1,\n        \"field_type\": \"text\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-14 19:07:55\",\n        \"update_time\": \"2025-07-14 19:07:55\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 62,\n        \"key\": \"sequence_enrollment\",\n        \"name\": \"Adicionar a uma sequência\",\n        \"group_id\": 1,\n        \"order_nr\": 2,\n        \"field_type\": \"boolean\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2025-07-04 10:26:40\",\n        \"update_time\": \"2025-07-14 19:07:55\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": false,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": false,\n        \"sortable_flag\": false,\n        \"mandatory_flag\": true,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 4,\n        \"key\": \"value\",\n        \"name\": \"Valor\",\n        \"group_id\": 1,\n        \"order_nr\": 3,\n        \"field_type\": \"monetary\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": \"2025-07-14 19:07:55\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": null,\n        \"key\": \"currency\",\n        \"name\": \"Moeda\",\n        \"field_type\": \"varchar\",\n        \"edit_flag\": false,\n        \"active_flag\": true,\n        \"is_subfield\": true,\n        \"mandatory_flag\": false,\n        \"parent_id\": 4,\n        \"id_suffix\": \"currency\"\n      },\n      {\n        \"id\": 6,\n        \"key\": \"probability\",\n        \"name\": \"Probabilidade\",\n        \"group_id\": 1,\n        \"order_nr\": 4,\n        \"field_type\": \"int\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": \"2025-07-14 19:07:55\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": false,\n        \"details_visible_flag\": false,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": false,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 7,\n        \"key\": \"org_id\",\n        \"name\": \"Organização\",\n        \"group_id\": 1,\n        \"order_nr\": 5,\n        \"field_type\": \"org\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": \"2025-07-14 19:07:55\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": false,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": {\n          \"person_id\": \"<=0\"\n        },\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 9,\n        \"key\": \"person_id\",\n        \"name\": \"Pessoa de contato\",\n        \"group_id\": 1,\n        \"order_nr\": 6,\n        \"field_type\": \"people\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": \"2025-07-14 19:07:55\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": false,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": {\n          \"org_id\": \"<=0\"\n        },\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 11,\n        \"key\": \"label\",\n        \"name\": \"Etiqueta\",\n        \"group_id\": 1,\n        \"order_nr\": 7,\n        \"field_type\": \"set\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": \"2025-07-14 23:45:07\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": false,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": true,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        },\n        \"options\": [\n          {\n            \"id\": 15,\n            \"label\": \"Low Ticket\",\n            \"color\": \"orange\"\n          },\n          {\n            \"id\": 16,\n            \"label\": \"High Ticket\",\n            \"color\": \"orange\"\n          },\n          {\n            \"id\": 17,\n            \"label\": \"Mentoria\",\n            \"color\": \"yellow\"\n          },\n          {\n            \"id\": 18,\n            \"label\": \"Assessoria\",\n            \"color\": \"yellow\"\n          },\n          {\n            \"id\": 19,\n            \"label\": \"Implementação\",\n            \"color\": \"yellow\"\n          },\n          {\n            \"id\": 50,\n            \"label\": \"Consultoria\",\n            \"color\": \"yellow\"\n          },\n          {\n            \"id\": 20,\n            \"label\": \"Typeform\",\n            \"color\": \"dark-gray\"\n          },\n          {\n            \"id\": 26,\n            \"label\": \"Stories\",\n            \"color\": \"dark-gray\"\n          },\n          {\n            \"id\": 21,\n            \"label\": \"Mini treinamento\",\n            \"color\": \"dark-gray\"\n          },\n          {\n            \"id\": 22,\n            \"label\": \"Social Seller\",\n            \"color\": \"dark-gray\"\n          },\n          {\n            \"id\": 27,\n            \"label\": \"Indicação\",\n            \"color\": \"dark-gray\"\n          },\n          {\n            \"id\": 56,\n            \"label\": \"Atendeu a ligação\",\n            \"color\": \"green\"\n          },\n          {\n            \"id\": 57,\n            \"label\": \"Não atendeu\",\n            \"color\": \"red\"\n          },\n          {\n            \"id\": 58,\n            \"label\": \"Follow up 3\",\n            \"color\": \"brown\"\n          },\n          {\n            \"id\": 59,\n            \"label\": \"Follow Up 4\",\n            \"color\": \"brown\"\n          },\n          {\n            \"id\": 61,\n            \"label\": \"Reagendamento\",\n            \"color\": \"red\"\n          },\n          {\n            \"id\": 62,\n            \"label\": \"Forecast\",\n            \"color\": \"blue\"\n          },\n          {\n            \"id\": 108,\n            \"label\": \"formulario parcial\",\n            \"color\": \"pink\"\n          },\n          {\n            \"id\": 109,\n            \"label\": \"formulario completo\",\n            \"color\": \"blue\"\n          },\n          {\n            \"id\": 110,\n            \"label\": \"IMPORTADO\",\n            \"color\": \"red\"\n          }\n        ]\n      },\n      {\n        \"id\": 30,\n        \"key\": \"expected_close_date\",\n        \"name\": \"Data de fechamento esperada\",\n        \"group_id\": 1,\n        \"order_nr\": 8,\n        \"field_type\": \"date\",\n        \"json_column_flag\": false,\n        \"add_time\": \"2024-04-10 09:58:04\",\n        \"update_time\": \"2025-07-14 19:07:55\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": false,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": false,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": null,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true\n        }\n      },\n      {\n        \"id\": 100,\n        \"key\": \"0c0d3428eb7ff8f903c32b6957735775be3dc55c\",\n        \"name\": \"Faturamento\",\n        \"group_id\": 9,\n        \"order_nr\": 10,\n        \"field_type\": \"enum\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-12-04 21:22:46\",\n        \"update_time\": \"2025-12-04 21:22:46\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": true,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        },\n        \"options\": [\n          {\n            \"id\": 124,\n            \"label\": \"0 a 5k\"\n          },\n          {\n            \"id\": 125,\n            \"label\": \"5 a 15k\"\n          },\n          {\n            \"id\": 126,\n            \"label\": \"15 a 30k\"\n          },\n          {\n            \"id\": 127,\n            \"label\": \"30 a 50k\"\n          },\n          {\n            \"id\": 128,\n            \"label\": \"50 a 100k\"\n          },\n          {\n            \"id\": 129,\n            \"label\": \"100 a 200k\"\n          }\n        ]\n      },\n      {\n        \"id\": 92,\n        \"key\": \"bacf6b9ab400c991b29fe275641c50fba8472817\",\n        \"name\": \"Lead scoring\",\n        \"group_id\": 9,\n        \"order_nr\": 11,\n        \"field_type\": \"enum\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-12-04 19:21:02\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": true,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        },\n        \"options\": [\n          {\n            \"id\": 117,\n            \"label\": \"Topzeraaaaa\"\n          },\n          {\n            \"id\": 118,\n            \"label\": \"Bom lead\"\n          },\n          {\n            \"id\": 119,\n            \"label\": \"Um lead ok\"\n          },\n          {\n            \"id\": 120,\n            \"label\": \"Meia boca\"\n          }\n        ]\n      },\n      {\n        \"id\": 64,\n        \"key\": \"f475fd5c0b6d98e4d0b7c8f21936a0a689ff0cb7\",\n        \"name\": \"Maior dor da clínica?\",\n        \"group_id\": 9,\n        \"order_nr\": 12,\n        \"field_type\": \"varchar\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-08 14:00:26\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": true,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 39,\n        \"key\": \"695916a9baffe8f2c7e2c90c00ead5dbe07b0448\",\n        \"name\": \"Ele falou algo importante para ser ressaltado?\",\n        \"group_id\": 9,\n        \"order_nr\": 13,\n        \"field_type\": \"text\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2024-09-12 18:47:40\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": true,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 66,\n        \"key\": \"4177cb3cab5d0eea8c7f94f7ef145126cebfe6a5\",\n        \"name\": \"Nível de urgência\",\n        \"group_id\": 9,\n        \"order_nr\": 14,\n        \"field_type\": \"enum\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-08 14:02:21\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": true,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        },\n        \"options\": [\n          {\n            \"id\": 73,\n            \"label\": \"Só curiosa\"\n          },\n          {\n            \"id\": 74,\n            \"label\": \"Em dúvida\"\n          },\n          {\n            \"id\": 75,\n            \"label\": \"Quer resolver agora\"\n          }\n        ]\n      },\n      {\n        \"id\": 65,\n        \"key\": \"71191bc0d10d21b8213604ea00c52bb771cd05fb\",\n        \"name\": \"Fez ligação de pré vendas?\",\n        \"group_id\": 9,\n        \"order_nr\": 16,\n        \"field_type\": \"enum\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-08 14:00:58\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": true,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        },\n        \"options\": [\n          {\n            \"id\": 71,\n            \"label\": \"Sim\"\n          },\n          {\n            \"id\": 72,\n            \"label\": \"Não\"\n          }\n        ]\n      },\n      {\n        \"id\": 67,\n        \"key\": \"87dc85a0ca5e5af5b64cefc3d2bde86d0309c258\",\n        \"name\": \"Qual foi o humor do lead na chamada?\",\n        \"group_id\": 9,\n        \"order_nr\": 17,\n        \"field_type\": \"enum\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-08 14:04:43\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": true,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        },\n        \"options\": [\n          {\n            \"id\": 76,\n            \"label\": \"Muito engajada\"\n          },\n          {\n            \"id\": 77,\n            \"label\": \"Pouco engajada\"\n          },\n          {\n            \"id\": 78,\n            \"label\": \"Tanto faz, tanto fez\"\n          }\n        ]\n      },\n      {\n        \"id\": 90,\n        \"key\": \"ea94cc20f046a478c65f1f162b386e56d3fee7ca\",\n        \"name\": \"Preferência de Contato\",\n        \"group_id\": 5,\n        \"order_nr\": 20,\n        \"field_type\": \"varchar\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-11-13 03:35:39\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 68,\n        \"key\": \"a4fb9cf6d7d3f450d3c620e9d432642145d728f5\",\n        \"name\": \"Nicho que atua\",\n        \"group_id\": 5,\n        \"order_nr\": 21,\n        \"field_type\": \"enum\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-12 19:33:53\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        },\n        \"options\": [\n          {\n            \"id\": 79,\n            \"label\": \"Ainda não faturo com Harmonização\"\n          },\n          {\n            \"id\": 80,\n            \"label\": \"Harmonização Facial\"\n          },\n          {\n            \"id\": 81,\n            \"label\": \"Harmonização Corporal\"\n          },\n          {\n            \"id\": 82,\n            \"label\": \"Outro\"\n          }\n        ]\n      },\n      {\n        \"id\": 69,\n        \"key\": \"83a2907425bd02810f3541a1da13970fb4cad28a\",\n        \"name\": \"Case Dra Carol\",\n        \"group_id\": 5,\n        \"order_nr\": 22,\n        \"field_type\": \"enum\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-12 19:36:10\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        },\n        \"options\": [\n          {\n            \"id\": 83,\n            \"label\": \"É isso que eu preciso também!\"\n          },\n          {\n            \"id\": 84,\n            \"label\": \"Quero bater minha meta!\"\n          }\n        ]\n      },\n      {\n        \"id\": 70,\n        \"key\": \"28ee073609b17fd1f8b337721e40442435eb0792\",\n        \"name\": \"Urgência\",\n        \"group_id\": 5,\n        \"order_nr\": 23,\n        \"field_type\": \"enum\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-12 19:36:44\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        },\n        \"options\": [\n          {\n            \"id\": 85,\n            \"label\": \"Muito urgente\"\n          },\n          {\n            \"id\": 86,\n            \"label\": \"Médio\"\n          },\n          {\n            \"id\": 87,\n            \"label\": \"Não muito urgente\"\n          }\n        ]\n      },\n      {\n        \"id\": 71,\n        \"key\": \"601a5412a8553515d5da895a5b00cdc02c681b6f\",\n        \"name\": \"Quanto investe em anúncio\",\n        \"group_id\": 5,\n        \"order_nr\": 24,\n        \"field_type\": \"enum\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-12 19:37:39\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        },\n        \"options\": [\n          {\n            \"id\": 88,\n            \"label\": \"Nunca investi\"\n          },\n          {\n            \"id\": 89,\n            \"label\": \"Menos de R$1000\"\n          },\n          {\n            \"id\": 90,\n            \"label\": \"R$1000 a R$2000\"\n          },\n          {\n            \"id\": 91,\n            \"label\": \"R$2000 a R$4000\"\n          },\n          {\n            \"id\": 92,\n            \"label\": \"R$4000 a R$6000\"\n          },\n          {\n            \"id\": 93,\n            \"label\": \"Mais de R$6000\"\n          }\n        ]\n      },\n      {\n        \"id\": 73,\n        \"key\": \"d540737cfbd1ff9ff2185e46e5ac9abae70a7f92\",\n        \"name\": \"Case Dra. Jacinta\",\n        \"group_id\": 5,\n        \"order_nr\": 25,\n        \"field_type\": \"enum\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-12 19:40:05\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        },\n        \"options\": [\n          {\n            \"id\": 101,\n            \"label\": \"Quero resultados como esse!\"\n          },\n          {\n            \"id\": 102,\n            \"label\": \"Quero saber mais sobre a HarmonizaPRO\"\n          }\n        ]\n      },\n      {\n        \"id\": 74,\n        \"key\": \"27b0161724fac21d46132e9d327222c0c5563fd4\",\n        \"name\": \"Nome\",\n        \"group_id\": 5,\n        \"order_nr\": 26,\n        \"field_type\": \"varchar\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-12 19:40:24\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 75,\n        \"key\": \"842e0381bd316ebe2ef1141093b15e97310da42b\",\n        \"name\": \"❌Telefone\",\n        \"group_id\": 5,\n        \"order_nr\": 27,\n        \"field_type\": \"phone\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-12 19:40:59\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 76,\n        \"key\": \"7202d18e20ba4c0b03441ac9ec028ab4491990a9\",\n        \"name\": \"Instagram\",\n        \"group_id\": 5,\n        \"order_nr\": 28,\n        \"field_type\": \"varchar\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-12 19:41:16\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 77,\n        \"key\": \"13c9cd4cb4ffa5312edfda20039bed37337e0941\",\n        \"name\": \"Link do Instagram\",\n        \"group_id\": 5,\n        \"order_nr\": 29,\n        \"field_type\": \"varchar\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-12 19:41:35\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 78,\n        \"key\": \"b6ce2593ce42ab171496deeb7ee6c4a65c8b3934\",\n        \"name\": \"Email\",\n        \"group_id\": 5,\n        \"order_nr\": 30,\n        \"field_type\": \"varchar\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-12 19:42:17\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 79,\n        \"key\": \"2afb629678ee7fbe687e6cf7c88b529f090c7f28\",\n        \"name\": \"Situação Atual\",\n        \"group_id\": 5,\n        \"order_nr\": 31,\n        \"field_type\": \"text\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-12 19:42:39\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 80,\n        \"key\": \"81b0d9efdce5f2776dfd6c3d3cb180ecb8a372d2\",\n        \"name\": \"Case Dra. Mariana\",\n        \"group_id\": 5,\n        \"order_nr\": 32,\n        \"field_type\": \"enum\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-12 19:43:04\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        },\n        \"options\": [\n          {\n            \"id\": 103,\n            \"label\": \"Quero transformar minha clínica!\"\n          },\n          {\n            \"id\": 104,\n            \"label\": \"Quero saber como você pode me ajudar\"\n          }\n        ]\n      },\n      {\n        \"id\": 34,\n        \"key\": \"9d279e9c5f3f047c191100b7dd3ce645623068fb\",\n        \"name\": \"Instagram\",\n        \"group_id\": null,\n        \"order_nr\": 33,\n        \"field_type\": \"varchar\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2024-04-16 14:26:50\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": \"\",\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 40,\n        \"key\": \"9313043eb15c882d138a0136d61d29674305cd33\",\n        \"name\": \"Qual cenário administrativo do negócio?\",\n        \"group_id\": null,\n        \"order_nr\": 34,\n        \"field_type\": \"text\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2024-09-17 12:34:22\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 53,\n        \"key\": \"499d66a95d8a944ac9091e2ba1238cb0b41d6585\",\n        \"name\": \"Percepção sobre a personalidade\",\n        \"group_id\": null,\n        \"order_nr\": 35,\n        \"field_type\": \"varchar\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-05-19 13:07:50\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 54,\n        \"key\": \"f41ec8c6ccea9deaf81d7b0e83ad7d5a6dbd8c32\",\n        \"name\": \"Posição individual interna da clínica? (sócio, administrador, executivo...)\",\n        \"group_id\": null,\n        \"order_nr\": 36,\n        \"field_type\": \"text\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-05-19 13:08:30\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 55,\n        \"key\": \"7af7e2c9ac65ac7f34f39d8f277695d57c52c9e6\",\n        \"name\": \"1 ou mais decisores? Quais seus níveis de poder?\",\n        \"group_id\": null,\n        \"order_nr\": 37,\n        \"field_type\": \"text\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-05-19 13:08:59\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 56,\n        \"key\": \"fa4385adfdf0db42cec5e9b9ba91d85325810db9\",\n        \"name\": \"Desses decisores, quem são nossos alidados e outros possíveis opositores?\",\n        \"group_id\": null,\n        \"order_nr\": 38,\n        \"field_type\": \"text\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-05-19 13:09:27\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 50,\n        \"key\": \"e3424c16643b0e4ea0a97d658eb8cfacf7de0d30\",\n        \"name\": \"Campo aberto para detalhes importantes\",\n        \"group_id\": null,\n        \"order_nr\": 39,\n        \"field_type\": \"text\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2024-09-17 15:12:56\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 60,\n        \"key\": \"f411adfb5c1ccd6968627615551f614fe248c254\",\n        \"name\": \"utm_content\",\n        \"group_id\": null,\n        \"order_nr\": 40,\n        \"field_type\": \"text\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-06-30 23:01:15\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 61,\n        \"key\": \"c17646917ef46d09e21e5523d02ec8506861f0e8\",\n        \"name\": \"Faturamento\",\n        \"group_id\": null,\n        \"order_nr\": 41,\n        \"field_type\": \"varchar\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-01 21:20:54\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 88,\n        \"key\": \"84790c2f40e7c276ed45d00ed1e00f873cd74bea\",\n        \"name\": \"Lead scoring\",\n        \"group_id\": null,\n        \"order_nr\": 43,\n        \"field_type\": \"enum\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-14 20:31:38\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        },\n        \"options\": [\n          {\n            \"id\": 105,\n            \"label\": \"Proposta Assessoria\"\n          },\n          {\n            \"id\": 106,\n            \"label\": \"Proposta Mentoria\"\n          },\n          {\n            \"id\": 107,\n            \"label\": \"Descartado\"\n          }\n        ]\n      },\n      {\n        \"id\": 81,\n        \"key\": \"98c23f53854a205bb9e1b9f1d17a5459e0dc7d16\",\n        \"name\": \"utm_source\",\n        \"group_id\": 7,\n        \"order_nr\": 45,\n        \"field_type\": \"text\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-13 20:30:46\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 82,\n        \"key\": \"e5ae032d7fda4523edaf73cae9dbff166e1861fe\",\n        \"name\": \"utm_medium\",\n        \"group_id\": 7,\n        \"order_nr\": 46,\n        \"field_type\": \"text\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-13 20:31:01\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 83,\n        \"key\": \"1154d85b97ab799ecb95476c040eef165f8eca98\",\n        \"name\": \"utm_campaign\",\n        \"group_id\": 7,\n        \"order_nr\": 47,\n        \"field_type\": \"text\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-13 20:31:11\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 84,\n        \"key\": \"378430a5c3e70492a2e705aa5818052a6504407a\",\n        \"name\": \"utm_content\",\n        \"group_id\": 7,\n        \"order_nr\": 48,\n        \"field_type\": \"text\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-13 20:31:25\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 85,\n        \"key\": \"c83c89258b135c08b44d80a76eb69cf56fe41f99\",\n        \"name\": \"utm_term\",\n        \"group_id\": 7,\n        \"order_nr\": 49,\n        \"field_type\": \"text\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-13 20:31:41\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 86,\n        \"key\": \"a3a4cd5a4cdeff61454f4b72aa0796d0fcb62cb7\",\n        \"name\": \"utm_id\",\n        \"group_id\": 7,\n        \"order_nr\": 50,\n        \"field_type\": \"text\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-07-13 20:31:56\",\n        \"update_time\": \"2025-12-04 21:22:45\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 101,\n        \"key\": \"51247e250a5d89bfcf7bde4cdd8d586dc5ea834d\",\n        \"name\": \"Proposta feita\",\n        \"group_id\": 11,\n        \"order_nr\": 52,\n        \"field_type\": \"enum\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-12-04 21:24:23\",\n        \"update_time\": \"2025-12-04 21:24:23\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": true,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        },\n        \"options\": [\n          {\n            \"id\": 130,\n            \"label\": \"Mentoria\"\n          },\n          {\n            \"id\": 131,\n            \"label\": \"Assessoria\"\n          }\n        ]\n      },\n      {\n        \"id\": 99,\n        \"key\": \"1584834c45d23cb5e1a2543161fca7a2791c9ddd\",\n        \"name\": \"Alguma info importante sobre a reunião?\",\n        \"group_id\": 11,\n        \"order_nr\": 53,\n        \"field_type\": \"varchar\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-12-04 19:40:23\",\n        \"update_time\": \"2025-12-04 21:24:23\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 98,\n        \"key\": \"6628a36a4b8b8518f37ba8763b5e744bbc5599a9\",\n        \"name\": \"Tinha segundo decisor? Se sim, ele estava na call?\",\n        \"group_id\": 11,\n        \"order_nr\": 54,\n        \"field_type\": \"varchar\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-12-04 19:39:37\",\n        \"update_time\": \"2025-12-04 21:24:23\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": true,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 95,\n        \"key\": \"9e9209cbfa64563cb60b8a442e3c3a62fa9b284b\",\n        \"name\": \"Nota do lead pelo closer\",\n        \"group_id\": 11,\n        \"order_nr\": 55,\n        \"field_type\": \"double\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-12-04 19:37:35\",\n        \"update_time\": \"2025-12-04 21:24:23\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 94,\n        \"key\": \"2a7bd62853a7e25c9e176cc242cfe43945a70ad2\",\n        \"name\": \"Nota da reunião pelo closer (1 a 10)\",\n        \"group_id\": 11,\n        \"order_nr\": 56,\n        \"field_type\": \"double\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-12-04 19:36:51\",\n        \"update_time\": \"2025-12-04 21:24:23\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 93,\n        \"key\": \"c31cbe8f54216e54c9f6d7e6421cdb6d00da7fa7\",\n        \"name\": \"Qual foi o humor do lead?\",\n        \"group_id\": 11,\n        \"order_nr\": 57,\n        \"field_type\": \"enum\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-12-04 19:34:18\",\n        \"update_time\": \"2025-12-04 21:24:23\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": false,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": false,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        },\n        \"options\": [\n          {\n            \"id\": 121,\n            \"label\": \"Muito engajada\"\n          },\n          {\n            \"id\": 122,\n            \"label\": \"Engajada\"\n          },\n          {\n            \"id\": 123,\n            \"label\": \"Pouco engajada\"\n          }\n        ]\n      },\n      {\n        \"id\": 96,\n        \"key\": \"4e9b242788f1076d1846f42a7a6fcb404d7ed523\",\n        \"name\": \"Quais foram as 3 principais dores/necessidades do lead?\",\n        \"group_id\": null,\n        \"order_nr\": 58,\n        \"field_type\": \"text\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-12-04 19:38:20\",\n        \"update_time\": \"2025-12-04 21:24:23\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": true,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      },\n      {\n        \"id\": 97,\n        \"key\": \"2a62ed5510592c231e2e2d7632e31bea4a88e426\",\n        \"name\": \"O que ficou acordado sobre próximos passos?\",\n        \"group_id\": null,\n        \"order_nr\": 59,\n        \"field_type\": \"varchar\",\n        \"json_column_flag\": true,\n        \"add_time\": \"2025-12-04 19:38:54\",\n        \"update_time\": \"2025-12-04 21:24:23\",\n        \"last_updated_by_user_id\": 20851756,\n        \"edit_flag\": true,\n        \"details_visible_flag\": true,\n        \"add_visible_flag\": true,\n        \"important_flag\": false,\n        \"bulk_edit_allowed\": true,\n        \"filtering_allowed\": true,\n        \"sortable_flag\": true,\n        \"mandatory_flag\": false,\n        \"searchable_flag\": true,\n        \"restriction_settings\": [],\n        \"user_restrictions\": null,\n        \"description\": null,\n        \"created_by_user_id\": 20851756,\n        \"active_flag\": true,\n        \"projects_detail_visible_flag\": true,\n        \"show_in_pipelines\": {\n          \"show_in_all\": true,\n          \"pipeline_ids\": []\n        }\n      }\n    ],\n    \"additional_data\": {\n      \"pagination\": {\n        \"start\": 0,\n        \"limit\": 500,\n        \"more_items_in_collection\": false\n      }\n    }\n  }\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        144,
+        144
+      ],
+      "id": "3d3c68f1-835a-4289-8043-2d9921503acd",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $item(\"0\").$node[\"Webhook\"].json[\"origem_campo\"] }}",
+                    "rightValue": "webhook",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "3655b481-272d-4246-9b0e-f059b5d7a9ca"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "webhook"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "7eceeadb-0b90-4aab-b13c-4331e669c470",
+                    "leftValue": "={{ $item(\"0\").$node[\"Webhook\"].json[\"origem_campo\"] }}",
+                    "rightValue": "get_deal",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "get_deal"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        480,
+        144
+      ],
+      "id": "73508034-3bb8-4596-896b-c7afd579b8fc",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "jsCode": "const dealJson = $('Webhook').first().json;\nconst dealId = dealJson.id;\nconst campos = $('Edit Fields').first().json.data;\n\nconst resultado = {};\n\nfor (const campo of campos) {\n  const key = campo.key;\n  const tipo = campo.field_type;\n\n  // Considera apenas campos customizados (hash de 40 caracteres)\n  const isCustomField = /^[a-f0-9]{40}$/i.test(key);\n  if (!isCustomField) continue;\n\n  const valorCampo = dealJson[key];\n\n  let valorFinal = \"\";\n  let idValorFinal = null;\n\n  if (valorCampo !== null && valorCampo !== undefined) {\n    if (tipo === \"set\" && Array.isArray(valorCampo.values)) {\n      const ids = valorCampo.values.map(v => v.id);\n      const labels = campo.options\n        .filter(opt => ids.includes(opt.id))\n        .map(opt => opt.label);\n      valorFinal = labels.join(\", \");\n      idValorFinal = ids;\n    } else if (tipo === \"enum\" && Array.isArray(campo.options)) {\n      const idSelecionado = valorCampo?.id ?? valorCampo;\n      const opcao = campo.options.find(opt => opt.id.toString() === idSelecionado);\n      valorFinal = opcao?.label ?? \"\";\n      idValorFinal = opcao?.id ?? null;\n    } else if (tipo === \"user\" && typeof valorCampo === \"object\" && valorCampo.name && valorCampo.id) {\n      // Tratamento especial para campos do tipo \"user\"\n      valorFinal = valorCampo.name;\n      idValorFinal = valorCampo.id;\n    } else {\n      valorFinal = valorCampo?.value ?? valorCampo ?? \"\";\n    }\n  }\n\n  resultado[key] = {\n    field_type: tipo,\n    name: campo.name,\n    valueLabel: valorFinal,\n    valueId: idValorFinal,\n    options: campo.options || null\n  };\n\n  // Campo _currency associado, se existir\n  const chaveMoeda = `${key}_currency`;\n  if (dealJson.hasOwnProperty(chaveMoeda)) {\n    resultado[chaveMoeda] = {\n      field_type: \"varchar\",\n      name: `Currency of ${campo.name}`,\n      valueLabel: dealJson[chaveMoeda],\n      valueId: null,\n      options: null\n    };\n  }\n}\n\nreturn [{\n  json: {\n    dealId: dealId.toString(),\n    resultado\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        864,
+        240
+      ],
+      "id": "e7fd66e5-457f-4818-a0ef-9f728bf9b219",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "content": "Recebe os dados do [fluxo principal do Pipedrive](https://workflows.goldeletra.pro/workflow/xawOX8VHRfM8AbwM)",
+        "height": 80,
+        "width": 220,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -240,
+        32
+      ],
+      "typeVersion": 1,
+      "id": "2ad10b79-7a68-4300-990e-9c645ad06bae",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Replica todos os campos existentes em um deal. Caso seja criado mais campos, é necessário executar a requisição HTTP acima e mockar os dados nesse node",
+        "width": 220,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        80,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "d66e65b9-19c5-48a4-a63b-85258943a934",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Verifica de onde vem os dados e executa o node apropriado",
+        "height": 80,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        400,
+        32
+      ],
+      "typeVersion": 1,
+      "id": "0fb0b829-fb3d-474e-a2cf-e98bee151c4c",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "events": [
+          "update"
+        ]
+      },
+      "type": "n8n-nodes-base.n8nTrigger",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        -656
+      ],
+      "id": "85e957d5-c667-4b11-9fca-8efefa191ea5",
+      "name": "Dados Cadastro Workflow",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e3c3eb3-253b-4434-9f68-f12806e90433",
+              "name": "Pasta Cliente",
+              "value": "901312698708",
+              "type": "string"
+            },
+            {
+              "id": "f5017427-6e91-4ce3-adfb-1f26db53104e",
+              "name": "Fluxos com Erro",
+              "value": "901319151056",
+              "type": "string"
+            },
+            {
+              "id": "69e95a88-9ca8-46ae-8016-ca15db383fd7",
+              "name": "Fluxos Cadastrados",
+              "value": "901319151049",
+              "type": "string"
+            },
+            {
+              "id": "d1a157b0-9836-4758-92bf-6fa81eff1a26",
+              "name": "Link N8N",
+              "value": "={{ \"https://workflows.\" + $execution.resumeUrl.split('/')[2].split('.').slice(1).join('.') + \"/workflow/\" + $workflow.id }}",
+              "type": "string"
+            },
+            {
+              "id": "a8a396de-7e97-4833-8520-dd5af4bb0baf",
+              "name": "Tarefa Cliente ID",
+              "value": "86ac2h7bc",
+              "type": "string"
+            },
+            {
+              "id": "1bca2025-d73c-4f0d-abee-0abf3d328f2a",
+              "name": "Campo Relacionamento Fluxo Cadastrado",
+              "value": "de89a9e9-7831-4b3e-90f4-0114797d4e6b",
+              "type": "string"
+            },
+            {
+              "id": "bc48d677-8f44-45a4-b66a-e5a671a74128",
+              "name": "Campo Relacionamento Reportar Erro",
+              "value": "6d2dbdb6-40dd-4c2a-a42b-f6e4b5536261",
+              "type": "string"
+            },
+            {
+              "id": "90c1b11d-2707-4db7-b02f-3ca053887764",
+              "name": "Nome do Fluxo",
+              "value": "={{ $workflow.name }}",
+              "type": "string"
+            },
+            {
+              "id": "c4f8fea6-e31a-4023-b56c-58e217565f7c",
+              "name": "ID Página Fluxos",
+              "value": "c9pay-8513",
+              "type": "string"
+            },
+            {
+              "id": "8e2f5c9a-6b3d-4e7f-a1c8-9d4e6f2b7a5c",
+              "name": "ID Documento",
+              "value": "c9pay-15913",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        144,
+        -656
+      ],
+      "id": "32346214-1e40-42d2-8e87-2da10a4f02b2",
+      "name": "Variaveis do Cliente1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $workflow.id }}",
+          "mode": "id"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        416,
+        -656
+      ],
+      "id": "2c817fea-ad76-4627-9793-0d931fa5b5d2",
+      "name": "Get a workflow",
+      "credentials": {
+        "n8nApi": {
+          "id": "F1ykyghOg9lLGBLd",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://webhooks.autotrackable.com.br/webhook/receber_cadastro_dos_clientes",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n(() => {\n  const err = $item(\"0\").$node[\"Dados Cadastro Workflow\"].json;\n  const cli = $item(\"0\").$node[\"Variaveis do Cliente1\"].json;\n  const workflow = $item(\"0\").$node[\"Get a workflow\"].json;\n  return { ...err, info_cliente: cli, workflow: workflow };\n})()\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        688,
+        -656
+      ],
+      "id": "a22c24b7-522f-497c-af65-30253d17050a",
+      "name": "Encaminhar Erro para TrackAble1"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhooks.mgaads.top",
+            "user-agent": "Pipedrive Webhooks",
+            "content-length": "6966",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "x-forwarded-for": "44.228.233.78",
+            "x-forwarded-host": "webhooks.mgaads.top",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik_traefik.1",
+            "x-real-ip": "44.228.233.78"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "data": {
+              "add_time": "2025-07-03T10:57:31Z",
+              "channel": 8,
+              "channel_id": "Mega Ads",
+              "close_time": null,
+              "creator_user_id": 24270281,
+              "currency": "BRL",
+              "custom_fields": {
+                "01f66d2c464a4d8dc318a3f16827b420b1c98ee7": null,
+                "f13a73813939d357790227cbe9bbb76183c14d4d": null,
+                "e9884feb9000cdbb7469bd1cb10f781c81f405b9": null,
+                "f787e73887326e97717036cc19d964e9653cec11": {
+                  "id": 24311069,
+                  "type": "user"
+                },
+                "1070ed7835ce1dbbb225904d3ba81cfedf2201d5": null,
+                "60de0363eeb70832fd379083e446308072689de1": null,
+                "9ca6ffd36270a5dfe5b4df7916c0879ea507956a": {
+                  "type": "text",
+                  "value": "2804:14c:5982:9526:9d16:bf21:c14:60da"
+                },
+                "0d19b1e5fc28f957b5db8ecfbcd8041e8136b3cb": {
+                  "type": "text",
+                  "value": "fb.1.1751540213908.10173850154932004"
+                },
+                "22e80b4d6b5e33212bdacba147fe3cbda3464ae1": null,
+                "d12cce33bfdd27677aab9019fe90d8032c4866aa": null,
+                "ba14b9a70c351b21160c4752d20167c5ef03dd1f": null,
+                "568981f67c2ce120ba70db5caa6f728dbe12c4ab": null,
+                "b51972a7f8c8f5a7c63a8f4cbd3287a9332723c9": null,
+                "9098599030161038437ee979a03cfccb3d09108f": null,
+                "f39d5840ce2d16a4a1202c9b694904d9beafb440": {
+                  "type": "varchar",
+                  "value": "Vitoria"
+                },
+                "1332f79c1e82f95ae741375d13c47d4fc2858289": null,
+                "a43afa9fab86fd0b6495feb9b581e28a6ef4d8a8": null,
+                "615e5ac82a36b29fdd1b3917767a6a76958e9847": {
+                  "type": "text",
+                  "value": "https://form.typeform.com/to/I2euAQ0g?utm_source=Instagram_Stories&utm_medium=120215295481870753&utm_campaign=120215295481850753&utm_content=120215295828090753&utm_term=ig&utm_id=120215295481850753&fbclid=PAZXh0bgNhZW0BMABhZGlkAaseKPGimtEBp18k8bFOp248kyJJG1mtb_tFfVcUwEw3TXdhzbCtRp1yHzaQ-bzxFDgvcBJD_aem_GDMUSn4oDg_d8IZ-q1jQHA&campaign_id=120215295481850753&ad_id=120215295828090753"
+                },
+                "686487e367b878378623f1373bf4110f463f3501": {
+                  "type": "varchar",
+                  "value": "120215295481870753"
+                },
+                "09282902fde61f9c57d279b3b12f508e06173e74": null,
+                "01cb5b533040bf30d617d15e9979ae170a1def8a": null,
+                "cc0cab0fae9bbf158c6daf2879d16e02ce4672c7": null,
+                "4b31e7b858dc703744a0a8556b4e9ed4270f3141": null,
+                "dbf952bf502e544e149cd075c2f01c39612aefae": null,
+                "b667607185f733f6229ccf59e3f20232df755564": {
+                  "type": "varchar",
+                  "value": "120215295828090753"
+                },
+                "56211e10de7d99f4fca724e6916625286a7ec46a": null,
+                "8dfa4ea85ce51d29bd1d1dcb93c58fba9744fa4f": null,
+                "12e56ea7c90677c5ee8e1ab6fb449d9fc29900c7": null,
+                "72c91bc98cfb1850ac8738a2108573aadb1163aa": null,
+                "39f9c4408ac61d481544d87b02fd905141953dda": null,
+                "d1d8b9484f964279130d1493da08101bf3eaa47b": {
+                  "type": "text",
+                  "value": "Instagram_Stories"
+                },
+                "547c8d660d62300fc5e1f80368f1b8d91f136b55": null,
+                "c664a23e65e6f0f4857eaba9c59f944ba0f64b75": null,
+                "d80417d794cf2a21eb1b25e66cd5258827e101f9": {
+                  "type": "varchar",
+                  "value": "120215295481850753"
+                },
+                "38b9317009614eccdbc875cc3755c40b94d6633f": null,
+                "bc7526046653397f17fa760dfecb63cd1066c2f1": null,
+                "21627e62a33ad0ad3c453f484736bc2788f6f253": null,
+                "e65dc0bea6fc8e00adaa91dbb8ea7c61090fa84b": null,
+                "fb9e8334ffa0ec7c1031627b894c9e0a2b45bb69": null,
+                "f24e76f26fc6336952e80b59fabb8a903d7ac620": null,
+                "2c69d4f0fb394d516a35814c0fa253ffda26fa52": {
+                  "type": "phone",
+                  "value": "+5591983428011"
+                },
+                "5b3a1aa1a360a1757476492b5855960c292f1276": null,
+                "8c722eda1077ceb45b33c371b7d62a4fd2f17fee": null,
+                "d7a3ca75230d56e0f798f5aedb6245853b979cc3": null,
+                "432d84bde09635d51e4e56462353ee85ed458283": null,
+                "9819ad52ab989dd58dc971d5751c51e7449df654": null,
+                "53ff006cfc8d7ffbeabda1a25d1a4c407a0d454b": null,
+                "a83edde124ae735a27b0c58f22631174ea509539": null,
+                "c79525e1cdd27d3a6aa7239840ef744c2fe55ab2": null,
+                "18a81492982cb317cabc3a17f5426724b705cf54": {
+                  "type": "phone",
+                  "value": "+5591983428011"
+                },
+                "6c9d66c025302922bdc1c5b61b421780d30aec02": null,
+                "4b0cf6fc8ecf1da8a687fa40c66d2712c9ffc89d": null,
+                "72a771829f32e90cb9b05858bab67d3069cdd4f1": null,
+                "baa6069d8b7311ab746820eac4f9c0c0a6fde906": null,
+                "24f9b6ca35d882af153f1d08a2fbdc5a3c4b72f1": null,
+                "ffe9f52a01d452d40cb9d2f04d1215051aed8755": null,
+                "2c0c6788299396fc893a913671e1d6282775cb70": null,
+                "2f20a5223e57992d42d687e67003b5a64c75ee42": null,
+                "03628a56c402e42e7fb9d022ece282e244d205b1": null,
+                "8f42eda94dc087d9b8c1dc3fae0c248a34f73a06": {
+                  "type": "varchar",
+                  "value": "ig"
+                },
+                "dff12b9b874b3f8c26d2facd370b889c19911b94": null,
+                "f535d9c713537b6906b36687cadc8a71385cbf44": null,
+                "8d37a2acc1a9e152c39a24b0f874bd3ec7da87a1": null,
+                "d3bee12af016d24330605e66663ea3b07c054ee4": null,
+                "434ff96e8eca694d7ae004316e0b69dc6248524d": null,
+                "fc3b7bb1c545f1cfe6076e59ef47b248c36e2844": null,
+                "08b1b182aa202632d85ffe58666d783a8f2b55a2": null,
+                "34bf53c24b8c1a14e05e5afe2a0118a926344428": {
+                  "type": "text",
+                  "value": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_6_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/19G82 Instagram 386.0.0.20.82 (iPhone12,8; iOS 15_6_1; pt_BR; pt; scale=2.00; 750x1334; 751752074; IABMV/1)"
+                },
+                "12517693197e402b261f04ae0827b26694fd1240": null,
+                "8d26de7edd94c50c04e6978eb0883824d0f0a19c": null,
+                "e664dd987aa5e59f2d9389eaf75a348d91a17433": null,
+                "564126d0b956af784bc26cf38c77112a95795e65": null,
+                "7bffd4e948005d4a8d1edbaf1ff4063c3b89dd13": {
+                  "type": "varchar",
+                  "value": "vitoriampmoura18@gmail.com"
+                },
+                "df91508407045a2f6d5a7f6b8bfcab165d2f89ad": {
+                  "type": "varchar",
+                  "value": "BR"
+                },
+                "d599795576b89fc1bf4b5853f91744138896acd6": {
+                  "type": "varchar",
+                  "value": "Menos de R$10 mil por mês"
+                },
+                "d5e21585dbb390c372dedaa4f0eb04eac6ca7abe": null,
+                "f980460cbb56a4c83fa4f797eec0c0bdce49e935": null,
+                "ec601903fa7ae293b239708f136bf94ef7c571a8": null,
+                "888f273dddb29b9c9a8366d51c318c621676a594": null,
+                "1179daa5b23d4805faa07d178ce316f472db8138": null,
+                "061105a25431fd85c1b8812c14b97956fa0bd2de": {
+                  "type": "varchar",
+                  "value": "vitoriampmoura18@gmail.com"
+                },
+                "995d1d5b5078c85d5ebc9305861dc81e70a7767c": null,
+                "32a9adbba6fcc07f19f9db38324d779920ed376a": null,
+                "59061addb88dab8093c88f3425e7decf0dbb354c": null,
+                "685c1fa8404f8e91ae9f9216082af3a095ae3245": {
+                  "type": "text",
+                  "value": "fb.1.1751540213903.PAZXh0bgNhZW0BMABhZGlkAaseKPGimtEBp18k8bFOp248kyJJG1mtb_tFfVcUwEw3TXdhzbCtRp1yHzaQ-bzxFDgvcBJD_aem_GDMUSn4oDg_d8IZ-q1jQHA"
+                },
+                "6b4e3008fa07343f0fc5ca4dcc8715b224d85a89": null,
+                "610721c989e225eb1afdbc8f0da26a602b2a8252": null,
+                "f10478ee961aa65cb3b22a223f3e1379a4f50ecb": null,
+                "556cf751e7404baba2e1e7a993e746ac5b86407d": null
+              },
+              "expected_close_date": null,
+              "first_won_time": null,
+              "id": 25,
+              "label_ids": [
+                161
+              ],
+              "lost_reason": null,
+              "lost_time": null,
+              "org_id": null,
+              "origin": "Marketplace",
+              "origin_id": "82f9b338a3b45966",
+              "owner_id": 24311069,
+              "person_id": 27,
+              "pipeline_id": 1,
+              "probability": null,
+              "stage_change_time": "2025-07-04T13:51:53Z",
+              "stage_id": 1,
+              "status": "open",
+              "title": "Vitoria",
+              "update_time": "2025-07-04T13:51:53Z",
+              "value": 0,
+              "visible_to": "3",
+              "won_time": null,
+              "is_archived": false,
+              "archive_time": null
+            },
+            "previous": {
+              "custom_fields": {
+                "f787e73887326e97717036cc19d964e9653cec11": {
+                  "id": 24311058,
+                  "type": "user"
+                }
+              },
+              "owner_id": 24311058
+            },
+            "meta": {
+              "action": "change",
+              "company_id": "14582609",
+              "correlation_id": "8b191056-667e-4181-b5d6-bd98abee373e",
+              "entity_id": "25",
+              "entity": "deal",
+              "id": "eab904c0-2fa1-4a47-89ac-3249b6a524e7",
+              "is_bulk_edit": false,
+              "timestamp": "2025-07-04T13:51:53.931Z",
+              "type": "general",
+              "user_id": "24270281",
+              "version": "2.0",
+              "webhook_id": "1611771",
+              "webhook_owner_id": "24270281",
+              "change_source": "app",
+              "permitted_user_ids": [
+                "21896778",
+                "22329650",
+                "24270281",
+                "24311047",
+                "24311058",
+                "24311069",
+                "24311091",
+                "24311113"
+              ],
+              "attempt": 1,
+              "host": "megaads2.pipedrive.com"
+            }
+          },
+          "webhookUrl": "https://webhooks.mgaads.top/webhook/pipedrivedeals",
+          "executionMode": "production",
+          "origem_campo": "webhook"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados Cadastro Workflow": {
+      "main": [
+        [
+          {
+            "node": "Variaveis do Cliente1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Variaveis do Cliente1": {
+      "main": [
+        [
+          {
+            "node": "Get a workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a workflow": {
+      "main": [
+        [
+          {
+            "node": "Encaminhar Erro para TrackAble1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "ByxX1TqYfyvlgp2T"
+  },
+  "versionId": "2a68e264-a6a7-4568-851b-11a770bc4b6e",
+  "meta": {
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "1ZOJnFDLY7e8hV8j",
+  "tags": [
+    {
+      "updatedAt": "2025-07-16T01:17:20.453Z",
+      "createdAt": "2025-07-16T01:17:20.453Z",
+      "id": "NaaSNhB5hEdSZaTh",
+      "name": "OK"
+    },
+    {
+      "updatedAt": "2025-10-03T18:16:37.959Z",
+      "createdAt": "2025-10-03T18:16:37.959Z",
+      "id": "olakFEXRFPPNeevi",
+      "name": "Cadastrado"
+    },
+    {
+      "updatedAt": "2025-11-17T13:43:22.843Z",
+      "createdAt": "2025-11-17T13:43:22.843Z",
+      "id": "xDu8TyrW6g7HiKXS",
+      "name": "Documentado"
+    }
+  ]
+}

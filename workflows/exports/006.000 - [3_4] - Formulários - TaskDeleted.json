@@ -1,0 +1,478 @@
+{
+  "name": "006.000 - [3/4] - Formulários - TaskDeleted",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -96,
+        608
+      ],
+      "id": "7b024f0b-e535-4e48-a70f-ee06af4eee97",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "pre_vendas_sdr",
+          "mode": "list",
+          "cachedResultName": "pre_vendas_sdr"
+        },
+        "limit": 1,
+        "where": {
+          "values": [
+            {
+              "column": "task_id",
+              "value": "={{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"task_id\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        208,
+        608
+      ],
+      "id": "8b91911e-f712-41b8-b8cf-f5dc7ccc67ab",
+      "name": "Select rows from a table1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "LVCJiRba2gV4yM7S",
+          "name": "Metricas - Clientes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a437a09c-9e90-4dcc-8f3a-cb554eed3549",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        512,
+        608
+      ],
+      "id": "eb3d5c8e-d8db-4899-ac90-cb75f5d2a3eb",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "vendas_closer",
+          "mode": "list",
+          "cachedResultName": "vendas_closer"
+        },
+        "limit": 1,
+        "where": {
+          "values": [
+            {
+              "column": "task_id",
+              "value": "={{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"task_id\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1088,
+        592
+      ],
+      "id": "9f9897a1-5176-438f-896c-50fd6a1e49f6",
+      "name": "Select rows from a table2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "LVCJiRba2gV4yM7S",
+          "name": "Metricas - Clientes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a437a09c-9e90-4dcc-8f3a-cb554eed3549",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1392,
+        592
+      ],
+      "id": "7d439d3d-9f6e-4cab-8170-1ba72967d018",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "dados_sdr",
+          "mode": "list",
+          "cachedResultName": "dados_sdr"
+        },
+        "limit": 1,
+        "where": {
+          "values": [
+            {
+              "column": "task_id",
+              "value": "={{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"task_id\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1984,
+        576
+      ],
+      "id": "14f1c432-975d-4200-a858-5c9d8ba2a7dd",
+      "name": "Select rows from a table3",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "LVCJiRba2gV4yM7S",
+          "name": "Metricas - Clientes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a437a09c-9e90-4dcc-8f3a-cb554eed3549",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2288,
+        576
+      ],
+      "id": "5103ab1f-54a5-470e-84e4-7fac05e8d109",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "operation": "deleteTable",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "pre_vendas_sdr",
+          "mode": "list",
+          "cachedResultName": "pre_vendas_sdr"
+        },
+        "deleteCommand": "delete",
+        "where": {
+          "values": [
+            {
+              "column": "task_id",
+              "value": "={{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"task_id\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        832,
+        736
+      ],
+      "id": "18991819-05bd-4659-b76d-7fc08a19f366",
+      "name": "Delete table or rows",
+      "credentials": {
+        "postgres": {
+          "id": "LVCJiRba2gV4yM7S",
+          "name": "Metricas - Clientes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "deleteTable",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "vendas_closer",
+          "mode": "list",
+          "cachedResultName": "vendas_closer"
+        },
+        "deleteCommand": "delete",
+        "where": {
+          "values": [
+            {
+              "column": "task_id",
+              "value": "={{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"task_id\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1744,
+        736
+      ],
+      "id": "c12ab437-ddc6-4afe-b396-ac2d304e8142",
+      "name": "Delete table or rows1",
+      "credentials": {
+        "postgres": {
+          "id": "LVCJiRba2gV4yM7S",
+          "name": "Metricas - Clientes"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "deleteTable",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "dados_sdr",
+          "mode": "list",
+          "cachedResultName": "dados_sdr"
+        },
+        "deleteCommand": "delete",
+        "where": {
+          "values": [
+            {
+              "column": "task_id",
+              "value": "={{ $item(\"0\").$node[\"When Executed by Another Workflow\"].json[\"task_id\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2624,
+        592
+      ],
+      "id": "2c9e0317-bf4d-473d-9206-c826108e9f45",
+      "name": "Delete table or rows2",
+      "credentials": {
+        "postgres": {
+          "id": "LVCJiRba2gV4yM7S",
+          "name": "Metricas - Clientes"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "event": "taskDeleted",
+          "task_id": "86aezemv3"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table2": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delete table or rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table3": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delete table or rows1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Delete table or rows2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a3dfe54b-e731-4622-820d-c2adf1a6c067",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "jGfoGDdLSD7uJlww",
+  "tags": []
+}

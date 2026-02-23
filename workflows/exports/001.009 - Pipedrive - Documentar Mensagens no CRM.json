@@ -1,0 +1,1470 @@
+{
+  "name": "001.009 - Pipedrive - Documentar Mensagens no CRM",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "documentar_msgs",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -5456,
+        320
+      ],
+      "id": "c42aa2e8-72b0-4bf9-b6e7-07119b0cfd12",
+      "name": "Webhook",
+      "webhookId": "0475f0ed-90e2-49cf-aaeb-eb37f0717bea"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"chat\"][\"wa_lastMessageType\"] }}",
+                    "rightValue": "Conversation",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "fe1e2461-28e2-403b-91dc-4f559b2e42dd"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "46d309cb-1fe8-4edc-8846-de66aee0f647",
+                    "leftValue": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"chat\"][\"wa_lastMessageType\"] }}",
+                    "rightValue": "ExtendedTextMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Long Text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f30f55c7-71c4-4bcb-8826-2354470908bb",
+                    "leftValue": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"chat\"][\"wa_lastMessageType\"] }}",
+                    "rightValue": "ephemeralMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Temporary Message"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "183f5928-bcad-417b-8b06-68ce3d25a797",
+                    "leftValue": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"chat\"][\"wa_lastMessageType\"] }}",
+                    "rightValue": "AudioMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b4d0b28e-d022-484d-be18-31cf866c2abc",
+                    "leftValue": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"chat\"][\"wa_lastMessageType\"] }}",
+                    "rightValue": "ImageMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Image"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2d0639c5-a762-40c0-b6e5-c8c8a248c5c2",
+                    "leftValue": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"chat\"][\"wa_lastMessageType\"] }}",
+                    "rightValue": "VideoMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Video"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "dd4a1b0f-e351-42d8-9d56-c48ffc7352e5",
+                    "leftValue": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"chat\"][\"wa_lastMessageType\"] }}",
+                    "rightValue": "DocumentMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Document"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -4848,
+        256
+      ],
+      "id": "f97772d6-a09f-47b9-9cfc-850cd4d8030e",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f80bbc6a-73a1-4d0b-a428-4cff68a9676e",
+              "name": "=message",
+              "value": "={{ $json.body.chat.wa_lastMessageTextVote }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3824,
+        16
+      ],
+      "id": "afbe8d78-c760-4958-aaeb-289becd92049",
+      "name": "Set Text"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -4400,
+        16
+      ],
+      "id": "bddf7419-7b2d-4fd2-9972-ebe808fe97bf",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "numberInputs": 5
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -3024,
+        32
+      ],
+      "id": "86567c71-7455-4b72-8150-e714538b43ec",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "message",
+              "value": "={{ $item(\"0\").$node[\"Merge1\"].json[\"message\"] }}"
+            },
+            {
+              "key": "fromMe",
+              "value": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"message\"][\"fromMe\"].toString() }}"
+            },
+            {
+              "key": "phone",
+              "value": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"message\"][\"chatid\"].includes('@s.whatsapp.net') ?$item(\"0\").$node[\"Webhook\"].json[\"body\"][\"message\"][\"chatid\"].replace(/[^0-9]/g,'') : $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"message\"][\"chatid\"] }}"
+            },
+            {
+              "key": "name",
+              "value": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"chat\"][\"wa_name\"] }}"
+            },
+            {
+              "key": "messageType",
+              "value": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"chat\"][\"wa_lastMessageType\"] }}"
+            },
+            {
+              "key": "sender",
+              "value": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"message\"][\"chatid\"] }}"
+            },
+            {
+              "key": "instance",
+              "value": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"instanceName\"] }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        -608,
+        64
+      ],
+      "id": "85aacb1b-c1d3-4c7e-a4f7-72254d2a6391",
+      "name": "Execution Data"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "18cb4363-c7a2-4315-b9ee-3b9736b092b1",
+              "name": "message",
+              "value": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"chat\"][\"name\"] }}: {{ $json.message }}",
+              "type": "string"
+            },
+            {
+              "id": "80b8698d-e4a7-46ed-a80a-2af0ecdef443",
+              "name": "arquivo",
+              "value": "={{ $item(\"0\").$node[\"Merge1\"].json[\"arquivo\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2704,
+        80
+      ],
+      "id": "a03fdab8-4d0d-49a1-b1ac-a92b60ed102f",
+      "name": "Set Input",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b5ff603b-8fcf-494a-821b-8386fe192532",
+              "leftValue": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"message\"][\"fromMe\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -336,
+        64
+      ],
+      "id": "5af54f99-48a7-4725-b041-ecee26d11a4c",
+      "name": "fromMe?",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "activity",
+        "subject": "Mensagem do Lead",
+        "done": "1",
+        "type": "Mensagem de WhatsApp",
+        "additionalFields": {
+          "deal_id": "={{ $item(\"0\").$node[\"Edit Fields\"].json[\"id\"] }}",
+          "due_date": "={{ $now.format('yyyy-MM-dd') }}",
+          "note": "=Lead: {{ $item(0).$node[\"Merge1\"].json[\"message\"] }}\n{{ \n  $item(0).$node[\"Merge1\"].json[\"arquivo\"] \n    ? `<br><br>Link do arquivo:<br>${$item(0).$node[\"Merge1\"].json[\"arquivo\"]}` \n    : \"\" \n}}"
+        }
+      },
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        192
+      ],
+      "id": "4df38b49-6cdb-4a60-bc1c-825f0b73406f",
+      "name": "Create an activity - Mensagem do Lead",
+      "credentials": {
+        "pipedriveOAuth2Api": {
+          "id": "y8O0rqLgOCkuE8hK",
+          "name": "Pipedrive - evoluamidia@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "activity",
+        "subject": "Mensagem do Atendente",
+        "done": "1",
+        "type": "Mensagem de WhatsApp",
+        "additionalFields": {
+          "deal_id": "={{ $item(\"0\").$node[\"Edit Fields\"].json[\"id\"] }}",
+          "due_date": "={{ $now.format('yyyy-MM-dd') }}",
+          "note": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"instanceName\"] }}: {{ $item(0).$node[\"Merge1\"].json[\"message\"] }}\n{{ \n  $item(0).$node[\"Merge1\"].json[\"arquivo\"] \n    ? `<br><br>Link do arquivo:<br>${$item(0).$node[\"Merge1\"].json[\"arquivo\"]}` \n    : \"\" \n}}"
+        }
+      },
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        -64
+      ],
+      "id": "e8ee0930-878b-47c2-ac53-6388e7ee924d",
+      "name": "Create an activity - Mensagem do Atendente",
+      "credentials": {
+        "pipedriveOAuth2Api": {
+          "id": "y8O0rqLgOCkuE8hK",
+          "name": "Pipedrive - evoluamidia@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "base64Data",
+        "binaryPropertyName": "=data",
+        "options": {
+          "mimeType": "={{ $json.mimetype }}"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -4192,
+        176
+      ],
+      "id": "3cfa465a-5403-4233-a026-fcd02e8e58cb",
+      "name": "Convert to File",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Webhook').item.json.body.BaseUrl }}/message/download",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $('Webhook').item.json.body.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "id",
+              "value": "={{ $json.body.message.id }}"
+            },
+            {
+              "name": "return_base64",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4400,
+        176
+      ],
+      "id": "c76c50df-6f58-494d-99f0-76daa2ad7ad7",
+      "name": "GetBase64",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -4000,
+        176
+      ],
+      "id": "e8c4671c-245a-45e0-9fe6-cd42a4c96930",
+      "name": "Transcribe a recording",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f80bbc6a-73a1-4d0b-a428-4cff68a9676e",
+              "name": "=message",
+              "value": "=ÁUDIO",
+              "type": "string"
+            },
+            {
+              "id": "d8578d1f-7e81-409a-a4c9-53251d8b17db",
+              "name": "arquivo",
+              "value": "={{ $item(\"0\").$node[\"GetBase64\"].json[\"fileURL\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3824,
+        176
+      ],
+      "id": "06cfe52d-6f76-499d-9da7-55f44f9d0cb7",
+      "name": "Set Audio"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "base64Data",
+        "options": {
+          "mimeType": "={{ $json.mimetype }}"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -4192,
+        560
+      ],
+      "id": "19e2fbbc-bf75-439b-aebf-0b4a134f69cf",
+      "name": "Convert to File2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "base64Data",
+        "options": {
+          "mimeType": "={{ $json.mimetype }}"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -4192,
+        752
+      ],
+      "id": "c90c9441-3513-480d-84f6-a8ea7439c34f",
+      "name": "Convert to File3",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f80bbc6a-73a1-4d0b-a428-4cff68a9676e",
+              "name": "=message",
+              "value": "=IMAGEM",
+              "type": "string"
+            },
+            {
+              "id": "5ccdcc44-5e35-4675-8d65-66348ca655e8",
+              "name": "arquivo",
+              "value": "={{ $item(\"0\").$node[\"GetBase64Image\"].json[\"fileURL\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3824,
+        368
+      ],
+      "id": "8f6f8d2d-77d9-4a8a-a9da-44c4b7462d76",
+      "name": "Set Image"
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "text": "analise esse vídeo e me descreva o conteúdo dele",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -4000,
+        560
+      ],
+      "id": "d0c0fe0f-96e7-4180-a355-395cc7cc24d4",
+      "name": "Analyze video",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "text": "analise essa imagem e me descreva o conteúdo dela",
+        "inputType": "base64",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -4000,
+        368
+      ],
+      "id": "11d60c7e-ec92-465b-9c09-adfc30d98f7a",
+      "name": "Analyze image",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "base64Data",
+        "options": {
+          "mimeType": "={{ $json.mimetype }}"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -4192,
+        368
+      ],
+      "id": "325be47c-8f55-4caf-8050-9378a057f81d",
+      "name": "Convert to Image",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "resource": "document",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "text": "analise esse documento e me descreva o conteúdo dele em português",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -4000,
+        752
+      ],
+      "id": "34544e13-1733-4e0e-a799-cf487d74d527",
+      "name": "Analyze document",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f80bbc6a-73a1-4d0b-a428-4cff68a9676e",
+              "name": "=message",
+              "value": "=DOCUMENTO",
+              "type": "string"
+            },
+            {
+              "id": "8976f3b3-9cf9-49a4-95c5-d7fb3fe7bde1",
+              "name": "arquivo",
+              "value": "={{ $item(\"0\").$node[\"GetBase64Video2\"].json[\"fileURL\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3824,
+        752
+      ],
+      "id": "29102ce0-0549-40a1-b7f4-c9f2c58045a6",
+      "name": "Set Document"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f80bbc6a-73a1-4d0b-a428-4cff68a9676e",
+              "name": "=message",
+              "value": "=VÍDEO",
+              "type": "string"
+            },
+            {
+              "id": "7e8d87bc-b0dd-4908-aed6-96ee707f1dd2",
+              "name": "arquivo",
+              "value": "={{ $item(\"0\").$node[\"GetBase64Video\"].json[\"fileURL\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3824,
+        560
+      ],
+      "id": "799b1cc0-7eeb-4d6e-bb41-073f3177f54f",
+      "name": "Set Video"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Webhook').item.json.body.BaseUrl }}/message/download",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $('Webhook').item.json.body.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "id",
+              "value": "={{ $json.body.message.id }}"
+            },
+            {
+              "name": "return_base64",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4400,
+        368
+      ],
+      "id": "267857b9-f06d-4568-abcf-46ca1640855a",
+      "name": "GetBase64Image",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Webhook').item.json.body.BaseUrl }}/message/download",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $('Webhook').item.json.body.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "id",
+              "value": "={{ $json.body.message.id }}"
+            },
+            {
+              "name": "return_base64",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4400,
+        560
+      ],
+      "id": "1ecfae74-035c-4831-8c09-00ee38cf7e97",
+      "name": "GetBase64Video",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Webhook').item.json.body.BaseUrl }}/message/download",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $('Webhook').item.json.body.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "id",
+              "value": "={{ $json.body.message.id }}"
+            },
+            {
+              "name": "return_base64",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4400,
+        752
+      ],
+      "id": "e3bbd497-71c5-41cc-9534-1fc6f8293641",
+      "name": "GetBase64Video2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2045559d-d9e7-43ca-90b1-2493ea0fa53b",
+              "leftValue": "={{ $json.body.message.isGroup }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -5168,
+        320
+      ],
+      "id": "79a6a7f1-e1f2-415f-9944-39a15222d2be",
+      "name": "If isGroup"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "93713fd3-daf7-48cf-88b7-a9b37166712c",
+              "leftValue": "={{ $item(\"0\").$node[\"Encontra Negocio\"].json[\"id\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1744,
+        80
+      ],
+      "id": "f632b3dc-9e72-45ed-8ceb-060b78ffcbe7",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "search",
+        "term": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"message\"][\"chatid\"] }}",
+        "limit": 1,
+        "additionalFields": {
+          "fields": [
+            "custom_fields"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [
+        -2048,
+        80
+      ],
+      "id": "4d7d1101-f956-4da1-a902-c8b3a349c1a4",
+      "name": "Encontra Negocio",
+      "alwaysOutputData": true,
+      "credentials": {
+        "pipedriveOAuth2Api": {
+          "id": "y8O0rqLgOCkuE8hK",
+          "name": "Pipedrive - evoluamidia@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "search",
+        "term": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"message\"][\"chatid\"].replace(/[^0-9]/g,'').slice(-8) }}",
+        "limit": 1,
+        "additionalFields": {
+          "fields": [
+            "custom_fields"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.pipedrive",
+      "typeVersion": 1,
+      "position": [
+        -1120,
+        288
+      ],
+      "id": "911aa4c2-4b05-47a2-ab51-614c4aa8a287",
+      "name": "Encontra Negocio1",
+      "alwaysOutputData": false,
+      "credentials": {
+        "pipedriveOAuth2Api": {
+          "id": "y8O0rqLgOCkuE8hK",
+          "name": "Pipedrive - evoluamidia@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "93713fd3-daf7-48cf-88b7-a9b37166712c",
+              "leftValue": "={{ $item(\"0\").$node[\"Webhook\"].json[\"body\"][\"message\"][\"chatid\"].includes('@s.whatsapp.net') }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1536,
+        192
+      ],
+      "id": "edf906ab-24ec-4d62-bb81-68e49557f650",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": []
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -880,
+        64
+      ],
+      "id": "55653075-d28f-4ccf-b0ed-895c55cb940a",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1328,
+        288
+      ],
+      "id": "2b472684-e305-4238-ab2d-efd17ba6e19c",
+      "name": "Wait",
+      "webhookId": "b4b9a67c-05ca-40fd-9c96-8d2ba2308655"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2384,
+        80
+      ],
+      "id": "49fc915d-34dc-47d5-a3d8-8cb499a2d0fd",
+      "name": "Wait1",
+      "webhookId": "1ab36a20-440f-4873-9eca-ed1ca60a2c19"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If isGroup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [
+          {
+            "node": "GetBase64",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GetBase64Image",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GetBase64Video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GetBase64Video2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Text": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing": {
+      "main": [
+        [
+          {
+            "node": "Set Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Set Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execution Data": {
+      "main": [
+        [
+          {
+            "node": "fromMe?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Input": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "fromMe?": {
+      "main": [
+        [
+          {
+            "node": "Create an activity - Mensagem do Atendente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create an activity - Mensagem do Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Transcribe a recording",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetBase64": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe a recording": {
+      "main": [
+        [
+          {
+            "node": "Set Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Audio": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Convert to File2": {
+      "main": [
+        [
+          {
+            "node": "Analyze video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File3": {
+      "main": [
+        [
+          {
+            "node": "Analyze document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Image": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Analyze video": {
+      "main": [
+        [
+          {
+            "node": "Set Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze image": {
+      "main": [
+        [
+          {
+            "node": "Set Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to Image": {
+      "main": [
+        [
+          {
+            "node": "Analyze image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze document": {
+      "main": [
+        [
+          {
+            "node": "Set Document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Document": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Set Video": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "GetBase64Image": {
+      "main": [
+        [
+          {
+            "node": "Convert to Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetBase64Video": {
+      "main": [
+        [
+          {
+            "node": "Convert to File2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetBase64Video2": {
+      "main": [
+        [
+          {
+            "node": "Convert to File3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If isGroup": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Encontra Negocio": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Encontra Negocio1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Execution Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Encontra Negocio1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Encontra Negocio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ea4900c7-2099-4836-82da-bf93ea9adcbc",
+  "meta": {
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "CJfeejjEkXAZwNeB",
+  "tags": []
+}
