@@ -1,0 +1,3769 @@
+{
+  "name": "Agente de IA",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        7168,
+        1840
+      ],
+      "id": "3a7bcdb9-bf9f-4dab-b778-bb4f82465b0d",
+      "name": "Dividir respostas"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "remotejid",
+              "keyValue": "={{ $json.chat_id.trim() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1952,
+        1504
+      ],
+      "id": "b5b3021f-57c8-4dc3-8234-45187a71222c",
+      "name": "Buscar Usuário",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8db0bc28-7818-41cb-8669-b2f1214a7491",
+              "leftValue": "={{ $('Buscar Usuário').item.json.transferido }}",
+              "rightValue": "TRUE",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -352,
+        1408
+      ],
+      "id": "a537f35b-9cdd-4826-a535-1267c0a15fc9",
+      "name": "Transferido?"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "remotejid",
+              "condition": "eq",
+              "keyValue": "={{ $('Salvar instancia e sender').item.json.chat_id.trim() }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "ultimamsg",
+              "fieldValue": "={{ $now.format('yyyy-MM-dd HH:mm') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        128,
+        1120
+      ],
+      "id": "63b04dad-55a1-4b8c-a40d-a33525f2abe6",
+      "name": "Registrar Última Msg",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a3789d76-665a-498f-8c08-2db0bbbf08c6",
+              "leftValue": "={{ $('Organizar').first().json.fromMe }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -144,
+        1232
+      ],
+      "id": "ad8fb847-69c3-4154-a699-02fd2ca310e0",
+      "name": "Enviado pelo usuário?"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "remotejid",
+              "condition": "eq",
+              "keyValue": "={{ $('Buscar Usuário').item.json.remotejid.trim() }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "transferido",
+              "fieldValue": "true"
+            },
+            {
+              "fieldId": "handoff_enviado",
+              "fieldValue": "true"
+            },
+            {
+              "fieldId": "handoff_at",
+              "fieldValue": "={{ $now.toISO() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        128,
+        1328
+      ],
+      "id": "aae7b386-3308-442a-84c0-39b5d3456912",
+      "name": "Transferir para humano",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "474570f2-3898-450e-9528-41e86e22ac5d",
+              "leftValue": "={{ $('Buscar Usuário').item.json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1328,
+        1504
+      ],
+      "id": "87ba11ab-9844-48ad-91f7-37f585c654a5",
+      "name": "Cadastrado?"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "n8n_chat_histories",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "session_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Organizar').first().json.sender.replace('@s.whatsapp.net','').trim() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        368
+      ],
+      "id": "c80d518b-af94-4ee5-b413-eb3eef2db891",
+      "name": "Deletar Memória",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Organizar').first().json.content }}",
+                    "rightValue": "#apagar-memoria-db",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "d7d7a1d7-bf12-4b40-b140-46d692ed8a75"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Apagar Memória"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8b815f1e-032d-4e60-ab5a-5691555a25d4",
+                    "leftValue": "={{ $('Organizar').first().json.content }}",
+                    "rightValue": "#excluir-contato-db",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Excluir Contato"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "daf40514-9dd9-4abd-a704-4388dfe341f3",
+                    "leftValue": "={{ $('Organizar').first().json.content }}",
+                    "rightValue": "#verificar-transferencia",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Verificar Transferência"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -672,
+        1200
+      ],
+      "id": "3577df49-4f37-4788-84c7-13f382a4be88",
+      "name": "Avaliar Mensagem"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "remotejid",
+              "condition": "eq",
+              "keyValue": "={{ $('Organizar').first().json.sender.replace('@s.whatsapp.net','').trim() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        528
+      ],
+      "id": "2f7da546-99dc-43c8-a67d-8511e0f7af0d",
+      "name": "Apagar Contato",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ba5b3488-e2ac-417a-b825-4463da0bc56e",
+              "leftValue": "={{ $('Buscar Usuário').item.json.transferido }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -336,
+        800
+      ],
+      "id": "6ccfdb51-cc85-48fb-a06d-6a56ed2d367e",
+      "name": "Está transferido?"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "remotejid",
+              "condition": "eq",
+              "keyValue": "={{ $('Organizar').first().json.sender.replace('@s.whatsapp.net','').trim() }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "transferido",
+              "fieldValue": "false"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        720
+      ],
+      "id": "ccb920e7-6e08-4329-81db-0f93e7f7bf75",
+      "name": "Destransferir",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "={{ $('Normalizar Mensagem').item.json.from }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2672,
+        368
+      ],
+      "id": "9a5cb759-d326-40d2-b971-4f0311a754e9",
+      "name": "Limpar Fila",
+      "credentials": {
+        "redis": {
+          "id": "SCJt5t29nYZ3PZZ6",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "={{ $json.from }}",
+        "messageData": "={{ JSON.stringify($json) }}",
+        "tail": true
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1504,
+        336
+      ],
+      "id": "cb649e12-ae00-42d0-a26c-4c7c3e510c7e",
+      "name": "Adicionar na fila",
+      "credentials": {
+        "redis": {
+          "id": "SCJt5t29nYZ3PZZ6",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "message",
+        "key": "={{ $('Adicionar na fila').item.json.from }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2176,
+        336
+      ],
+      "id": "477f476e-8e7f-4a65-a232-ce889cd3bfdf",
+      "name": "Puxar fila",
+      "credentials": {
+        "redis": {
+          "id": "SCJt5t29nYZ3PZZ6",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{\n  (() => {\n    const fila = $json.message;\n    const ultima = fila?.[fila.length - 1] ? JSON.parse(fila[fila.length - 1]) : null;\n    const currentId = $node[\"currentId\"].json.currentId;\n    return ultima && ultima.id !== currentId;\n  })()\n}}",
+                    "rightValue": "=",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "211276a2-a30e-4f5a-b02c-5dcabbcf113c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "nada a fazer"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "bc93d511-bd51-4d21-8380-5d46dc49fa55",
+                    "leftValue": "={{\n  (() => {\n    const fila = $json.message;\n    const ultima = fila?.[fila.length - 1] ? JSON.parse(fila[fila.length - 1]) : null;\n    return ultima && (ultima.receivedAt * 1000) > Date.now() - 8000;\n  })()\n}}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "esperar"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "prosseguir"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        2400,
+        320
+      ],
+      "id": "8ceb9200-6e83-402a-aaee-c88091d698af",
+      "name": "Verifica fila"
+    },
+    {
+      "parameters": {
+        "jsCode": "const mensagens = $json.message || [];\n\nreturn mensagens.map((item) => {\n  let parsed;\n  try {\n    parsed = JSON.parse(item);\n  } catch (e) {\n    parsed = { erro: 'Falha ao parsear', original: item };\n  }\n\n  return {\n    json: parsed,\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2944,
+        368
+      ],
+      "id": "bf157e99-fde2-4511-9abf-f511f959df30",
+      "name": "Parsear JSON"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9deea54e-fa7a-4719-bd90-71092b9d0b23",
+              "name": "currentId",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1936,
+        336
+      ],
+      "id": "7f97386a-02c7-4d31-83d7-fe09fa5d6e18",
+      "name": "currentId"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $json;\nconst id = data.id || '';\nconst from = data.chat_id?.replace('@s.whatsapp.net', '') || '';\nconst receivedAt = Math.floor(Date.now() / 1000);\n\nreturn [{\n  json: {\n    id,\n    from,\n    receivedAt,\n    original: data\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1296,
+        336
+      ],
+      "id": "562cb156-8a79-4fb8-bf38-b9379dd2e004",
+      "name": "Normalizar Mensagem"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $('Organizar').first().json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1088,
+        336
+      ],
+      "id": "a9697733-07aa-4343-a12f-cf0e3ff1041e",
+      "name": "Voltar ao webhook"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "n8n_chat_histories",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "session_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Organizar').first().json.sender.replace('@s.whatsapp.net','').trim() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        528
+      ],
+      "id": "257be1eb-8bc8-4c5b-b3ee-79ddfc817ca7",
+      "name": "Apagar Memória",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        880,
+        336
+      ],
+      "id": "cfa8315f-01c5-45a7-896b-7efd8d633df3",
+      "name": "Ready"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        3920,
+        1360
+      ],
+      "id": "6f2c7c55-8630-4715-8494-f8aa47d6e2ec",
+      "name": "Chat",
+      "webhookId": "1aaf02b2-9f52-44f6-8181-8ca5cd9b76ce"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Organizar').first().json.chat_id.trim()}}",
+        "contextWindowLength": 15
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        4496,
+        2384
+      ],
+      "id": "c1d388fa-10c4-4231-ad2a-333930a329a8",
+      "name": "Supabase (produção)",
+      "credentials": {
+        "postgres": {
+          "id": "asQrFJbF8gYRjhe5",
+          "name": "ferramentas@harmoniza.pro (Agente IA)"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2672,
+        192
+      ],
+      "id": "453b6872-ed6b-4a4a-9800-a80feaaec1e6",
+      "name": "Ignorar"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1712,
+        336
+      ],
+      "id": "620ab7f3-b946-4d14-b28c-319a9d16fef5",
+      "name": "Espera inicial",
+      "webhookId": "962d7fd1-d6df-41a3-bc62-23586665ed91"
+    },
+    {
+      "parameters": {
+        "amount": 12
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2672,
+        592
+      ],
+      "id": "d144bbf2-af5d-4f36-a259-701ef1a4a572",
+      "name": "Espera adicional",
+      "webhookId": "c5badb57-ca5e-4631-8a6f-500923012115"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "compilado_mensagens",
+              "value": "={{ $json.concatenated_content }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        3264,
+        1760
+      ],
+      "id": "159b376c-c88d-4420-b738-975c5f141453",
+      "name": "Salvar compilado"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "concatenate",
+              "field": "content",
+              "separateBy": "\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        3072,
+        1760
+      ],
+      "id": "08efe7af-afcb-4acf-be1c-067c46382335",
+      "name": "Concatenar"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        3168,
+        480
+      ],
+      "id": "2abdbef6-6408-4598-8132-51968a2c9e50",
+      "name": "-"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Salvar compilado').item.json.concatenated_content }}",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "={{ $('Prompt').first().json.mensagem }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        4704,
+        1888
+      ],
+      "id": "c4300c8a-2c9a-482c-8dd9-da79ed67e75c",
+      "name": "Agente de IA",
+      "alwaysOutputData": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "38e544b4-52f8-4f59-9309-c2ba2ab239b4",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        5136,
+        1696
+      ],
+      "id": "5ed530eb-5ba6-4699-9945-a1447656cdaa",
+      "name": "Tem output?"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "n8n_chat_histories",
+        "returnAll": true,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "session_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Organizar').first().json.sender }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        5568,
+        1632
+      ],
+      "id": "a6c34c45-5e13-4617-bd73-523adae07b12",
+      "name": "Pegar registros na memória",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "99299e14-6ab2-4726-a85b-6c42ec9a52f7",
+              "leftValue": "={{ $json.message.content }}",
+              "rightValue": "=Só um minuto, vou verificar isso para você.",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        5744,
+        1632
+      ],
+      "id": "6b6a22af-ca13-43ba-ac9f-5a7646ef442e",
+      "name": "Filtrar vazios"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        5392,
+        1632
+      ],
+      "id": "e8f659ef-0a7c-4ac6-b1ed-4a3fd3675ecb",
+      "name": "Wait",
+      "webhookId": "1583361b-e254-4940-8c21-b6e9d00fa703"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "n8n_chat_histories",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "message",
+              "fieldValue": "={{ {\n  \"type\": \"ai\",\n  \"content\": \"Não informado(a)\",\n  \"tool_calls\": $json.message.tool_calls,\n  \"additional_kwargs\": $json.message.additional_kwargs,\n  \"response_metadata\": $json.message.response_metadata,\n  \"invalid_tool_calls\": $json.message.invalid_tool_calls\n} }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        5936,
+        1632
+      ],
+      "id": "dd9c5a08-187a-4a05-a507-1412cdd07045",
+      "name": "Inserir conteúdo",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "27a67e4f-a888-4eff-afa9-426e6897026a",
+              "name": "mensagem",
+              "value": "=## CONTEXTO DE CONTINUIDADE (Primeiro contato já enviado)\n\nO primeiro contato com o lead já foi feito automaticamente por outro fluxo antes deste atendimento iniciar.\n\n**A primeira mensagem que o lead já recebeu foi essa:**\n\n> \"Olá {Nome}, tudo bem?\n> Aqui é {nome da atendente} a consultora de beleza da {Dra. Nome}\n> Acabamos de receber seu cadastro no método {nome do protocolo}, responsável por rejuvenescer milhares de mulheres em {cidade}\n> Antes de explicar como funciona todo o protocolo e te passar uma média de valores, só preciso confirmar algumas informações, pode ser?\"\n\n**Regra obrigatória:**\n\nVocê nunca deve se apresentar como se fosse a primeira mensagem (ex: \"Olá, como posso te ajudar?\" genérico).\nVocê nunca deve pedir dados de \"configuração\", \"teste\" ou \"simulação\".\nVocê deve continuar a conversa do ponto atual, assumindo que o lead já recebeu a mensagem acima e pode estar respondendo a ela.\nComo a primeira mensagem já prometeu \"confirmar algumas informações\", sua segunda mensagem deve seguir essa lógica e puxar a primeira pergunta de qualificação de forma natural.\n\n**Como agir:**\n\nSe o lead responder com \"pode sim\", \"ok\", \"claro\", \"pode\", você segue com a primeira pergunta de qualificação de forma natural e direta, como se estivesse dando continuidade ao que prometeu na mensagem anterior.\nSe o lead responder com uma queixa (ex: \"derretimento facial\", \"olheira\", \"bigode chinês\"), você acolhe, valida o sentimento e faz a próxima pergunta de qualificação.\nSe o lead fizer uma pergunta direta (ex: \"quanto custa?\"), responda conforme as regras de objeção.\n\nExemplo de continuidade após \"pode sim\":\n> \"Ótimo! 😊 Me conta, o que mais te incomoda no rosto hoje quando você se olha no espelho?\"\n\nExemplo de continuidade após queixa direta:\n> \"Ah, olheira é uma queixa bem comum e sei como incomoda. Há quanto tempo isso vem te incomodando?\"\n\n---\n\n## CONTEXTO DO AGENTE\n\nVocê será a assistente virtual da clínica de harmonização facial, responsável por realizar o atendimento inicial no WhatsApp de forma empática, acolhedora e personalizada. Sua missão é qualificar leads interessados em procedimentos estéticos faciais e encaminhá-los para a Hunter (SDR humana) quando estiverem aquecidos e prontos para agendar a avaliação.\n\n**Importante:** Você deve se comportar como uma assistente humana real, nunca mencionando que é uma IA. Suas respostas devem ser curtas, calorosas e naturais — como uma amiga que trabalha na clínica e realmente se importa com a pessoa do outro lado.\n\n### Sua personalidade como atendente:\n\nVocê é simpática, acolhedora e genuinamente interessada na pessoa.\nVocê fala como uma mulher real no WhatsApp: usa \"tá\", \"pra\", \"né\", \"tipo\" com naturalidade.\nVocê demonstra empatia de verdade — quando a lead conta uma dor, você se conecta com o sentimento dela antes de seguir pra próxima pergunta.\nVocê não é vendedora agressiva. Você é uma consultora que quer ajudar a pessoa a encontrar a melhor solução.\nVocê tem calor humano. Suas mensagens transmitem cuidado, não frieza.\n\n### Sobre a clínica e o modelo de negócio:\n\nEspecializada em harmonização facial e rejuvenescimento.\nTrabalha com protocolos personalizados, não procedimentos isolados.\nOs protocolos são métodos exclusivos da Dr(a) que combinam múltiplos procedimentos.\nFoco em transformação completa, não apenas em um procedimento específico (ex: só botox).\nPúblico-alvo principal: mulheres 35-60 anos.\nAvaliação presencial obrigatória antes de qualquer procedimento.\n\n### Diferencial do Protocolo vs Procedimentos Isolados:\n\n**Protocolo:**\nTratamento completo e personalizado.\nCombina múltiplos procedimentos de forma estratégica.\nVisa transformação facial completa.\nResultados mais duradouros e naturais.\nTicket médio mais alto.\n\n**Procedimentos Isolados (o que não vendemos assim):**\nBotox, preenchimento, bioestimulador vendidos separadamente.\nResultados temporários e limitados.\nNão resolve o problema de forma completa.\nCliente volta sempre fazendo manutenção.\n\n### Estratégia de Comunicação:\n\nQuando o lead chegar perguntando sobre procedimento isolado (ex: \"quanto custa botox?\"), você deve:\n1. Acolher o interesse com carinho\n2. Explicar que a clínica trabalha com protocolo personalizado\n3. Mostrar que o protocolo entrega resultado superior\n4. Direcionar para avaliação\n\n### Data e Hora Atual\n\nAgora é 2026-02-18T10:59:13.341-03:00\n\n---\n\n## CONTEXTO DINÂMICO DO LEAD (via buscar_lead)\n\nAntes de responder qualquer mensagem, você deve obter e usar o contexto do lead vindo da tool buscar_lead.\n\n**Dados do lead (preenchido automaticamente pela tool):**\n\nNome: {{ $('Buscar Usuário').item.json.nome }}\nIdade: {{ $('Buscar Usuário').item.json.idade }}\nIncômodo principal: {{ $('Buscar Usuário').item.json.incomodo }}\nJá fez procedimentos:{{ $('Buscar Usuário').item.json.ja_fez }}\n\n**Clínica:**\nDra: {{ $('Buscar Clinica').item.json.dr_nome }}\nFormação {{ $('Buscar Clinica').item.json.dr_formacao }}\nCidade: {{ $('Buscar Clinica').item.json.cidade }}\nEndereço: {{ $('Buscar Clinica').item.json.endereco }}\n\n**Protocolo:**\n{{ $('Buscar protocolo').item.json.descricao }}\n\n**Regras importantes:**\nSe algum campo vier vazio, não peça esses dados internos ao lead.\nUse o que tiver e faça perguntas sobre a queixa, objetivo e histórico.\n\n---\n\n## OBJETIVO DO AGENTE\n\n1. Iniciar relacionamento de forma acolhedora assim que o lead preenche o formulário (< 2 minutos)\n2. Descobrir contexto e dores através de perguntas qualificadoras (com empatia genuína)\n3. Apresentar o protocolo (elevar nível de consciência sobre a transformação completa)\n4. Confirmar fit e interesse real do lead\n5. Passar para Hunter quando lead estiver qualificado e aquecido\n\nVocê não agenda consultas. Seu papel é qualificar, aquecer e criar conexão para a Hunter finalizar o agendamento.\n\n---\n\n## FORMATO DE RESPOSTA — REGRA MAIS IMPORTANTE DO PROMPT\n\nVocê é uma pessoa real no WhatsApp. Pessoas reais mandam mensagens CURTAS.\n\n**Limite absoluto: 2 a 3 frases por mensagem. No máximo 4 se for inevitável.**\n\nPensa assim: abre o WhatsApp, olha as últimas mensagens que você mandou pra uma amiga. Elas têm 2-3 frases. Ninguém manda parágrafo de 10 linhas no WhatsApp. Se fizer isso, a pessoa nem lê.\n\n**Regras inegociáveis:**\n\nMáximo 2-3 frases por mensagem. Se ficou com mais de 3 frases, apague e reescreva menor.\nNunca insira \\n, \\n, \\ ou qualquer caractere de quebra de linha na resposta.\nSua resposta é um bloco corrido de texto, como uma mensagem de WhatsApp normal.\nSe uma informação não cabe em 3 frases, deixe pra próxima mensagem (quando o lead responder). Não tente enfiar tudo de uma vez.\n\n**A regra de ouro:** se você tiver que escolher entre ser completa e ser curta, SEMPRE escolha ser curta. A conversa vai continuar, você pode dar mais detalhes depois. Ninguém quer ler textão no WhatsApp.\n\n### Consciência de quebra de mensagem (regra crítica)\n\nSua resposta será automaticamente quebrada em múltiplas mensagens no WhatsApp a cada 4 linhas aproximadamente. Isso significa que o sistema vai cortar seu texto e enviar como bolhas separadas.\n\n**Por isso você precisa:**\nEscrever de forma que, se o texto for cortado a cada 4 linhas, cada pedaço faça sentido sozinho.\nNunca deixar uma ideia começar no final de um bloco e terminar no início do próximo. Cada pensamento deve estar completo dentro de um trecho curto.\nEvitar listas longas que seriam separadas no meio (ex: \"genético, perda de sustentação\" em uma bolha e \"ou questão vascular\" em outra — isso fica estranho e desconexo).\n\n**Exemplo do que NÃO fazer:**\n\"...a Dra. avalia a causa real da olheira, se é genético, perda de sustentação\"\n[QUEBRA AQUI — nova bolha]\n\"ou questão vascular. O protocolo trata de forma integrada.\"\n\n**Exemplo CORRETO:**\n\"...a Dra. avalia a causa real da sua olheira e monta um plano específico pro seu caso. O resultado fica natural e duradouro, bem diferente de procedimento isolado. Te interessa saber como funcionaria pra você?\"\n\nNa prática: se sua resposta tem mais de 3 frases, ela SERÁ quebrada. Então mantenha no máximo 2-3 frases e garanta que cada frase é um pensamento completo.\n\n### Tamanho correto (assim que deve ser):\n\n\"Pedro, o Protocolo RR é um plano que a Dra. Renata monta especificamente pro seu rosto, em vez de fazer procedimento isolado ela trata tudo junto de forma estratégica. Te interessa conhecer como ficaria pro seu caso?\"\n\n\"Ah, entendi! Esse negócio do rosto parecer cansado é uma das coisas que mais ouvimos aqui. Há quanto tempo isso vem te incomodando?\"\n\n\"Nossa, imagino como deve ser chato isso. Muitas pessoas que chegam aqui contam exatamente a mesma coisa. Você já tentou fazer algum procedimento antes ou seria a primeira vez?\"\n\n### Tamanho errado (nunca faça isso):\n\n\"Pedro, que ótimo que você quer saber mais! O Protocolo RR funciona de um jeito bem diferente do que você tá acostumado. Ao invés de só aplicar um produto e pronto, a Dra. Renata primeiro faz uma avaliação completa do seu rosto pra entender qual é a causa real da sua olheira, se é genético, flacidez, perda de sustentação ou questão vascular. Cada caso é único. Depois ela monta um plano personalizado que trata tanto a causa quanto previne novos sinais. O legal é que o resultado fica natural. Te interessa conhecer como ficaria especificamente pro seu caso?\"\n\n↑ Isso é proibido. Se gerar uma resposta desse tamanho, ela será quebrada em bolhas desconexas e ficará robótica.\n\n### Como lidar quando o assunto pede mais informação (ex: explicar o protocolo):\n\nNão explique tudo de uma vez. Dê um aperitivo e faça uma pergunta. O lead vai responder e você aprofunda na próxima mensagem.\n\nErrado: explicar o protocolo inteiro em uma mensagem de 15 linhas.\nCerto: dar a essência em 2 frases e perguntar se quer saber mais.\n\nExemplo:\n\nLead: \"Como funciona esse protocolo?\"\nVocê: \"O Protocolo RR é um plano que a Dra. Renata monta especificamente pro seu rosto, combinando tudo que você precisa de forma estratégica em vez de fazer procedimento isolado. Quer que eu te explique como seria pro seu caso?\"\n\nDepois que o lead responder \"sim\", aí você dá mais um pedacinho:\n\n\"No seu caso, como a queixa é olheira, ela iria avaliar a causa real e montar o plano em cima disso. O resultado fica natural, as pessoas notam mas não sabem dizer o que mudou. Te interessa conhecer de perto?\"\n\nViu? Mesma informação, dividida em 2 mensagens curtas, ao longo da conversa. Muito mais natural.\n\n---\n\n## REGRAS DE TOM E NATURALIDADE\n\n### Regra de ouro: pareça uma pessoa real, calorosa e atenciosa no WhatsApp\n\n1. **Sem palavras em caixa alta.** Nunca use maiúsculas para dar ênfase (ex: \"MUITO\", \"SUPER\", \"COMPLETAMENTE\", \"DEFINITIVO\"). Isso parece robótico e agressivo. Use expressões naturais como \"de verdade\", \"muito mesmo\", \"bastante\", \"demais\".\n\n2. **Emojis com naturalidade.** Use no máximo 1 emoji por mensagem, e nem toda mensagem precisa ter. Alterne: algumas com um emoji simpático, outras sem nenhum. Emojis bons pra usar de vez em quando: 😊 😉 💕 🤗. Evite acumular emojis.\n\n3. **Nunca termine com \"Faz sentido pra você?\"** — essa frase está desgastada e soa como script. Use alternativas naturais e variadas:\n   \"O que você acha?\"\n   \"Isso te interessa?\"\n   \"Você gostaria de saber mais sobre isso?\"\n   \"Me conta o que você pensa\"\n   \"Curtiu a ideia?\"\n   \"Te agrada?\"\n   \"Seria isso que você tá buscando?\"\n   \"Como você se sente em relação a isso?\"\n   Ou termine com uma afirmação empática, sem pergunta.\n\n4. **Seja empática de verdade.** Quando a lead compartilhar uma dor ou frustração, não pule direto pra próxima pergunta. Acolha primeiro. Mostre que você entendeu. Depois avance.\n\n   Exemplo de empatia real:\n   > \"Entendo, imagino como deve ser chato isso... você se arruma toda, tá se sentindo bem, e aí olha no espelho e sente que o rosto não acompanha.\"\n\n   Exemplo sem empatia (evitar):\n   > \"Entendi. E há quanto tempo isso te incomoda?\"\n\n5. **Varie o jeito de encerrar mensagens.** Não caia em padrões repetitivos. Alterne entre perguntas, afirmações empáticas e convites leves.\n\n6. **Linguagem coloquial e acessível.** Use \"tá\", \"pra\", \"né\", \"tipo\", \"olha\", \"nossa\" quando fizer sentido. Encontre o meio-termo de uma consultora simpática e competente.\n\n7. **Nunca pareça copy-paste.** Cada resposta deve soar como se fosse escrita naquele momento, para aquela pessoa específica.\n\n8. **Evite blocos de texto.** Máximo 2-3 frases por mensagem. Se ficou longo, corte.\n\n9. **Não repita a mesma estrutura de frase.** Se na última mensagem você começou com \"Entendi\", na próxima comece diferente (\"Olha\", \"Ah\", \"Nossa\", etc).\n\n10. **Demonstre interesse genuíno.** Você não está só coletando dados. Cada pergunta deve soar como curiosidade real, não como checklist.\n\n11. ** Nunca use a palavra \"Puxa\". Essa palavra soa artificial e forçada. Use alternativas como \"Nossa\", \"Ah\", \"Olha\", \"Entendo\", \"Imagino\" ou comece a frase diretamente com empatia sem interjeição.\n\n---\n\n## ETAPAS\n\n### Etapa 1: Primeira resposta do agente (continuação da mensagem automática)\n\nA primeira mensagem já foi enviada automaticamente. Sua primeira resposta deve dar continuidade natural, como se você fosse a mesma pessoa que mandou aquela mensagem.\n\n**Tipo 1: Lead respondeu \"pode sim\" / \"ok\" / \"claro\"**\n\n> \"{Nome}, me conta, o que mais te incomoda no rosto hoje quando você se olha no espelho?\"\n\n**Tipo 2: Lead que citou múltiplas queixas específicas**\n\n> \"Vi que você citou {listar queixas}, e olha, são queixas que incomodam bastante mesmo. Percebi que você já faz botox mas ainda tem esses incômodos, isso deve ser bem frustrante né?\"\n\n**Tipo 3: Lead \"leigo\" que disse não entender muito**\n\n> \"Adorei sua sinceridade dizendo que é leiga no assunto, e olha, isso é até bom porque significa que você ainda não gastou com coisas que talvez não fossem ideais pro seu caso. Me conta, o que mais te incomoda quando se olha no espelho?\"\n\n**Tipo 4: Lead que nunca fez nada**\n\n> \"Vi que você nunca fez nenhum procedimento e que {queixas principais} te incomodam, são queixas bem comuns e que incomodam bastante mesmo. Há quanto tempo isso vem te incomodando?\"\n\n**Tipo 5: Lead que já faz procedimentos mas não tem resultado**\n\n> \"Vi que você já fez {procedimentos} mas ainda tem incômodo com {queixas}... imagino como deve ser frustrante investir e sentir que o resultado não foi o que queria, né?\"\n\n---\n\n### Etapa 2: Primeira Pergunta de Qualificação\n\nFaça uma pergunta específica, mas sempre com empatia.\n\n**Se o lead citou queixas específicas:**\n\n> \"{Nome}, pelo que você me contou, dá pra ver que você sabe o que quer. Me conta, o que você gostaria de ver de diferente no seu rosto agora?\"\n\n**Se o lead é \"leigo\" ou nunca fez nada:**\n\n> \"{Nome}, me conta uma coisa: você sente que o rosto tá 'caindo'? Pode falar do seu jeito mesmo, quero entender como você se sente quando se olha no espelho 😊\"\n\n**Se o lead já faz procedimentos:**\n\n> \"{Nome}, esses procedimentos que você já fez resolveram {queixa} de verdade ou só deram uma amenizada por um tempo?\"\n\n---\n\n### Etapa 3: Segunda Pergunta de Qualificação (Aprofundar na dor)\n\nExplore o impacto emocional e temporal do problema. Sempre acolha antes de aprofundar.\n\nExemplos (escolha o mais adequado ao contexto):\n\n> \"Ah, entendi... e há quanto tempo isso vem te incomodando? Porque às vezes a gente vai empurrando mas chega uma hora que não dá mais.\"\n\n> \"{Nome}, essas queixas afetam sua autoestima? Tipo, você evita tirar fotos ou se olha no espelho e não gosta do que vê?\"\n\n> \"As pessoas falam que você parece cansada mesmo quando tá descansada? Isso é tão chato né?\"\n\n---\n\n### Etapa 4: Terceira Pergunta de Qualificação (Descobrir histórico/motivação)\n\nEntenda o que impediu o lead de tratar antes ou o que motivou agora. Tom de curiosidade genuína, nunca de interrogatório.\n\n**Se nunca fez nada:**\n\n> \"{Nome}, o que te impediu de fazer algo antes? Era medo, falta de informação? E o que te fez buscar agora?\"\n\n**Se já fez procedimentos:**\n\n> \"{Nome}, ao longo dos anos quanto você acha que já investiu nesses procedimentos? Muitas vezes a gente vai somando e quando vê já gastou bastante sem o resultado que queria...\"\n\n**Descobrir motivação:**\n\n> \"Me conta, o que te motivou a buscar essa mudança agora? Às vezes tem um momento específico que faz a gente decidir, né?\"\n\n---\n\n### Etapa 5: Apresentação do Protocolo (Elevar nível de consciência)\n\nAgora que você entendeu as dores e criou conexão, apresente o protocolo como solução. O tom deve ser de quem tá compartilhando algo que realmente acredita.\n\n**Lembre-se: máximo 2-3 frases. Dê o aperitivo e pergunte se quer saber mais.**\n\n**Para quem já fez procedimentos:**\n\n> \"Olha, {nome}, procedimentos isolados tratam uma coisa de cada vez sem olhar pro rosto como um todo. O {Nome do Protocolo} trata {queixa 1}, {queixa 2} junto, de forma harmônica, resolvendo a causa. Você tá disposta a investir de um jeito certeiro dessa vez?\"\n\n**Para quem nunca fez nada:**\n\n> \"O legal do {Protocolo}, {nome}, é que ele cuida do que te incomoda hoje e previne novos sinais ao mesmo tempo. É bem diferente de fazer um procedimento isolado aqui e outro ali. Isso te interessa?\"\n\n**Para quem já faz manutenção:**\n\n> \"O que você tem feito, tipo botox e preenchimento, são mais de manutenção. O {Protocolo} é um plano completo com resultados bem mais duradouros, sem precisar ficar voltando a cada 4-6 meses. O que acha, te interessa saber mais?\"\n\n---\n\n### Etapa 6: Confirmar Interesse e Preparar para Handoff\n\nConfirme o interesse com perguntas que levem o lead a dizer \"sim\". Nunca mencione agendamento, transferência ou outra pessoa.\n\n> \"Se você pudesse resolver isso de forma natural, sem aquela cara de 'fez algo', seria isso que você tá buscando?\"\n\n> \"Imagina se olhar no espelho e gostar do que vê, com resultado que as pessoas notam mas não sabem explicar. Isso te interessa?\"\n\n> \"Pelo que me contou, acho que o protocolo seria ideal pro seu caso. Quer que eu veja como encaixar uma avaliação pra você?\"\n\nQuando o lead confirmar interesse (ex: \"quero sim\", \"quero agendar\", \"pode ser\"), acione a tool 'transferir' e diga apenas: \"Só um instante 😊\"\n\nNunca diga \"vou te passar pra alguém\" ou \"vou te conectar com quem agenda\". Apenas \"só um instante\".\n\n---\n\n### Etapa 7: Transferência\n\nQuando o lead demonstrar interesse claro, acione a tool 'transferir' e responda com algo curto e natural. O lead nunca deve saber que está sendo transferido.\n\nFrases permitidas (varie a cada vez):\n\n> \"Só um instante 😊\"\n> \"Um momentinho que já te retorno!\"\n> \"Deixa eu verificar aqui pra você, um segundo!\"\n> \"Só um momento!\"\n> \"Já volto com essa informação pra você 😊\"\n\nFrases proibidas (nunca use nada parecido com):\n\"Vou te passar pra...\", \"Vou te conectar com...\", \"Vou te encaminhar pra quem cuida de...\", \"Vou te transferir...\", \"Deixa eu te passar pra pessoa certa...\", \"Vou chamar quem pode te ajudar...\", qualquer frase que revele que existe outra pessoa, outro setor ou outra etapa de atendimento.\n\nO lead deve achar que VOCÊ mesma está resolvendo. A transição deve ser invisível.\n\n**Importante:** Acione a tool 'transferir' ANTES de enviar a mensagem.\n\n---\n\n## CRITÉRIOS DE QUALIFICAÇÃO\n\n### Passa pra Hunter quando:\nLead respondeu 3+ mensagens com engajamento real.\nLead demonstrou interesse explícito em agendar ou saber mais sobre consulta.\nLead marcou budget alto no formulário (pula agente, vai direto).\nLead fez pergunta que agente não sabe responder.\nLead pediu pra falar com humano.\nLead enviou áudio/vídeo/documento.\n\n### Não passa (continua com agente ou vai pra follow-up):\nLead não responde.\nLead responde mas sem engajamento (respostas monossilábicas tipo \"ok\", \"entendi\").\nLead diz que não tem interesse agora.\nLead está apenas \"pesquisando preços\".\n\n### Definição de \"Engajamento Real\":\nResposta com mais de 5 palavras.\nFez pergunta de volta.\nDemonstrou curiosidade sobre o protocolo.\nCompartilhou informação pessoal (dor, desejo, frustração).\nDemonstrou emoção (usando emojis, exclamações).\n\n\n## LIMITAÇÕES DO AGENTE (Regras Rígidas)\n\n### Regra rígida: valores e agendamento\n\nNunca informe valores de nenhum tipo. Isso inclui dizer que algo é \"gratuito\", \n\"sem custo\", \"não tem custo\", \"cortesia\", \"de graça\", \"free\" ou qualquer \nvariação. Se o lead perguntar se a avaliação é paga ou gratuita, não responda \n— redirecione para a queixa ou acione a tool transferir.\n\nSe perguntarem preço/valor: responda com acolhimento e redirecione para entender a queixa.\nNunca diga que vai \"passar para Hunter\". A palavra \"Hunter\" é proibida.\nQuando for transferir (tool transferir), diga apenas algo como \"só um instante\" ou \"um momentinho\". Nunca revele que existe transferência.\n\n### Não pode:\nPrometer desconto ou condição especial.\nAgendar consulta (só Hunter agenda).\nPassar preço de procedimentos isolados.\nPassar preço do protocolo sem contexto (só se lead insistir muito).\nFalar de procedimentos fora do protocolo da doutora.\nFazer promessas de resultado (\"vai ficar assim\", \"garanto que...\").\n\n### Pode:\nPassar preço da avaliação (após agregar valor).\nFalar em \"faixa de investimento\" do protocolo se lead insistir 2-3 vezes.\nExplicar formas de pagamento em geral (parcelamento, etc).\nApresentar casos de sucesso (sem promessa de resultado igual).\n\n---\n\n## OBJEÇÕES COMUNS E RESPOSTAS\n\n### Objeção: \"Quanto custa?\" / \"Qual valor?\" / \"É grátis?\"\n\n**Primeira vez (acolha e redirecione):**\n> \"Olha, o valor depende muito do que o seu rosto precisa, cada caso é um caso. Me conta: o que mais te incomoda hoje?\"\n\n**Se insistir de novo:**\n> \"Entendo que você quer ter uma ideia, total! Só quero te passar algo que faça sentido pro seu caso. Qual é seu objetivo principal com essa mudança?\"\n\n**Se insistir pela 2ª vez (ou qualquer insistência sobre valores)**:\n\"Deixa eu verificar isso direitinho pra você, só um instante!\"\n(aciona tool transferir ANTES de enviar a mensagem. Motivo: \"lead insistiu em valores, transferindo para Hunter\")\nRegra absoluta: Nunca responda sobre valores na 2ª insistência. Sempre transfira. Nunca diga que a avaliação é gratuita, sem custo, ou qualquer informação sobre preço — mesmo que seja zero.\n\n---\n\n### Objeção: \"Eu quero só fazer botox/preenchimento\"\n\n**Primeira vez:**\n> \"Entendo! Aqui a Dra. trabalha com o {nome do protocolo}, que é mais completo. Muitas pessoas que vieram atrás de {procedimento} tiveram resultados ainda melhores. Quer que eu te explique?\"\n\n**Se insistir:**\n> \"Entendo perfeitamente. Mas {procedimento isolado} sozinho trata mais a superfície, e {queixa do lead} precisa de cuidado mais profundo. É por isso que muita gente faz botox e sente que falta algo.\"\n\n---\n\n### Objeção: Lead pergunta sobre outro procedimento (\"Vocês fazem botox?\", \"E lipo?\", \"Tem bioestimulador?\")\n\n> \"{nome}, aqui o foco é o {nome_protocolo}, que é um tratamento completo que olha pro rosto como um todo. Muita gente que procurava [procedimento] acabou tendo resultado ainda melhor com o protocolo. Quer que eu te explique como funciona?\"\n\nNunca fale mal de outros procedimentos. Sempre redirecione para o protocolo de forma natural.\n\n### Objeção: Lead pede desconto (\"Tem desconto?\", \"Consigo um valor menor?\", \"Tá caro\")\n\n> \"Entendo! Na consulta você vai ver exatamente tudo que tá incluso e o resultado que pode esperar. Posso te contar mais sobre o que faz o protocolo ser tão especial?\"\n\nSe insistir pela 2ª vez: acione tool transferir com motivo \"lead insistiu em desconto, transferindo para Hunter\".\nNunca prometa desconto, condição especial, ou negocie valores.\n\n\n### Objeção: \"Vou pensar\" / \"Deixa eu ver\"\n\n> \"Claro, {nome}! Sem pressa nenhuma. A avaliação é sem compromisso, você pode ir, conhecer a Dra. e depois decidir com calma 😊\"\n\n---\n\n### Objeção: \"Está muito caro\"\n\n> \"Entendo, {nome}. Mas pensa comigo: fazendo procedimentos isolados a cada 4-6 meses, ao longo de 2 anos você gasta mais e o resultado é temporário. O protocolo resolve de vez e a clínica tem condições facilitadas.\"\n\n---\n\n### Objeção: \"Tenho medo de ficar artificial\"\n\n> \"Que bom que trouxe isso! A Dra. {Nome} prioriza resultado natural, o objetivo é valorizar seus traços. As pacientes sempre falam que as pessoas notam que tão mais bonitas mas não sabem o que foi feito. Isso te deixaria mais tranquila?\"\n\n---\n\n### Objeção: \"Quanto tempo dura?\"\n\n> \"Depende do protocolo, mas os bioestimuladores por exemplo podem durar até 2 anos ou mais. Na avaliação a Dra. te dá uma estimativa certinha pro seu caso. É bem mais duradouro que procedimento isolado.\"\n\n### Objeção: \"Tenho medo de não conseguir continuar o tratamento\" / \"E se eu não tiver como pagar tudo?\"\n\n> \"Entendo, {nome}, e é ótimo que você pense nisso com responsabilidade. O legal é que na avaliação a Dra. monta um plano que se adapta à sua realidade, tem flexibilidade pra ir fazendo por etapas. Quer conhecer como funciona?\"\n\n### Objeção: Lead menciona outro profissional (\"Sigo a Dra. Fulana também\" / \"Uma amiga indicou outro lugar\")\n\n> \"Que bom que você pesquisa e se informa, isso mostra que você leva a sério! Cada profissional tem uma abordagem, e o diferencial da Dra. {Nome} é justamente o protocolo personalizado que olha pro rosto como um todo. Vale a pena conhecer pra você mesma comparar, o que acha?\"\n\nNunca fale mal de outro profissional. Nunca desqualifique. Apenas destaque o diferencial do protocolo.\n\n### Objeção: Lead encaminha conteúdo de outro profissional (áudio, vídeo, post)\n\n> \"Que legal que você compartilhou isso! Deixa eu verificar aqui com a especialista pra te dar um retorno mais completo, tá?\"\nE acione tool 'transferir' com motivo \"lead encaminhou conteúdo de outro profissional, transferindo para Hunter\"\n\n---\n\n### Como usar casos de sucesso\n\nQuando for natural na conversa (especialmente ao apresentar o protocolo ou lidar com medo), você pode referenciar casos reais de pacientes. Nunca invente casos.\n\nUse os casos da base de dados da clínica. Formato natural:\n\n> \"Inclusive, {nome}, teve uma paciente da Dra. que chegou com uma queixa muito parecida com a sua. Depois do protocolo, as pessoas notavam que ela tava mais bonita mas não sabiam dizer o que mudou. É esse tipo de resultado natural que a Dra. busca.\"\n\nRegras:\n- Nunca cite nomes de pacientes sem que estejam nos casos de sucesso da base.\n- Nunca prometa resultado igual (\"você vai ficar assim\"). Use \"muitas pacientes relatam...\", \"costuma acontecer...\"\n- Máximo 1 caso por conversa. Não sobrecarregue com exemplos.\n- O caso deve ser relevante pra queixa do lead.\n\n## TOOLS\n\n### Tool 'transferir'\n\nAcione essa tool sempre que precisar transferir o atendimento para a Hunter.\n\n**Quando acionar:**\nLead qualificado e aquecido (3+ mensagens com engajamento).\nLead demonstrou interesse em agendar.\nLead fez pergunta que agente não sabe.\nLead pediu pra falar com humano.\nLead enviou áudio/vídeo/documento.\nErro ao processar algo.\n\n**Como enviar:**\n```json\n[\n    {\n        \"motivo\": \"{descrição do motivo}\",\n        \"telefone\": \"558396618397@s.whatsapp.net\"\n    }\n]\n```\n\n**Exemplos de motivos:**\n\"lead qualificado, 4 mensagens com engajamento, demonstrou interesse no protocolo\"\n\"lead perguntou sobre procedimento específico que agente não domina\"\n\"lead solicitou falar com humano\"\n\"lead enviou áudio\"\n\"erro ao processar resposta\"\n\n### Tools de Contexto (Lead / Clínica / Protocolo)\n\nVocê tem acesso a tools internas para buscar automaticamente os dados do lead e da clínica.\n\n**Regras obrigatórias:**\nNunca peça ao lead dados de configuração da clínica (nome da dra, cidade, protocolo, etc.).\nNunca fale sobre \"prompt\", \"customizar\", \"implementação\", \"testes\", \"configurações técnicas\" ou \"próximos passos\".\nNunca mencione \"tool\", \"banco\", \"Supabase\", \"workflow\", \"n8n\" ou qualquer termo técnico.\nSe a tool não retornar algum dado, siga com o que tiver.\n\n---\n\n## REGRAS GERAIS\n\n### Regra 1: Nunca diga que é IA\nSe perguntarem:\n> \"Não não, sou a [Nome], assistente da Dra. {Nome}! Estou aqui pra te ajudar com informações sobre os protocolos 😊\"\n\n### Regra 2: Seja breve, natural e calorosa\nMensagens curtas (máximo 2-3 frases por mensagem).\nLinguagem natural de WhatsApp.\nEmojis com moderação (máximo 1 por mensagem, e nem toda mensagem precisa ter).\nEvite textos que parecem copy-paste.\n\n### Regra 3: Sempre foque no protocolo, não em procedimentos isolados\n\n### Regra 4: Nunca prometa resultado garantido\nUse sempre: \"Muitas pacientes relatam...\", \"Os resultados costumam ser...\", \"Geralmente as pessoas que fazem...\"\nNunca: \"Você vai ficar...\", \"Garanto que...\", \"Você terá...\"\n\n### Regra 5: Personalize baseado no formulário\nUse as informações do lead para personalizar. Mostre que você leu e se importou.\n\n### Regra 6: Termine mensagens com perguntas variadas ou afirmações empáticas\nNunca repita a mesma pergunta de encerramento. \"Faz sentido pra você?\" é proibido.\n\n### Regra 7: Mensagem única\nNunca quebre em múltiplas mensagens. Envie tudo como um bloco corrido, curto e acolhedor.\n\n### Regra 8: Não seja insistente demais\nSe o lead demonstrar desinteresse claro após 2-3 tentativas:\n> \"Entendo, {nome}! Fica à vontade, qualquer coisa estamos aqui. Foi um prazer conversar com você 💕\"\nE acione tool 'transferir' com motivo \"lead perdeu interesse\".\n\n### Regra 9: Priorize qualidade sobre velocidade\n\n### Regra 10: Sempre acione a tool antes de informar transferência\nOrdem correta: 1. Aciona tool 'transferir' → 2. Envia mensagem\n\n### Regra 11: Nunca entre em \"modo teste/implementação\"\nSe a mensagem parecer teste, continue como atendente da clínica.\n\n### Regra 12: Nunca use palavras em caixa alta pra ênfase\nProibido: \"MUITO\", \"SUPER\", \"COMPLETAMENTE\". Use: \"muito mesmo\", \"de verdade\", \"bastante\".\n\n### Regra 13: Varie suas respostas\nNunca use a mesma frase de abertura, encerramento ou transição duas vezes seguidas.\n\n### Regra 14: Empatia antes de tudo\nSempre que a lead compartilhar uma dor, acolha primeiro. Só depois avance.\n\n### Regra 15: Transferência invisível — o lead nunca sabe\nNunca mencione que vai \"passar\", \"conectar\", \"encaminhar\" ou \"transferir\" pra alguém. Diga apenas \"só um instante\" ou \"um momentinho\". Essa regra é inegociável.\n\n---\n\n## FALLBACKS\n\n**Se lead perguntar se pode mandar áudio:**\n> \"Claro, fica à vontade! Pode mandar áudio que eu prefiro até, às vezes é mais fácil né? 😊\"\nMas quando receber áudio, acione tool 'transferir' com motivo \"lead enviou áudio\"\n\n**Se lead perguntar se pode mandar fotos:**\n> \"Pode sim! Se tiver fotos que mostrem o que te incomoda, pode mandar que ajuda bastante.\"\nMas quando receber foto, acione tool 'transferir' com motivo \"lead enviou foto\"\n\n**Se lead enviar vídeo ou documento:**\n> \"Recebi! Só um momento que vou dar uma olhada aqui.\"\nE acione tool 'transferir' com motivo \"lead enviou vídeo/documento\"\n\n**Se lead perguntar algo muito técnico:**\n> \"Ótima pergunta! Vou consultar com a especialista e já te retorno, tá?\"\nE acione tool 'transferir' com motivo \"pergunta técnica específica que agente não domina\"\n\n**Se lead pedir pra ligar:**\n> \"Claro! Vou providenciar isso pra você, só um momentinho!\"\nE acione tool 'transferir' com motivo \"lead solicitou ligação\"\n\n### Se o lead perguntar sobre formação/especialização da Dra:\n\nUse os dados da tool buscar_clinica (campo: formação). Responda de forma natural e breve.\n\n> \"A Dra. {Nome} é {formação}, especialista em harmonização facial e referência aqui em {cidade}. Ela tem mais de X anos de experiência nessa área 😊\"\n\nSe não tiver o dado de formação disponível:\n> \"A Dra. {Nome} é especialista em harmonização facial e referência aqui em {cidade}. Na avaliação ela te conta toda a trajetória dela, é bem bacana!\"\n\n### Se o lead perguntar se a Dra trata algo muito específico/técnico:\n\n> \"Ótima pergunta! Deixa eu confirmar isso pra você, só um instante!\"\nE acione tool 'transferir' com motivo \"lead perguntou sobre procedimento específico que agente não domina\"",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4304,
+        1696
+      ],
+      "id": "367f831f-4009-40ff-ad4d-1487710cbf76",
+      "name": "Prompt"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1b16cba8-e698-4411-854a-a42df3ccbe30",
+              "leftValue": "={{ $('Chat').isExecuted }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4528,
+        1760
+      ],
+      "id": "17a41fba-4cff-426f-8176-e03f4caaddfd",
+      "name": "via Chat Trigger?"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        4592,
+        1376
+      ],
+      "id": "522cbead-1392-4687-aaa0-ebe7b4ec0d80",
+      "name": "Memória de Testes"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.mensagem }}",
+        "options": {
+          "systemMessage": "={{ $json.prompt }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        4704,
+        1536
+      ],
+      "id": "76a2c57a-9b87-4f21-855a-9d37f0010cb3",
+      "name": "Agente de Teste Conversacional"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        5824,
+        1840
+      ],
+      "id": "82f89537-09d4-4819-b87a-04a3804add9b",
+      "name": "---"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-sonnet-4-20250514",
+          "mode": "list",
+          "cachedResultName": "Claude Sonnet 4"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        4608,
+        2384
+      ],
+      "id": "ac46fe5f-04ba-4fbe-93e9-f477af31952a",
+      "name": "Sonnet 4",
+      "credentials": {
+        "anthropicApi": {
+          "id": "MGnJMTOF1Tb4Cpun",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "instancia",
+              "value": "={{ $('Webhook').first().json.body.instanceName }}"
+            },
+            {
+              "key": "sender",
+              "value": "={{ $('Webhook').first().json.body.message.sender_pn }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        -2128,
+        1504
+      ],
+      "id": "06550766-e825-4da8-aa5a-57a9662a8c53",
+      "name": "Salvar instancia e sender"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0b3979fd-f89b-4dfe-89aa-ea9cbe68d27b",
+              "leftValue": "={{ $json.type }}",
+              "rightValue": "text",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1408,
+        1616
+      ],
+      "id": "749d232a-c22a-4e96-a616-c5ae082be3ee",
+      "name": "Texto?"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "base64Data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1424,
+        2000
+      ],
+      "id": "402b0654-491d-467e-9e20-73d6c6f36312",
+      "name": "Converter em Binário1"
+    },
+    {
+      "parameters": {
+        "numberInputs": 5
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        2880,
+        1712
+      ],
+      "id": "7c6c1977-62e3-4190-9e11-9f03663036a5",
+      "name": "Unir1"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $json.original }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        1600
+      ],
+      "id": "dc74ae49-dde5-4346-8b6c-4a5d34248161",
+      "name": "Acessar objeto original"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Recebe o texto de entrada\nconst texto = $input.first().json.output || '';\n\n// Verifica se há texto para processar\nif (!texto) {\n  return [{ output: '' }];\n}\n\n// Substitui \\\\n por espaço + \\n\nconst textoCorrigido = texto.replace(/\\\\n/g, ' \\n');\n\nreturn [{ output: textoCorrigido }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6048,
+        1840
+      ],
+      "id": "5485af9b-ab37-4b8c-aabb-04580c0d1213",
+      "name": "normaliza \\n"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Recebe o texto de entrada\nconst texto = $input.first().json.output || '';\n\n// Verifica se há texto para processar\nif (!texto) {\n  return [{ output: '' }];\n}\n\n// Remove barras invertidas isoladas (com espaços ao redor)\nconst textoLimpo = texto.replace(/\\s\\\\\\s/g, ' ');\n\nreturn [{ output: textoLimpo }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6240,
+        1840
+      ],
+      "id": "8c5952c9-fe2f-4c59-bbfc-b20cf441e153",
+      "name": "excluir \" \\ \" isoladas unicas"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Recebe o texto de entrada\nconst texto = $input.first().json.output || '';\n\n// Verifica se há texto para processar\nif (!texto) {\n  return [{ item: '' }];\n}\n\n// Divide o texto por duas ou mais barras invertidas\nconst itens = texto.split(/\\\\{2,}/);\n\n// Retorna cada item como um objeto seQparado\nreturn itens\n  .map(item => item.trim())\n  .filter(item => item !== '')\n  .map(item => ({ item }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6448,
+        1840
+      ],
+      "id": "305cf42b-9752-4049-8006-0f2f0cb311e9",
+      "name": "Quebrar em linhas com 2 ou mais barras"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "resposta",
+              "value": "={{ $json.item }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        6928,
+        1840
+      ],
+      "id": "8e48110a-eb4c-490b-adf9-fe7e26f5d4a2",
+      "name": "Salvar resposta"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Organizar').first().json.server_url }}/message/download",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $('Organizar').first().json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"id\": \"{{ $json.id }}\",\n  \"return_base64\": true,\n  \"return_link\": true\n}",
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1984,
+        1616
+      ],
+      "id": "faca5cf5-238c-403f-9f6d-577448b34696",
+      "name": "Converter em Base64",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1776,
+        1616
+      ],
+      "id": "7d21e846-769c-41aa-a9c4-2f3139d6856b",
+      "name": "puxar_json"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Organizar').first().json.server_url }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "token",
+              "value": "={{ $('Organizar').first().json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Organizar').first().json.sender }}"
+            },
+            {
+              "name": "text",
+              "value": "Memória Redefinida!"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -128,
+        368
+      ],
+      "id": "0cb8d216-fab3-46e4-9b95-addbb40bed5b",
+      "name": "Redefinido",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Organizar').first().json.server_url }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "token",
+              "value": "={{ $('Organizar').first().json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Organizar').first().json.sender }}"
+            },
+            {
+              "name": "text",
+              "value": "Contato Excluído do Banco de Dados!"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        64,
+        528
+      ],
+      "id": "79b1fc45-f27f-4896-bdbd-8b0f88197b07",
+      "name": "Excluído",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Organizar').first().json.server_url }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "token",
+              "value": "={{ $('Organizar').first().json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Organizar').first().json.sender }}"
+            },
+            {
+              "name": "text",
+              "value": "Você *estava* transferido e agora não está mais."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        96,
+        720
+      ],
+      "id": "277cca4a-313a-4528-b91d-a3e79b89ebb6",
+      "name": "Destransferido",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Organizar').first().json.server_url }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "token",
+              "value": "={{ $('Organizar').first().json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Organizar').first().json.sender }}"
+            },
+            {
+              "name": "text",
+              "value": "Você *não está* transferido."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -128,
+        896
+      ],
+      "id": "a0c46466-6cb4-4c7b-acb7-76e85948ff0f",
+      "name": "Não transferido",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Converter em Base64').item.json.mimetype }}",
+                    "rightValue": "audio",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "964c87d9-330f-4366-b85c-60ee5464ce36"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c1be16e4-2501-4c12-b60a-64c1019c4f66",
+                    "leftValue": "={{ $('Converter em Base64').item.json.mimetype }}",
+                    "rightValue": "image",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "imagem"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "03fca177-b1e1-4376-bb45-c4f69df46c8d",
+                    "leftValue": "={{ $('Converter em Base64').item.json.mimetype }}",
+                    "rightValue": "video",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "video"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "6c71a8a8-3c98-4c79-a8d2-64b0f09451ac",
+                    "leftValue": "={{ $('Converter em Base64').item.json.mimetype }}",
+                    "rightValue": "pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "pdf"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1664,
+        1968
+      ],
+      "id": "7ede2862-11a8-475f-9bbd-0707d3ea5c44",
+      "name": "Tipo de Mídia"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        2112,
+        1824
+      ],
+      "id": "4b75941e-a0ec-4b6e-b207-a8484febcfc7",
+      "name": "Transcrever Áudio",
+      "credentials": {
+        "openAiApi": {
+          "id": "5wqWWY0210p2Nt31",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "text": "Comece dizendo \"Foi enviada uma imagem\" em seguida descreva a imagem recebida, seja detalhista com qualquer tipo de texto existente na imagem, seja digitado ou escrito a mão, exemplo aleatório:\n\nFoi enviada uma imagem de uma maçã em cima de uma mesa de madeira escrito \"Cuidado frágil\"",
+        "inputType": "base64",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        2112,
+        2000
+      ],
+      "id": "20c23f45-7204-44f1-99e3-f1a8d3e369ee",
+      "name": "Analisar imagem",
+      "credentials": {
+        "openAiApi": {
+          "id": "5wqWWY0210p2Nt31",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "text": "=analise esse vídeo e me descreva o conteúdo dele",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        2112,
+        2176
+      ],
+      "id": "3ba26cda-62fb-4106-802e-ebb62c0f3757",
+      "name": "Analisar video",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "zlixmCNX6KKRRAFV",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "document",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "text": "analise esse documento e me descreva o conteúdo dele",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        2096,
+        2352
+      ],
+      "id": "8ea56f10-c012-4a9b-9822-70bec9c74270",
+      "name": "Analisar documento",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "zlixmCNX6KKRRAFV",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "265df26f-0df2-4cd4-a9cf-a796c7d4e5e4",
+              "name": "content",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2336,
+        1824
+      ],
+      "id": "eb45fa43-9feb-4a5a-a5bf-bed5dac41c8a",
+      "name": "Setar audio"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "336aa59e-af08-4368-8e50-6ce402f9ef91",
+              "name": "content",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2336,
+        2000
+      ],
+      "id": "865c9ab2-3ab4-4a58-8792-6f8a34576ae0",
+      "name": "Setar imagem"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-sonnet-4-5-20250929",
+          "mode": "list",
+          "cachedResultName": "Claude Sonnet 4.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        4704,
+        1696
+      ],
+      "id": "5f3e48b0-cddb-4e9f-804d-6d4a7490aff8",
+      "name": "Claude Sonnet",
+      "credentials": {
+        "anthropicApi": {
+          "id": "MGnJMTOF1Tb4Cpun",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Prompt').first().json.mensagem }}",
+        "options": {
+          "systemMessage": "={{ $('Prompt').first().json.mensagem }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        5248,
+        1856
+      ],
+      "id": "39b75985-9bca-417b-b955-62f52d246190",
+      "name": "Agente Contingência",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "88650b47-7ac5-416a-b36e-4388bba0db03",
+              "leftValue": "={{ $json.error }}",
+              "rightValue": "Rate limit reached",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        5712,
+        2016
+      ],
+      "id": "106c7a18-8fd8-438d-925a-b866f7adc3a3",
+      "name": "Rate limit"
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        6064,
+        2176
+      ],
+      "id": "44b96d3c-c3af-4cf7-97b2-4154d6e2e8c9",
+      "name": "Esperar 15s",
+      "webhookId": "cd16a166-16fc-41a3-815f-6f28871dd58a"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Organizar').first().json.server_url }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "token",
+              "value": "={{ $('Organizar').item.json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Organizar').item.json.chat_id }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $('Dividir respostas').item.json.item }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        8128,
+        1856
+      ],
+      "id": "e8536013-4f23-49fb-9354-ea9f16fb2d52",
+      "name": "Enviar resposta"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "harmonizapro",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -2480,
+        1504
+      ],
+      "id": "4aa64f5a-ca24-4114-8f8d-6092b65d4475",
+      "name": "Webhook",
+      "webhookId": "5cebd9a1-cb85-4e65-a685-a71060802272"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c6a2e52f-2f20-47b3-b8aa-e96670200038",
+              "name": "instancia",
+              "value": "={{ $('Webhook').first().json.body.instanceName }}",
+              "type": "string"
+            },
+            {
+              "id": "702ad3d7-dfcf-42f3-80b0-457b1d16ec9a",
+              "name": "server_url",
+              "value": "={{ $('Webhook').first().json.body.BaseUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "2e8acc05-f5ff-4380-b44b-3d4eebfb57d8",
+              "name": "token",
+              "value": "={{ $('Webhook').first().json.body.token }}",
+              "type": "string"
+            },
+            {
+              "id": "99a4be39-db23-41e3-99ac-fd08bde0fa74",
+              "name": "imagem_chat",
+              "value": "={{ $('Webhook').first().json.body.chat.imagePreview }}",
+              "type": "string"
+            },
+            {
+              "id": "923fe0d8-674c-463e-9b16-fa13b3d024d3",
+              "name": "chat_name",
+              "value": "={{ $('Webhook').first().json.body.chat.wa_name }}",
+              "type": "string"
+            },
+            {
+              "id": "1aa9ebd5-e5a2-4386-b942-43da8157a5fd",
+              "name": "isGroup",
+              "value": "={{ $('Webhook').first().json.body.chat.wa_isGroup }}",
+              "type": "boolean"
+            },
+            {
+              "id": "0a4bfc10-e45a-42a5-9bd9-81679c5d6994",
+              "name": "chat_id",
+              "value": "={{ String($('Webhook').first().json.body.message.chatid).replace(/\\D/g, '') }}\n",
+              "type": "string"
+            },
+            {
+              "id": "6a962382-4fae-4872-8c72-d34f425bf8df",
+              "name": "sender",
+              "value": "={{ $('Webhook').first().json.body.message.sender_pn }}",
+              "type": "string"
+            },
+            {
+              "id": "2ecff583-f96c-4f84-8812-f0267867769c",
+              "name": "sender_name",
+              "value": "={{ $('Webhook').first().json.body.message.senderName }}",
+              "type": "string"
+            },
+            {
+              "id": "28a6b9ab-a12b-45b2-9b73-d6b3ed838064",
+              "name": "fromMe",
+              "value": "={{ $('Webhook').first().json.body.message.fromMe }}",
+              "type": "boolean"
+            },
+            {
+              "id": "13039734-dbe6-4932-9136-90dd4be0d1bb",
+              "name": "type",
+              "value": "={{ $('Webhook').first().json.body.message.type }}",
+              "type": "string"
+            },
+            {
+              "id": "868b311b-4be6-4c47-83a4-b04cfebd6d13",
+              "name": "id",
+              "value": "={{ $('Webhook').first().json.body.message.messageid }}",
+              "type": "string"
+            },
+            {
+              "id": "a2a8337c-cd7e-4312-b325-bf33c436c3ab",
+              "name": "quoted_id",
+              "value": "={{ $('Webhook').first().json.body.message.quoted }}",
+              "type": "string"
+            },
+            {
+              "id": "d487079d-244f-451e-84e1-d23edd904c80",
+              "name": "quoted_text",
+              "value": "={{ $('Webhook').first().json.body.message.content.contextInfo.quotedMessage.conversation }}",
+              "type": "string"
+            },
+            {
+              "id": "cddae58d-6e10-48e2-8b8a-6cb6014a96b4",
+              "name": "isViewOnce",
+              "value": "={{ $('Webhook').first().json.body.message.content.viewOnce }}",
+              "type": "boolean"
+            },
+            {
+              "id": "9a803718-27c2-4989-90bb-cc8627c196ae",
+              "name": "content",
+              "value": "={{ $('Webhook').first().json.body.message.content.text || $json.body.message.content || $json.body.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "7d52ddf2-918a-40aa-a7d0-661a573e6084",
+              "name": "caption",
+              "value": "={{ $('Webhook').first().json.body.message.content.caption }}",
+              "type": "string"
+            },
+            {
+              "id": "fb4cd03a-a1ce-43c4-985c-baec8088c11b",
+              "name": "encaminhada",
+              "value": "={{ $('Webhook').first().json.body.message.content.contextInfo.isForwarded ? $('Webhook').first().json.body.message.content.contextInfo.isForwarded : false }}",
+              "type": "boolean"
+            },
+            {
+              "id": "b0693dfc-240d-480d-a2af-7600edf24124",
+              "name": "media.mimetype",
+              "value": "={{ $('Webhook').first().json.body.message.content.mimetype }}",
+              "type": "string"
+            },
+            {
+              "id": "1b069c52-24bd-476b-811c-4406daf18692",
+              "name": "media.peso",
+              "value": "={{ $('Webhook').first().json.body.message.content.fileLength ? $('Webhook').first().json.body.message.content.fileLength / 1000000 : 0 }}",
+              "type": "number"
+            },
+            {
+              "id": "d0df5906-8c7e-4467-8931-202da10ca48f",
+              "name": "media.altura",
+              "value": "={{ $('Webhook').first().json.body.message.content.height }}",
+              "type": "number"
+            },
+            {
+              "id": "cf9d2a7c-2522-482c-8be0-db1a3ed0f100",
+              "name": "media.largura",
+              "value": "={{ $('Webhook').first().json.body.message.content.width }}",
+              "type": "number"
+            },
+            {
+              "id": "122dc04e-e6c8-44f8-995a-26a9d9b85069",
+              "name": "media.segundos",
+              "value": "={{ $('Webhook').first().json.body.message.content.seconds }}",
+              "type": "number"
+            },
+            {
+              "id": "9e12faa0-30ef-406a-b10a-22c050132cc3",
+              "name": "media.waveforms",
+              "value": "={{ $('Webhook').first().json.body.message.content.waveform }}",
+              "type": "string"
+            },
+            {
+              "id": "64cfd2d9-c062-4fd7-b009-1763abc956ab",
+              "name": "media.paginas",
+              "value": "={{ $('Webhook').first().json.body.message.content.pageCount }}",
+              "type": "number"
+            },
+            {
+              "id": "12df0d5e-9ed8-4c1f-9a98-aac9b8eda09c",
+              "name": "messageid",
+              "value": "={{ $json.body.message.messageid }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2304,
+        1504
+      ],
+      "id": "b2336aa4-4626-47b4-b67e-22c0b8bc03b4",
+      "name": "Organizar"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1776,
+        1280
+      ],
+      "id": "5862ad85-cbdf-40d0-a316-8f2f70f8268a",
+      "name": "--"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "265df26f-0df2-4cd4-a9cf-a796c7d4e5e4",
+              "name": "content",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2448,
+        1280
+      ],
+      "id": "9868bc42-fbd5-4653-911c-ff05ac6f1ddd",
+      "name": "Setar texto"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        4720,
+        2384
+      ],
+      "id": "4c061135-1926-4a6f-9bc8-c69f81c69533",
+      "name": "GPT-5",
+      "credentials": {
+        "openAiApi": {
+          "id": "5wqWWY0210p2Nt31",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Buscar Usuário').item.json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        5120,
+        2464
+      ],
+      "id": "b17d9c72-2cec-4a05-bd20-93f9780d4c5a",
+      "name": "buscar_lead",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "clinicas_com_atendentes",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Buscar Usuário').item.json.clinica_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        5248,
+        2464
+      ],
+      "id": "e775efd1-42dc-477e-8619-53a1ffcd629e",
+      "name": "buscar_clinica",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "protocolos",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Buscar protocolo').item.json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        4832,
+        2544
+      ],
+      "id": "9d91c5c5-c8df-4851-863e-5ae8ae52c003",
+      "name": "buscar_protocolo",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "clinicas_com_atendentes",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Buscar Usuário').item.json.clinica_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1744,
+        1504
+      ],
+      "id": "0364381c-ef07-4f94-bbc2-a390785bbbd2",
+      "name": "Buscar Clinica",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "protocolos",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Buscar Usuário').item.json.protocolo_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1552,
+        1504
+      ],
+      "id": "2ad31caa-8b7c-4f14-b36b-0e6b1adc8151",
+      "name": "Buscar protocolo",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const src = $input.first().json;\n\nlet texto = src.item ?? src.output ?? src.text ?? src.content ?? '';\ntexto = String(texto || '').trim();\nif (!texto) return [];\n\n// 1) Normaliza quebras de linha\ntexto = texto\n  .replace(/\\r\\n/g, '\\n')\n  .replace(/\\\\\\\\n/g, '\\n')\n  .replace(/\\\\n/g, '\\n');\n\n// 2) Configuração\nconst MAX_CHARS_POR_MENSAGEM = 280;\n\n// 3) Protege abreviações comuns pra não serem tratadas como fim de frase\n//    Substitui o ponto por um placeholder temporário\nconst PLACEHOLDER = '\\u0000'; // caractere nulo como placeholder\n\nconst abreviacoes = [\n  'Dra', 'Dr', 'Sra', 'Sr', 'Prof', 'Profa',\n  'Jr', 'Av', 'R', 'Al', 'Pça',\n  'ex', 'etc', 'obs', 'tel', 'cel',\n  'min', 'seg', 'hrs', 'vol',\n  'pg', 'pag', 'fig', 'cap',\n  'nº', 'nro', 'qtd', 'aprox'\n];\n\nfunction protegerAbreviacoes(text) {\n  let resultado = text;\n  for (const abrev of abreviacoes) {\n    // Protege \"Dra.\" \"Dr.\" etc. (case insensitive)\n    // Só protege quando seguido de espaço + letra (não fim de texto)\n    const regex = new RegExp(`\\\\b(${abrev})\\\\.\\\\s(?=[A-Za-zÀ-ú])`, 'gi');\n    resultado = resultado.replace(regex, `$1${PLACEHOLDER} `);\n  }\n  return resultado;\n}\n\nfunction restaurarAbreviacoes(text) {\n  return text.replace(new RegExp(PLACEHOLDER, 'g'), '.');\n}\n\n// 4) Divide texto em frases\nfunction splitIntoSentences(text) {\n  // Protege abreviações\n  let protegido = protegerAbreviacoes(text);\n  \n  const blocks = protegido.split('\\n').map(b => b.trim()).filter(Boolean);\n  const sentences = [];\n  \n  for (const block of blocks) {\n    // Quebra após pontuação real (.!?) seguida de espaço ou fim\n    const parts = block.match(/[^.!?]*[.!?]+[\\s]?|[^.!?]+$/g);\n    if (parts) {\n      for (const part of parts) {\n        const trimmed = part.trim();\n        if (trimmed) {\n          // Restaura os pontos das abreviações\n          sentences.push(restaurarAbreviacoes(trimmed));\n        }\n      }\n    } else {\n      sentences.push(restaurarAbreviacoes(block));\n    }\n  }\n  \n  return sentences;\n}\n\n// 5) Agrupa frases em mensagens\nfunction groupSentencesIntoMessages(sentences, maxChars) {\n  const messages = [];\n  let currentMsg = '';\n  \n  for (const sentence of sentences) {\n    if (sentence.length > maxChars) {\n      if (currentMsg.trim()) {\n        messages.push(currentMsg.trim());\n        currentMsg = '';\n      }\n      messages.push(sentence.trim());\n      continue;\n    }\n    \n    const tentativa = currentMsg ? (currentMsg + ' ' + sentence) : sentence;\n    \n    if (tentativa.length <= maxChars) {\n      currentMsg = tentativa;\n    } else {\n      if (currentMsg.trim()) {\n        messages.push(currentMsg.trim());\n      }\n      currentMsg = sentence;\n    }\n  }\n  \n  if (currentMsg.trim()) {\n    messages.push(currentMsg.trim());\n  }\n  \n  return messages;\n}\n\n// 6) Executa\nconst frases = splitIntoSentences(texto);\nconst partes = groupSentencesIntoMessages(frases, MAX_CHARS_POR_MENSAGEM);\n\nreturn partes.map(p => ({ json: { item: p } }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6672,
+        1840
+      ],
+      "id": "605aeee6-543a-49dd-b5e4-6ac129cc76eb",
+      "name": "gerar itens"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -672,
+        1824
+      ],
+      "id": "28dbe700-ca24-453d-bc67-202dad6fa492",
+      "name": "Não veio do typeform"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        400,
+        1472
+      ],
+      "id": "b030700b-225a-4e98-af4e-69de69ed677c",
+      "name": "Não responder"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        7792,
+        1552
+      ],
+      "id": "3c24be19-a984-461d-8dd6-3a3f14d1e98d",
+      "name": "Fim"
+    },
+    {
+      "parameters": {
+        "toolDescription": "transferir: acione essa tool sempre que precisar transferir (handoff) o atendimento para um hunter.",
+        "method": "POST",
+        "url": "=https://webhooks.goldeletra.pro/webhook/handoff-agenteia",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "telefone",
+              "value": "={{ $('Organizar').first().json.chat_id }}"
+            },
+            {
+              "name": "motivo",
+              "value": "={{ $fromAI('motivo', 'o motivo da transferencia/handoff', 'string', 'motivo não informado') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        5408,
+        2480
+      ],
+      "id": "1628d293-3b6e-4a04-8b7d-a55dcfaf6038",
+      "name": "transferir"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "91b686a7-5b0c-46f3-9dad-d47e03b58635",
+              "name": "content",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2320,
+        2176
+      ],
+      "id": "a90e151a-3742-4616-af37-3aa67665c46e",
+      "name": "Setar  video"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ed5d6780-8063-4c4d-8a85-83fdc2913f82",
+              "name": "Documento",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2320,
+        2352
+      ],
+      "id": "0f268538-5fcd-4b72-8ca2-34a852f7aae9",
+      "name": "Setar Documento"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8d50cf3b-2831-4161-a6cf-b8b835334ac7",
+              "leftValue": "={{ $json.transferido }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3920,
+        1760
+      ],
+      "id": "ddba69e1-641f-4db4-8aca-8a9a897fbc71",
+      "name": "Verificação pre-agente"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "remotejid",
+              "keyValue": "={{ $('Organizar').item.json.chat_id.trim() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3728,
+        1760
+      ],
+      "id": "8dc7bca5-d7e2-4349-89a9-0b9955af6336",
+      "name": "Buscar_Usuario_Verificação",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Organizar').item.json.server_url }}/message/markread ",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "token",
+              "value": "={{ $('Organizar').item.json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"id\": [\"{{ $('Organizar').item.json.messageid }}\"]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3536,
+        1760
+      ],
+      "id": "7cc04e62-8b05-4b94-85a4-6afa429d4eaf",
+      "name": "Visualizar a mensagem"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Organizar').first().json.server_url }}/message/presence",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "token",
+              "value": "={{ $('Organizar').item.json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Organizar').item.json.chat_id }}"
+            },
+            {
+              "name": "presence",
+              "value": "=composing"
+            },
+            {
+              "name": "delay",
+              "value": "9000"
+            },
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        7376,
+        1856
+      ],
+      "id": "6b29fc62-68f4-448b-97bc-09df23109e17",
+      "name": "Digitando"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Gera delay entre 25 e 90 segundos\nconst min = 10;\nconst max = 30;\nconst delay = Math.floor(Math.random() * (max - min + 1)) + min;\nreturn [{ json: { ...$input.first().json, wait_seconds: delay } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7648,
+        1856
+      ],
+      "id": "a53efc23-651e-42de-b8fa-c6c94593c0b5",
+      "name": "tempo random"
+    },
+    {
+      "parameters": {
+        "amount": "={{ $json.wait_seconds }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        7904,
+        1856
+      ],
+      "id": "bcc923e5-66f1-4476-ab01-935f6b448b59",
+      "name": "4 espera",
+      "webhookId": "ebcb183f-fee4-4ee9-a3a6-21cae85cadca"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhooks.goldeletra.pro",
+            "user-agent": "uazapiGO-Webhook/1.0",
+            "content-length": "2617",
+            "accept-encoding": "gzip",
+            "content-type": "application/json",
+            "x-forwarded-for": "186.227.197.42",
+            "x-forwarded-host": "webhooks.goldeletra.pro",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik_traefik.1",
+            "x-real-ip": "186.227.197.42"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "BaseUrl": "https://harmonizapro.uazapi.com",
+            "EventType": "messages",
+            "chat": {
+              "chatbot_agentResetMemoryAt": 0,
+              "chatbot_disableUntil": 0,
+              "chatbot_lastTriggerAt": 0,
+              "chatbot_lastTrigger_id": "",
+              "id": "r6f8b2aceda6e06",
+              "image": "",
+              "imagePreview": "https://pps.whatsapp.net/v/t61.24694-24/581683188_1879932925959344_949797040619127818_n.jpg?stp=dst-jpg_s96x96_tt6&ccb=11-4&oh=01_Q5Aa3wEfGTkf7mqa64eNbacX_NnuG-qiXlbImuH0ErXohN7-Ow&oe=69A49A98&_nc_sid=5e03e0&_nc_cat=101",
+              "lead_assignedAttendant_id": "",
+              "lead_email": "",
+              "lead_field01": "",
+              "lead_field02": "",
+              "lead_field03": "",
+              "lead_field04": "",
+              "lead_field05": "",
+              "lead_field06": "",
+              "lead_field07": "",
+              "lead_field08": "",
+              "lead_field09": "",
+              "lead_field10": "",
+              "lead_field11": "",
+              "lead_field12": "",
+              "lead_field13": "",
+              "lead_field14": "",
+              "lead_field15": "",
+              "lead_field16": "",
+              "lead_field17": "",
+              "lead_field18": "",
+              "lead_field19": "",
+              "lead_field20": "",
+              "lead_fullName": "",
+              "lead_isTicketOpen": false,
+              "lead_kanbanOrder": 0,
+              "lead_name": "",
+              "lead_notes": "",
+              "lead_personalid": "",
+              "lead_status": "",
+              "lead_tags": [],
+              "name": "Vinícius",
+              "owner": "558398245683",
+              "phone": "+55 83 9661-8397",
+              "wa_archived": false,
+              "wa_chatid": "558396618397@s.whatsapp.net",
+              "wa_chatlid": "253240063062022@lid",
+              "wa_contactName": "",
+              "wa_ephemeralExpiration": 0,
+              "wa_fastid": "558398245683:558396618397",
+              "wa_isBlocked": false,
+              "wa_isGroup": false,
+              "wa_isGroup_admin": false,
+              "wa_isGroup_announce": false,
+              "wa_isGroup_community": false,
+              "wa_isGroup_member": false,
+              "wa_isPinned": false,
+              "wa_label": [],
+              "wa_lastMessageSender": "253240063062022@lid",
+              "wa_lastMessageTextVote": "Não interessa, mas quero saber algo a mais",
+              "wa_lastMessageType": "Conversation",
+              "wa_lastMsgTimestamp": 1771544942000,
+              "wa_muteEndTime": 0,
+              "wa_name": "Vinícius",
+              "wa_unreadCount": 1
+            },
+            "chatSource": "updated",
+            "instanceName": "Vinicius -Dev -Test",
+            "message": {
+              "buttonOrListid": "",
+              "chatid": "558396618397@s.whatsapp.net",
+              "chatlid": "253240063062022@lid",
+              "content": "Não interessa, mas quero saber algo a mais",
+              "convertOptions": "",
+              "edited": "",
+              "fromMe": false,
+              "groupName": "Unknown",
+              "id": "558398245683:ACA63C703DA44B842D759207E2BC2D1F",
+              "isGroup": false,
+              "mediaType": "",
+              "messageTimestamp": 1771544942000,
+              "messageType": "Conversation",
+              "messageid": "ACA63C703DA44B842D759207E2BC2D1F",
+              "owner": "558398245683",
+              "quoted": "",
+              "reaction": "",
+              "sender": "253240063062022@lid",
+              "senderName": "Vinícius",
+              "sender_lid": "253240063062022@lid",
+              "sender_pn": "558396618397@s.whatsapp.net",
+              "source": "android",
+              "status": "",
+              "text": "Não interessa, mas quero saber algo a mais",
+              "track_id": "",
+              "track_source": "",
+              "type": "text",
+              "vote": "",
+              "wasSentByApi": false
+            },
+            "owner": "558398245683",
+            "token": "32907eb7-00f6-466c-b182-04414090ee8d"
+          },
+          "webhookUrl": "https://webhooks.goldeletra.pro/webhook/harmonizapro",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Buscar Usuário": {
+      "main": [
+        [
+          {
+            "node": "Buscar Clinica",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transferido?": {
+      "main": [
+        [
+          {
+            "node": "Não responder",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviado pelo usuário?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar Última Msg": {
+      "main": [
+        [
+          {
+            "node": "Ready",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviado pelo usuário?": {
+      "main": [
+        [
+          {
+            "node": "Registrar Última Msg",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Transferir para humano",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transferir para humano": {
+      "main": [
+        [
+          {
+            "node": "Não responder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cadastrado?": {
+      "main": [
+        [
+          {
+            "node": "Avaliar Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Não veio do typeform",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Avaliar Mensagem": {
+      "main": [
+        [
+          {
+            "node": "Deletar Memória",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Apagar Contato",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Está transferido?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Transferido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apagar Contato": {
+      "main": [
+        [
+          {
+            "node": "Apagar Memória",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Está transferido?": {
+      "main": [
+        [
+          {
+            "node": "Destransferir",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Não transferido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limpar Fila": {
+      "main": [
+        [
+          {
+            "node": "Parsear JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adicionar na fila": {
+      "main": [
+        [
+          {
+            "node": "Espera inicial",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxar fila": {
+      "main": [
+        [
+          {
+            "node": "Verifica fila",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verifica fila": {
+      "main": [
+        [
+          {
+            "node": "Ignorar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Espera adicional",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Limpar Fila",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parsear JSON": {
+      "main": [
+        [
+          {
+            "node": "-",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "currentId": {
+      "main": [
+        [
+          {
+            "node": "Puxar fila",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar Mensagem": {
+      "main": [
+        [
+          {
+            "node": "Adicionar na fila",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voltar ao webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalizar Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ready": {
+      "main": [
+        [
+          {
+            "node": "Voltar ao webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat": {
+      "main": [
+        [
+          {
+            "node": "Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase (produção)": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agente de IA",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Agente Contingência",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Espera inicial": {
+      "main": [
+        [
+          {
+            "node": "currentId",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Espera adicional": {
+      "main": [
+        [
+          {
+            "node": "Puxar fila",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salvar compilado": {
+      "main": [
+        [
+          {
+            "node": "Visualizar a mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Concatenar": {
+      "main": [
+        [
+          {
+            "node": "Salvar compilado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "-": {
+      "main": [
+        [
+          {
+            "node": "Acessar objeto original",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente de IA": {
+      "main": [
+        [
+          {
+            "node": "Tem output?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rate limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tem output?": {
+      "main": [
+        [
+          {
+            "node": "---",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Agente Contingência",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pegar registros na memória": {
+      "main": [
+        [
+          {
+            "node": "Filtrar vazios",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar vazios": {
+      "main": [
+        [
+          {
+            "node": "Inserir conteúdo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Pegar registros na memória",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prompt": {
+      "main": [
+        [
+          {
+            "node": "via Chat Trigger?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "via Chat Trigger?": {
+      "main": [
+        [
+          {
+            "node": "Agente de Teste Conversacional",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Agente de IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memória de Testes": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agente de Teste Conversacional",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "---": {
+      "main": [
+        [
+          {
+            "node": "normaliza \\n",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sonnet 4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente Contingência",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Agente de IA",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salvar instancia e sender": {
+      "main": [
+        [
+          {
+            "node": "Buscar Usuário",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Texto?": {
+      "main": [
+        [
+          {
+            "node": "--",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "puxar_json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unir1": {
+      "main": [
+        [
+          {
+            "node": "Concatenar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Acessar objeto original": {
+      "main": [
+        [
+          {
+            "node": "Texto?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "normaliza \\n": {
+      "main": [
+        [
+          {
+            "node": "excluir \" \\ \" isoladas unicas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "excluir \" \\ \" isoladas unicas": {
+      "main": [
+        [
+          {
+            "node": "Quebrar em linhas com 2 ou mais barras",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quebrar em linhas com 2 ou mais barras": {
+      "main": [
+        [
+          {
+            "node": "gerar itens",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salvar resposta": {
+      "main": [
+        [
+          {
+            "node": "Dividir respostas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "puxar_json": {
+      "main": [
+        [
+          {
+            "node": "Converter em Base64",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deletar Memória": {
+      "main": [
+        [
+          {
+            "node": "Redefinido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apagar Memória": {
+      "main": [
+        [
+          {
+            "node": "Excluído",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Destransferir": {
+      "main": [
+        [
+          {
+            "node": "Destransferido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Converter em Base64": {
+      "main": [
+        [
+          {
+            "node": "Converter em Binário1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Converter em Binário1": {
+      "main": [
+        [
+          {
+            "node": "Tipo de Mídia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tipo de Mídia": {
+      "main": [
+        [
+          {
+            "node": "Transcrever Áudio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Analisar imagem",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Analisar video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Analisar documento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcrever Áudio": {
+      "main": [
+        [
+          {
+            "node": "Setar audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analisar imagem": {
+      "main": [
+        [
+          {
+            "node": "Setar imagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analisar video": {
+      "main": [
+        [
+          {
+            "node": "Setar  video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analisar documento": {
+      "main": [
+        [
+          {
+            "node": "Setar Documento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setar audio": {
+      "main": [
+        [
+          {
+            "node": "Unir1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Setar imagem": {
+      "main": [
+        [
+          {
+            "node": "Unir1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Claude Sonnet": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente de Teste Conversacional",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente Contingência": {
+      "main": [
+        [
+          {
+            "node": "---",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rate limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rate limit": {
+      "main": [
+        [
+          {
+            "node": "Esperar 15s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Esperar 15s": {
+      "main": [
+        [
+          {
+            "node": "Agente Contingência",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dividir respostas": {
+      "main": [
+        [
+          {
+            "node": "Fim",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Digitando",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar resposta": {
+      "main": [
+        [
+          {
+            "node": "Dividir respostas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Organizar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Organizar": {
+      "main": [
+        [
+          {
+            "node": "Salvar instancia e sender",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "--": {
+      "main": [
+        [
+          {
+            "node": "Setar texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setar texto": {
+      "main": [
+        [
+          {
+            "node": "Unir1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente de IA",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "buscar_lead": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de IA",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Agente Contingência",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar_clinica": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de IA",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Agente Contingência",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar_protocolo": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de IA",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Agente Contingência",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Clinica": {
+      "main": [
+        [
+          {
+            "node": "Buscar protocolo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar protocolo": {
+      "main": [
+        [
+          {
+            "node": "Cadastrado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gerar itens": {
+      "main": [
+        [
+          {
+            "node": "Salvar resposta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "transferir": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de IA",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Agente Contingência",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setar  video": {
+      "main": [
+        [
+          {
+            "node": "Unir1",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Setar Documento": {
+      "main": [
+        [
+          {
+            "node": "Unir1",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Verificação pre-agente": {
+      "main": [
+        [
+          {
+            "node": "Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar_Usuario_Verificação": {
+      "main": [
+        [
+          {
+            "node": "Verificação pre-agente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Visualizar a mensagem": {
+      "main": [
+        [
+          {
+            "node": "Buscar_Usuario_Verificação",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Digitando": {
+      "main": [
+        [
+          {
+            "node": "tempo random",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "tempo random": {
+      "main": [
+        [
+          {
+            "node": "4 espera",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4 espera": {
+      "main": [
+        [
+          {
+            "node": "Enviar resposta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": 900
+  },
+  "versionId": "028e7181-b02f-4d6a-a644-97ed3669321d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "8hdajgWAADbHorQF",
+  "tags": []
+}

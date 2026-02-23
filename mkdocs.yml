@@ -1,39 +1,55 @@
-site_name: HarmonizaPRO - Documentação
-site_description: Documentação dos workflows n8n, integrações e regras de handoff
+site_name: HarmonizaPRO — Documentação
+site_description: Central de documentação do sistema de qualificação de leads via WhatsApp com IA
 site_author: HarmonizaPRO
 
 theme:
   name: material
   language: pt
+  logo: assets/logo.png
+  favicon: assets/logo-square.png
+
   palette:
-    - scheme: default
-      primary: deep purple
-      accent: pink
-      toggle:
-        icon: material/brightness-7
-        name: Modo escuro
     - scheme: slate
-      primary: deep purple
-      accent: pink
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-4
         name: Modo claro
+
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-7
+        name: Modo escuro
+
+  font:
+    text: Inter
+    code: JetBrains Mono
+
   features:
     - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.sections
     - navigation.expand
+    - navigation.top
+    - navigation.footer
     - search.highlight
+    - search.suggest
     - content.code.copy
+    - content.tabs.link
+    - toc.follow
 
 nav:
   - Início: index.md
   - PRD:
-      - "PRD 001 - Agente de Qualificação IA": prd-001-agente-qualificacao.md
+      - "PRD 001 — Agente de Qualificação IA": prd-001-agente-qualificacao.md
   - Workflows:
       - Índice de Workflows: workflows/index.md
       - "Agente de IA (entrada principal)": workflows/agente-de-ia.md
       - "Chamada Typeform": workflows/chamada-typeform.md
       - "Tool Transferir (Handoff)": workflows/tool-transferir.md
+      - "Fluxo Follow Ups": workflows/fluxo-follow-ups.md
   - Playbooks:
       - Índice: playbooks/index.md
       - "Abordagem Inicial por Perfil": playbooks/abordagem-por-perfil.md
@@ -44,6 +60,10 @@ nav:
       - "Handoff Falhando": runbooks/handoff-falhando.md
   - Base de Conhecimento:
       - "Clínicas e Protocolos": base-conhecimento-clinicas.md
+  - Equipe: equipe.md
+
+extra_css:
+  - stylesheets/custom.css
 
 markdown_extensions:
   - admonition
@@ -51,10 +71,25 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
   - tables
   - attr_list
   - md_in_html
+  - def_list
+  - toc:
+      permalink: true
+      title: Nesta página
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 plugins:
   - search:
       lang: pt
+
+extra:
+  generator: false

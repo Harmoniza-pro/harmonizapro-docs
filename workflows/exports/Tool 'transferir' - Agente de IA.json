@@ -1,0 +1,553 @@
+{
+  "name": "Tool 'transferir' - Agente de IA",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "handoff-agenteia",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        176,
+        -16
+      ],
+      "id": "1555703d-8ee1-4420-92cb-e56b95f592f5",
+      "name": "Webhook",
+      "webhookId": "734df866-0015-4724-9323-a22abf571228"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "remotejid",
+              "keyValue": "={{ $('Webhook').first().json.body.telefone.trim() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        448,
+        -16
+      ],
+      "id": "ac3f4db6-8359-4d99-99b5-3913a8d02eed",
+      "name": "Buscar ID da Clínica",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "clinicas_com_atendentes",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $json.clinica_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        720,
+        -16
+      ],
+      "id": "ec551eac-5888-478a-9157-8a703c604ce2",
+      "name": "Buscar hunter",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "n8n_chat_histories",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "session_id",
+              "keyValue": "={{ $('Webhook').first().json.body.telefone.trim() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        -48
+      ],
+      "id": "4a98a6ae-0d38-4126-851c-fd627913b209",
+      "name": "Buscar histórico da conversa",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6c04f261-5c42-47e7-9907-2d548592480f",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1632,
+        -64
+      ],
+      "id": "584a790f-37c3-414b-a19b-4b138934a84a",
+      "name": "Encontrou histórico?"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Buscar dados da instância').first().json.uazapi_server_url }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "token",
+              "value": "=32907eb7-00f6-466c-b182-04414090ee8d"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "=+55839794857"
+            },
+            {
+              "name": "text",
+              "value": "=*LEAD TRANSFERIDO 🚨*\n-------------------------\n*Telefone:* wa.me/{{ $('Webhook').first().json.body.telefone }}\n*Motivo:* {{ $('Webhook').first().json.body.motivo }}"
+            },
+            {
+              "name": "linkPreview",
+              "value": "true"
+            },
+            {
+              "name": "linkPreviewLarge",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1856,
+        64
+      ],
+      "id": "f160c40a-2dd8-41df-8260-0dc0c49e9cc9",
+      "name": "Handoff sem resumo"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "instancias_whatsapp",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Buscar ID da Clínica').item.json.instancia_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        944,
+        -48
+      ],
+      "id": "83fff3ba-2f8d-4748-9688-7f0de2428f56",
+      "name": "Buscar dados da instância",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ec66f289-4317-4913-a8e9-2c843627f1e4",
+              "name": "mensagens",
+              "value": "={{ $json.message.type }}: {{ $json.message.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1856,
+        -160
+      ],
+      "id": "ec448b21-96f7-48f7-897c-a12732b7dd48",
+      "name": "Organizar mensagens"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "concatenate",
+              "field": "mensagens",
+              "separateBy": "\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        2064,
+        -160
+      ],
+      "id": "6e0966e4-5008-4532-b03e-b7a08dac0796",
+      "name": "Concatenar"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2192,
+        16
+      ],
+      "id": "144be316-deae-4082-976a-18835259950a",
+      "name": "4o mini",
+      "credentials": {
+        "openAiApi": {
+          "id": "5wqWWY0210p2Nt31",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.concatenated_mensagens }}",
+        "options": {
+          "systemMessage": "=Você é um especialista em resumir conversas. crie um resumo da transcrição de conversa de whatsapp acima. seu resumo deve ter no máximo 50 palavras. seja objetivo."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        2272,
+        -160
+      ],
+      "id": "64215d2a-417a-4f3d-8c2f-33c799a101d3",
+      "name": "Gerar resumo"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Buscar dados da instância').first().json.uazapi_server_url }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "token",
+              "value": "=32907eb7-00f6-466c-b182-04414090ee8d"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "=+5583996618397"
+            },
+            {
+              "name": "text",
+              "value": "=*LEAD TRANSFERIDO 🚨*\n-------------------------\n*Telefone:* wa.me/{{ $('Webhook').first().json.body.telefone }}\n*Motivo:* {{ $('Webhook').first().json.body.motivo }}\n*Resumo:* {{ $json.output }}"
+            },
+            {
+              "name": "linkPreview",
+              "value": "true"
+            },
+            {
+              "name": "linkPreviewLarge",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2624,
+        -160
+      ],
+      "id": "f8f97fc0-fa83-4946-953b-5c395f2ab3da",
+      "name": "Handoff com resumo"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "remotejid",
+              "condition": "eq",
+              "keyValue": "={{ $json.body.telefone.trim()}}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "transferido",
+              "fieldValue": "true"
+            },
+            {
+              "fieldId": "handoff_enviado",
+              "fieldValue": "true"
+            },
+            {
+              "fieldId": "handoff_at",
+              "fieldValue": "={{ $now.toISO() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        448,
+        160
+      ],
+      "id": "eab6986b-fe9f-471b-8ee9-f181812c04aa",
+      "name": "Transferido = true",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {},
+          "body": {
+            "telefone": "558396618397\n",
+            "motivo": "Lead insistiu em agendar agora"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Buscar ID da Clínica",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Transferido = true",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar ID da Clínica": {
+      "main": [
+        [
+          {
+            "node": "Buscar hunter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar hunter": {
+      "main": [
+        [
+          {
+            "node": "Buscar dados da instância",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar histórico da conversa": {
+      "main": [
+        [
+          {
+            "node": "Encontrou histórico?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Encontrou histórico?": {
+      "main": [
+        [
+          {
+            "node": "Organizar mensagens",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Handoff sem resumo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar dados da instância": {
+      "main": [
+        [
+          {
+            "node": "Buscar histórico da conversa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Organizar mensagens": {
+      "main": [
+        [
+          {
+            "node": "Concatenar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Concatenar": {
+      "main": [
+        [
+          {
+            "node": "Gerar resumo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4o mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Gerar resumo",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gerar resumo": {
+      "main": [
+        [
+          {
+            "node": "Handoff com resumo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "51852bc2-14d9-4b50-8782-a0d6b80e7a65",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "Gt60I1KPG4ReJSIe",
+  "tags": []
+}

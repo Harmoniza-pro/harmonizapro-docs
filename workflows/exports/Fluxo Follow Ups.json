@@ -1,0 +1,2803 @@
+{
+  "name": "Fluxo Follow Ups",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "29195e52-f681-40c3-9cd8-d0c626ea6068",
+              "leftValue": "={{ $json.transferido }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "98fa25eb-d5eb-4f6e-812c-5e35b3d5212d",
+              "leftValue": "={{ $json.fup1 }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "47ff9381-12dc-4622-a8d5-3e73a34ec794",
+              "leftValue": "={{ !$json.ultimofollow || $json.ultimofollow < $now.minus($('Controle - fup').item.json[\"Intervalo mínimo do último follow (em horas)\"], 'hours').format('yyyy-MM-dd HH:mm') }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -1024,
+        1888
+      ],
+      "id": "aa532b77-b61b-4fdf-9440-b311ba59d80c",
+      "name": "Filtro"
+    },
+    {
+      "parameters": {
+        "tableId": "n8n_chat_histories",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "session_id",
+              "fieldValue": "={{ $json.remoteJid }}"
+            },
+            {
+              "fieldId": "message",
+              "fieldValue": "={{ JSON.parse($json.message) }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        16,
+        1984
+      ],
+      "id": "17fd5b65-eddb-48ef-a435-f094ee8c88fa",
+      "name": "Inserir msg na memória",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2db2be6f-ae92-413a-82a9-caf3abd3c1ef",
+              "name": "message",
+              "value": "={\"type\": \"ai\", \"content\": \"{{ $json.content.text }}\", \"tool_calls\": [], \"additional_kwargs\": {}, \"response_metadata\": {}, \"invalid_tool_calls\": []}",
+              "type": "string"
+            },
+            {
+              "id": "e0f232ae-1d80-479c-a65f-510e606370bb",
+              "name": "remoteJid",
+              "value": "={{ $json.chatid.replace('@s.whatsapp.net','').trim() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -208,
+        1984
+      ],
+      "id": "f2c7f98d-0c68-4723-9dac-3064e47d00c5",
+      "name": "Preparar p/ salvar"
+    },
+    {
+      "parameters": {
+        "compare": "selectedFields",
+        "fieldsToCompare": "remotejid",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        -816,
+        1888
+      ],
+      "id": "63cb1655-5b15-4042-9201-2514bfe35dbb",
+      "name": "Remover duplicados"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0416d89c-8609-4cc7-83a6-e26cf20f31cb",
+              "name": "Quanto tempo após estar sem resposta?",
+              "value": 4,
+              "type": "number"
+            },
+            {
+              "id": "35189af5-dc24-436d-bd1e-122a9ae0054c",
+              "name": "Unidade de medida (hours / minutes)",
+              "value": "hours",
+              "type": "string"
+            },
+            {
+              "id": "3ad2e5a0-30cf-413f-b6fe-c23c06b4c10c",
+              "name": "Somente horário comercial?",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "b935e7d4-2b33-4543-ac4c-b9598d30f5b2",
+              "name": "Intervalo mínimo do último follow (em horas)",
+              "value": 4,
+              "type": "number"
+            },
+            {
+              "id": "abfb5346-6acf-46d0-a2fd-4522c3647cee",
+              "name": "mensagem",
+              "value": "Olá! Podemos dar continuidade na nossa conversa?",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1984,
+        1856
+      ],
+      "id": "b779b4d4-68fa-4537-a0ff-b5fd5d7dd60b",
+      "name": "Controle - fup"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "leads",
+        "returnAll": true,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "ultimamsg",
+              "condition": "lt",
+              "keyValue": "={{ \n  $now\n    .minus({ \n      [$json[\"Unidade de medida (hours / minutes)\"]]: Number($json[\"Quanto tempo após estar sem resposta?\"])\n    })\n    .toFormat('yyyy-MM-dd HH:mm')\n}}\n"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1216,
+        1888
+      ],
+      "id": "26355939-d204-45af-8ffe-f28cac61c79a",
+      "name": "Buscar - fup",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "remotejid",
+              "condition": "eq",
+              "keyValue": "={{ $json.chatid.replace('@s.whatsapp.net','').trim() }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "fup1",
+              "fieldValue": "true"
+            },
+            {
+              "fieldId": "ultimofollow",
+              "fieldValue": "={{ $now.format('yyyy-MM-dd HH:mm') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        1776
+      ],
+      "id": "8fb52994-372f-433c-b9f7-73c14486f14e",
+      "name": "Marcar fup - true",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9bc0e24c-b1a0-4a16-b7d7-eccf87b9402b",
+              "name": "Horário em que inicial período comercial",
+              "value": 8,
+              "type": "number"
+            },
+            {
+              "id": "de5cc91c-575c-450f-9f18-f8a5aef022dc",
+              "name": "Horário em que finaliza período comercial",
+              "value": 18,
+              "type": "number"
+            },
+            {
+              "id": "add9bc55-ad02-4b24-b446-eb885248f9b0",
+              "name": "Enviar aos sábados",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "4e1ade35-23e9-47eb-ad21-3b94a3e4e70f",
+              "name": "Enviar aos domingos",
+              "value": false,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2768,
+        1008
+      ],
+      "id": "1dbef531-b86b-4239-bec3-9bd7606efa1c",
+      "name": "Horário Comercial"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7de65903-f90d-4dba-9a1c-a3d8416828e3",
+              "leftValue": "={{ $now.extract('hours') }}",
+              "rightValue": "={{ $('Horário Comercial').item.json[\"Horário em que inicial período comercial\"] }}",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "157c2d45-610c-4746-aa2c-6a0b668ced0c",
+              "leftValue": "={{ $now.extract('hours') }}",
+              "rightValue": "={{ $('Horário Comercial').item.json[\"Horário em que finaliza período comercial\"] }}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -1440,
+        1888
+      ],
+      "id": "1355f384-e0bd-4276-82c6-00fa8ce04a4d",
+      "name": "Verificar horário comercial"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json[\"Somente horário comercial?\"] == true && $('Horário Comercial').item.json[\"Enviar aos sábados\"] == true || $('Horário Comercial').item.json[\"Enviar aos domingos\"] == true }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "9aa9da6e-10fb-4a1f-9167-c168890a533e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "dia e hora"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d32e88d6-7aae-4eca-8402-dd5c38baa51d",
+                    "leftValue": "={{ $json[\"Somente horário comercial?\"] == true && $('Horário Comercial').item.json[\"Enviar aos sábados\"] == false && $('Horário Comercial').item.json[\"Enviar aos domingos\"] == false }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "horario"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1792,
+        1840
+      ],
+      "id": "28f07213-898b-43cf-99d4-d2f7387e724c",
+      "name": "Horário Comercial?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0220761d-a075-4f18-a2b9-e261537b3337",
+              "leftValue": "={{ $now.extract('weekdayLong') === 'sábado' && $('Horário Comercial').item.json[\"Enviar aos sábados\"] === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -1600,
+        1712
+      ],
+      "id": "ed3c9242-faf8-4c0d-a89e-3275984267f9",
+      "name": "Hoje é sabado?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "29195e52-f681-40c3-9cd8-d0c626ea6068",
+              "leftValue": "={{ $json.transferido }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "98fa25eb-d5eb-4f6e-812c-5e35b3d5212d",
+              "leftValue": "={{ $json.fup2 }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "c89b2d01-4bee-4c7f-9fcb-b59827904681",
+              "leftValue": "={{ $json.fup1 }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "47ff9381-12dc-4622-a8d5-3e73a34ec794",
+              "leftValue": "={{ !$json.ultimofollow || $json.ultimofollow < $now.minus($('Controle - fup1').item.json[\"Intervalo mínimo do último follow (em horas)\"], 'hours').format('yyyy-MM-dd HH:mm') }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -1024,
+        1328
+      ],
+      "id": "87131b6d-a893-4997-af8a-88068abe9926",
+      "name": "Filtro1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Dados Uazapi').first().json['URL Base'] }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "token",
+              "value": "={{ $('Dados Uazapi').first().json.apikey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $json.remotejid }}\",\n  \"text\": \"{{ $('Controle - fup1').first().json.mensagem }}\"\n}",
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -512,
+        1328
+      ],
+      "id": "fcacf385-519a-4d9d-b6aa-f46f9af16a3c",
+      "name": "Enviar mensagem1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "tableId": "n8n_chat_histories",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "session_id",
+              "fieldValue": "={{ $json.remoteJid }}"
+            },
+            {
+              "fieldId": "message",
+              "fieldValue": "={{ JSON.parse($json.message) }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        16,
+        1424
+      ],
+      "id": "cabb44ed-4ec9-4194-ba28-9d0839e52ccb",
+      "name": "Inserir msg na memória1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2db2be6f-ae92-413a-82a9-caf3abd3c1ef",
+              "name": "message",
+              "value": "={\"type\": \"ai\", \"content\": \"{{ $json.content.text }}\", \"tool_calls\": [], \"additional_kwargs\": {}, \"response_metadata\": {}, \"invalid_tool_calls\": []}",
+              "type": "string"
+            },
+            {
+              "id": "e0f232ae-1d80-479c-a65f-510e606370bb",
+              "name": "remoteJid",
+              "value": "={{ $json.chatid }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -208,
+        1424
+      ],
+      "id": "3244e9cb-c438-42e3-86b8-e1e222f422e5",
+      "name": "Preparar p/ salvar1"
+    },
+    {
+      "parameters": {
+        "compare": "selectedFields",
+        "fieldsToCompare": "remotejid",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        -816,
+        1328
+      ],
+      "id": "3055f779-4a23-4622-aa88-8ca65ecacd5b",
+      "name": "Remover duplicados1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0416d89c-8609-4cc7-83a6-e26cf20f31cb",
+              "name": "Quanto tempo após estar sem resposta?",
+              "value": 12,
+              "type": "number"
+            },
+            {
+              "id": "35189af5-dc24-436d-bd1e-122a9ae0054c",
+              "name": "Unidade de medida (hours / minutes)",
+              "value": "hours",
+              "type": "string"
+            },
+            {
+              "id": "3ad2e5a0-30cf-413f-b6fe-c23c06b4c10c",
+              "name": "Somente horário comercial?",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "b935e7d4-2b33-4543-ac4c-b9598d30f5b2",
+              "name": "Intervalo mínimo do último follow (em horas)",
+              "value": 4,
+              "type": "number"
+            },
+            {
+              "id": "abfb5346-6acf-46d0-a2fd-4522c3647cee",
+              "name": "mensagem",
+              "value": "Olá, tudo bem?",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2000,
+        1296
+      ],
+      "id": "6748768a-9d76-4d85-a0a3-b306b9bb3ef0",
+      "name": "Controle - fup1"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "leads",
+        "returnAll": true,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "ultimamsg",
+              "condition": "lt",
+              "keyValue": "={{ \n  $now\n    .minus({ \n      [$json[\"Unidade de medida (hours / minutes)\"]]: Number($json[\"Quanto tempo após estar sem resposta?\"])\n    })\n    .toFormat('yyyy-MM-dd HH:mm')\n}}\n"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1232,
+        1344
+      ],
+      "id": "0a02df63-738f-45fe-bc41-58697850ae72",
+      "name": "Buscar - fup1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "remotejid",
+              "condition": "eq",
+              "keyValue": "={{ $json.chatid.replace('@s.whatsapp.net','').trim() }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "fup2",
+              "fieldValue": "true"
+            },
+            {
+              "fieldId": "ultimofollow",
+              "fieldValue": "={{ $now.format('yyyy-MM-dd HH:mm') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        1216
+      ],
+      "id": "6ada0ff4-05f4-4a77-a5b3-b4238b1b36bd",
+      "name": "Marcar fup - true1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7de65903-f90d-4dba-9a1c-a3d8416828e3",
+              "leftValue": "={{ $now.extract('hours') }}",
+              "rightValue": "={{ $('Horário Comercial').item.json['Horário em que inicial período comercial'] }}",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "157c2d45-610c-4746-aa2c-6a0b668ced0c",
+              "leftValue": "={{ $now.extract('hours') }}",
+              "rightValue": "={{ $('Horário Comercial').item.json[\"Horário em que finaliza período comercial\"] }}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -1424,
+        1328
+      ],
+      "id": "4fe8293c-b32c-41a3-9f71-2d7bcf8ea3a6",
+      "name": "Verificar horário comercial1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json[\"Somente horário comercial?\"] == true && $('Horário Comercial').item.json[\"Enviar aos sábados\"] == true || $('Horário Comercial').item.json[\"Enviar aos domingos\"] == true }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "9aa9da6e-10fb-4a1f-9167-c168890a533e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "dia e hora"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d32e88d6-7aae-4eca-8402-dd5c38baa51d",
+                    "leftValue": "={{ $json[\"Somente horário comercial?\"] == true && $('Horário Comercial').item.json[\"Enviar aos sábados\"] == false && $('Horário Comercial').item.json[\"Enviar aos domingos\"] == false }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "horario"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1792,
+        1280
+      ],
+      "id": "3f0c57c6-ba83-46a0-a22f-b21035c892af",
+      "name": "Horário Comercial?1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0220761d-a075-4f18-a2b9-e261537b3337",
+              "leftValue": "={{ $now.extract('weekdayLong') === 'sábado' && $('Horário Comercial').item.json[\"Enviar aos sábados\"] === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -1600,
+        1152
+      ],
+      "id": "03707677-b913-4d79-aa46-8f002e064266",
+      "name": "Hoje é sabado?1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "29195e52-f681-40c3-9cd8-d0c626ea6068",
+              "leftValue": "={{ $json.transferido }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "98fa25eb-d5eb-4f6e-812c-5e35b3d5212d",
+              "leftValue": "={{ $json.fup3 }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "15038a0e-ae30-47e3-8482-e68c6823c276",
+              "leftValue": "={{ $json.fup2 }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "02aa199e-f120-40f6-bf5d-8c69d0b09484",
+              "leftValue": "={{ $json.fup1 }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "47ff9381-12dc-4622-a8d5-3e73a34ec794",
+              "leftValue": "={{ !$json.ultimofollow || $json.ultimofollow < $now.minus($('Controle - fup2').item.json[\"Intervalo mínimo do último follow (em horas)\"], 'hours').format('yyyy-MM-dd HH:mm') }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -1024,
+        800
+      ],
+      "id": "c763e4b3-fefc-4e14-b4fb-cda3be2eed53",
+      "name": "Filtro2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Dados Uazapi').first().json['URL Base'] }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "token",
+              "value": "={{ $('Dados Uazapi').first().json.apikey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $json.remotejid }}\",\n  \"text\": \"{{ $('Controle - fup2').first().json.mensagem }}\"\n}",
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -512,
+        800
+      ],
+      "id": "46980f6a-ef94-440f-8cfa-5d8f7b75e837",
+      "name": "Enviar mensagem2",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "tableId": "n8n_chat_histories",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "session_id",
+              "fieldValue": "={{ $json.remoteJid }}"
+            },
+            {
+              "fieldId": "message",
+              "fieldValue": "={{ JSON.parse($json.message) }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        16,
+        896
+      ],
+      "id": "05623265-5f9b-42c6-b16e-4409d1d57058",
+      "name": "Inserir msg na memória2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2db2be6f-ae92-413a-82a9-caf3abd3c1ef",
+              "name": "message",
+              "value": "={\"type\": \"ai\", \"content\": \"{{ $json.content.text }}\", \"tool_calls\": [], \"additional_kwargs\": {}, \"response_metadata\": {}, \"invalid_tool_calls\": []}",
+              "type": "string"
+            },
+            {
+              "id": "e0f232ae-1d80-479c-a65f-510e606370bb",
+              "name": "remoteJid",
+              "value": "={{ $json.chatid }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -208,
+        896
+      ],
+      "id": "76f8cc62-591e-4493-8ada-a9f21d5463f8",
+      "name": "Preparar p/ salvar2"
+    },
+    {
+      "parameters": {
+        "compare": "selectedFields",
+        "fieldsToCompare": "remotejid",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        -816,
+        800
+      ],
+      "id": "b5c91a8f-6f6b-4c6b-aa26-b58ef0096195",
+      "name": "Remover duplicados2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0416d89c-8609-4cc7-83a6-e26cf20f31cb",
+              "name": "Quanto tempo após estar sem resposta?",
+              "value": 24,
+              "type": "number"
+            },
+            {
+              "id": "35189af5-dc24-436d-bd1e-122a9ae0054c",
+              "name": "Unidade de medida (hours / minutes)",
+              "value": "hours",
+              "type": "string"
+            },
+            {
+              "id": "3ad2e5a0-30cf-413f-b6fe-c23c06b4c10c",
+              "name": "Somente horário comercial?",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "b935e7d4-2b33-4543-ac4c-b9598d30f5b2",
+              "name": "Intervalo mínimo do último follow (em horas)",
+              "value": 4,
+              "type": "number"
+            },
+            {
+              "id": "abfb5346-6acf-46d0-a2fd-4522c3647cee",
+              "name": "mensagem",
+              "value": "Imagino que seu tempo esteja corrido, ainda é prioridade para ti, seguir com seu atendimento?\\nFico no aguardo.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2000,
+        768
+      ],
+      "id": "6301a3f9-9545-486c-95f5-73af9fb4e7ea",
+      "name": "Controle - fup2"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "leads",
+        "returnAll": true,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "ultimamsg",
+              "condition": "lt",
+              "keyValue": "={{ \n  $now\n    .minus({ \n      [$json[\"Unidade de medida (hours / minutes)\"]]: Number($json[\"Quanto tempo após estar sem resposta?\"])\n    })\n    .toFormat('yyyy-MM-dd HH:mm')\n}}\n"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1232,
+        800
+      ],
+      "id": "1f34807b-8b72-4d09-a66b-8395f00bfcb0",
+      "name": "Buscar - fup2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "remotejid",
+              "condition": "eq",
+              "keyValue": "={{ $json.chatid.replace('@s.whatsapp.net','').trim() }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "fup3",
+              "fieldValue": "true"
+            },
+            {
+              "fieldId": "ultimofollow",
+              "fieldValue": "={{ $now.format('yyyy-MM-dd HH:mm') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        688
+      ],
+      "id": "6cc73330-f13b-4dc4-a8a1-8d5ecc36bf7c",
+      "name": "Marcar fup - true2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7de65903-f90d-4dba-9a1c-a3d8416828e3",
+              "leftValue": "={{ $now.extract('hours') }}",
+              "rightValue": "={{ $('Horário Comercial').item.json[\"Horário em que inicial período comercial\"] }}",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "157c2d45-610c-4746-aa2c-6a0b668ced0c",
+              "leftValue": "={{ $now.extract('hours') }}",
+              "rightValue": "={{ $('Horário Comercial').item.json[\"Horário em que finaliza período comercial\"] }}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -1456,
+        800
+      ],
+      "id": "23ce3e52-6653-4055-af5c-688c3060cb27",
+      "name": "Verificar horário comercial2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json[\"Somente horário comercial?\"] == true && $('Horário Comercial').item.json[\"Enviar aos sábados\"] == true || $('Horário Comercial').item.json[\"Enviar aos domingos\"] == true }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "9aa9da6e-10fb-4a1f-9167-c168890a533e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "dia e hora"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d32e88d6-7aae-4eca-8402-dd5c38baa51d",
+                    "leftValue": "={{ $json[\"Somente horário comercial?\"] == true && $('Horário Comercial').item.json[\"Enviar aos sábados\"] == false && $('Horário Comercial').item.json[\"Enviar aos domingos\"] == false }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "horario"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1792,
+        752
+      ],
+      "id": "8e4373a2-6e01-4161-bc7d-9132966363b2",
+      "name": "Horário Comercial?2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0220761d-a075-4f18-a2b9-e261537b3337",
+              "leftValue": "={{ $now.extract('weekdayLong') === 'sábado' && $('Horário Comercial').item.json[\"Enviar aos sábados\"] === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -1600,
+        640
+      ],
+      "id": "97c8fbc9-2499-425e-8623-aa6afda281bd",
+      "name": "Hoje é sabado?2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "29195e52-f681-40c3-9cd8-d0c626ea6068",
+              "leftValue": "={{ $json.transferido }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "98fa25eb-d5eb-4f6e-812c-5e35b3d5212d",
+              "leftValue": "={{ $json.fup4 }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "72a3e4a8-a39c-4d65-8d01-c70fcf59baa7",
+              "leftValue": "={{ $json.fup3 }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "736ae761-4ae9-44de-bda1-50bc72feb93a",
+              "leftValue": "={{ $json.fup2 }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "d000e03e-ec7a-4ac2-a22a-7b3a341dbb8b",
+              "leftValue": "={{ $json.fup1 }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "47ff9381-12dc-4622-a8d5-3e73a34ec794",
+              "leftValue": "={{ !$json.ultimofollow || $json.ultimofollow < $now.minus($('Controle - fup3').item.json[\"Intervalo mínimo do último follow (em horas)\"], 'hours').format('yyyy-MM-dd HH:mm') }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -1024,
+        240
+      ],
+      "id": "c964414b-dfd9-4c41-a972-d2aeb71cd4e2",
+      "name": "Filtro3"
+    },
+    {
+      "parameters": {
+        "tableId": "n8n_chat_histories",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "session_id",
+              "fieldValue": "={{ $json.remoteJid }}"
+            },
+            {
+              "fieldId": "message",
+              "fieldValue": "={{ JSON.parse($json.message) }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        16,
+        336
+      ],
+      "id": "d135dc69-8d3e-4990-a991-545852db34d2",
+      "name": "Inserir msg na memória3",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2db2be6f-ae92-413a-82a9-caf3abd3c1ef",
+              "name": "message",
+              "value": "={\"type\": \"ai\", \"content\": \"{{ $json.content.text }}\", \"tool_calls\": [], \"additional_kwargs\": {}, \"response_metadata\": {}, \"invalid_tool_calls\": []}",
+              "type": "string"
+            },
+            {
+              "id": "e0f232ae-1d80-479c-a65f-510e606370bb",
+              "name": "remoteJid",
+              "value": "={{ $json.chatid }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -208,
+        336
+      ],
+      "id": "4e873762-5452-45d4-89e9-be697f8c9983",
+      "name": "Preparar p/ salvar3"
+    },
+    {
+      "parameters": {
+        "compare": "selectedFields",
+        "fieldsToCompare": "remotejid",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        -816,
+        240
+      ],
+      "id": "1fbfef36-3ae1-4cae-a90c-c06588f8d8d0",
+      "name": "Remover duplicados3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0416d89c-8609-4cc7-83a6-e26cf20f31cb",
+              "name": "Quanto tempo após estar sem resposta?",
+              "value": 24,
+              "type": "number"
+            },
+            {
+              "id": "35189af5-dc24-436d-bd1e-122a9ae0054c",
+              "name": "Unidade de medida (hours / minutes)",
+              "value": "hours",
+              "type": "string"
+            },
+            {
+              "id": "3ad2e5a0-30cf-413f-b6fe-c23c06b4c10c",
+              "name": "Somente horário comercial?",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "b935e7d4-2b33-4543-ac4c-b9598d30f5b2",
+              "name": "Intervalo mínimo do último follow (em horas)",
+              "value": 6,
+              "type": "number"
+            },
+            {
+              "id": "abfb5346-6acf-46d0-a2fd-4522c3647cee",
+              "name": "mensagem",
+              "value": "Como não obtive mais resposta, entenderei que seguir aqui deixou de ser sua prioridade, vou arquivar seu contato e encerrar aqui minhas tentativas.\\n\\nCaso volte a ser prioridade seguir com nossa conversa futuramente, estarei a disposição para ajudar! Até mais.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2000,
+        208
+      ],
+      "id": "98654b26-87e4-40d9-97c7-4d39521ca288",
+      "name": "Controle - fup3"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "leads",
+        "returnAll": true,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "ultimamsg",
+              "condition": "lt",
+              "keyValue": "={{ \n  $now\n    .minus({ \n      [$json[\"Unidade de medida (hours / minutes)\"]]: Number($json[\"Quanto tempo após estar sem resposta?\"])\n    })\n    .toFormat('yyyy-MM-dd HH:mm')\n}}\n"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1232,
+        240
+      ],
+      "id": "273c79a4-ba6b-45a4-9d96-bcc5ad0b3ccc",
+      "name": "Buscar - fup3",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "remotejid",
+              "condition": "eq",
+              "keyValue": "={{ $json.chatid.replace('@s.whatsapp.net','').trim() }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "fup4",
+              "fieldValue": "true"
+            },
+            {
+              "fieldId": "ultimofollow",
+              "fieldValue": "={{ $now.format('yyyy-MM-dd HH:mm') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        128
+      ],
+      "id": "c502c31d-920d-44e1-a63a-455b976c310f",
+      "name": "Marcar fup - true3",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7de65903-f90d-4dba-9a1c-a3d8416828e3",
+              "leftValue": "={{ $now.extract('hours') }}",
+              "rightValue": "={{ $('Horário Comercial').item.json[\"Horário em que inicial período comercial\"] }}",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "157c2d45-610c-4746-aa2c-6a0b668ced0c",
+              "leftValue": "={{ $now.extract('hours') }}",
+              "rightValue": "={{ $('Horário Comercial').item.json[\"Horário em que finaliza período comercial\"] }}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -1424,
+        240
+      ],
+      "id": "a43e6229-c9e9-47fa-8203-00ed9a7eee92",
+      "name": "Verificar horário comercial3"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json[\"Somente horário comercial?\"] == true && $('Horário Comercial').item.json[\"Enviar aos sábados\"] == true || $('Horário Comercial').item.json[\"Enviar aos domingos\"] == true }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "9aa9da6e-10fb-4a1f-9167-c168890a533e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "dia e hora"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d32e88d6-7aae-4eca-8402-dd5c38baa51d",
+                    "leftValue": "={{ $json[\"Somente horário comercial?\"] == true && $('Horário Comercial').item.json[\"Enviar aos sábados\"] == false && $('Horário Comercial').item.json[\"Enviar aos domingos\"] == false }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "horario"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1792,
+        192
+      ],
+      "id": "2fb0a21e-5c77-4f2a-b9de-71dba254152d",
+      "name": "Horário Comercial?3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0220761d-a075-4f18-a2b9-e261537b3337",
+              "leftValue": "={{ $now.extract('weekdayLong') === 'sábado' && $('Horário Comercial').item.json[\"Enviar aos sábados\"] === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -1600,
+        64
+      ],
+      "id": "efbee71a-9be4-4622-a31f-05830ccc3244",
+      "name": "Hoje é sabado?3"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 11
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2992,
+        1008
+      ],
+      "id": "23bf8d22-18e4-48cc-a8f2-d75676654f95",
+      "name": "A cada 11 min",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "16e8219f-e6e6-4636-9d85-97ce2d2111f9",
+              "name": "motivo",
+              "value": "Fim de Cadência",
+              "type": "string"
+            },
+            {
+              "id": "818b1a20-4bd9-4c67-9c57-1cd7083bc2cc",
+              "name": "telefone",
+              "value": "={{ $json.remoteJid }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        48,
+        688
+      ],
+      "id": "4dbe591d-ba81-4ce8-ba7e-d7d5285af483",
+      "name": "JSON"
+    },
+    {
+      "parameters": {
+        "content": "## Preencher ✍️\n\n- Esses dois nodes Set\n- Todos os nodes 'Controle'",
+        "height": 320,
+        "width": 400,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2816,
+        864
+      ],
+      "id": "a6568648-d3d7-4281-9425-85d9e270fbe6",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Essa parte deve sempre estar ao final do último follow da cadência 🚨\nele irá transferir o lead por fim de cadência",
+        "height": 272,
+        "width": 800,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "b761e9d4-1133-41a1-8f62-cc3991659424",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Dica 💡\n\nOs follow iniciais devem estar na parte de baixo do workflow para serem executados por último, portanto a ordem de cima para baixo fica do último para o primeiro.",
+        "height": 176,
+        "width": 400,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2816,
+        1216
+      ],
+      "typeVersion": 1,
+      "id": "105e4033-7b89-4f10-8f84-0bc9ddff3911",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "#### Editar ao duplicar 🔄",
+        "height": 176,
+        "width": 192,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1072,
+        752
+      ],
+      "typeVersion": 1,
+      "id": "ca971bde-9f7e-4eb7-9b42-d426a59b03f4",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "#### Editar ao duplicar 🔄",
+        "height": 176,
+        "width": 192,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1072,
+        192
+      ],
+      "typeVersion": 1,
+      "id": "235c4a50-e949-405e-ac01-0e0dae6b296a",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "#### Editar ao duplicar 🔄",
+        "height": 176,
+        "width": 192,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1072,
+        1280
+      ],
+      "typeVersion": 1,
+      "id": "cc493476-6f21-4213-87df-b6b8f7861a15",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "#### Editar ao duplicar 🔄",
+        "height": 176,
+        "width": 192,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1072,
+        1840
+      ],
+      "typeVersion": 1,
+      "id": "76718383-c548-46a6-a86c-c3b3ccc05cdc",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 512,
+        "width": 2288,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2032,
+        1664
+      ],
+      "typeVersion": 1,
+      "id": "879165b2-404f-4d94-a2f5-3ee5c5c1fa3a",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 528,
+        "width": 2288,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2048,
+        1104
+      ],
+      "typeVersion": 1,
+      "id": "4077bebe-a506-4b4d-ac35-2e0a79108da5",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 528,
+        "width": 2288,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2048,
+        560
+      ],
+      "typeVersion": 1,
+      "id": "31887d59-77f9-4039-a0d1-5a9ed5accebf",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 528,
+        "width": 2288,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2048,
+        16
+      ],
+      "typeVersion": 1,
+      "id": "edd313b5-b60f-4f55-9141-47170af85c80",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -512,
+        2288
+      ],
+      "id": "0c2ea44b-ffd4-4548-af7a-146820715200",
+      "name": "Juntar todos que receberam"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "remoteJid",
+              "value": "={{ $json.concatenated_remoteJid }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        -96,
+        2320
+      ],
+      "id": "632838fb-aa76-4385-be1e-7db31589199c",
+      "name": "Salvar lista de telefones que receberam follow"
+    },
+    {
+      "parameters": {
+        "content": "## Salvar telefone dos que receberam follow 🧠",
+        "height": 304,
+        "width": 672,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        2224
+      ],
+      "id": "51a39f41-e382-4657-8e92-9c3479ce256a",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Dados Uazapi').first().json['URL Base'] }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "token",
+              "value": "=32907eb7-00f6-466c-b182-04414090ee8d"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $json.remotejid }}\",\n  \"text\": \"{{ $('Controle - fup').first().json.mensagem }}\"\n}",
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -512,
+        1888
+      ],
+      "id": "318bbfda-1dee-43e2-9968-3e7d17752169",
+      "name": "Enviar mensagem4",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Dados Uazapi').first().json['URL Base'] }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "token",
+              "value": "={{ $('Dados Uazapi').first().json.apikey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $json.remotejid }}\",\n  \"text\": \"{{ $('Controle - fup3').first().json.mensagem }}\"\n}",
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -512,
+        240
+      ],
+      "id": "ebdf01a2-fabe-4214-bb2a-dcd72cf47ea8",
+      "name": "Enviar mensagem5",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "concatenate",
+              "field": "remoteJid",
+              "separateBy": " "
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        -320,
+        2320
+      ],
+      "id": "d4fe7a0b-9a9b-48e4-83e0-f594fb36c4ed",
+      "name": "Concatenar1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -3120,
+        1616
+      ],
+      "id": "e9d1fbe0-cd98-44a0-91e0-a7d0cefb1721",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://  /webhook/",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "=motivo",
+              "value": "=Fim de Cadência"
+            },
+            {
+              "name": "=telefone",
+              "value": "={{ $json.item.telefone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        64,
+        112
+      ],
+      "id": "e1fe4f08-a88d-4bb9-9632-a32499c1a518",
+      "name": "Chama aviso"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "de38165e-cbe2-4f87-84d5-759e174fa9a5",
+              "name": "URL Base",
+              "value": "https://harmonizapro.uazapi.com",
+              "type": "string"
+            },
+            {
+              "id": "6c5e5b2a-96ea-475f-a0a4-235a462db162",
+              "name": "apikey",
+              "value": "32907eb7-00f6-466c-b182-04414090ee8d",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2544,
+        1008
+      ],
+      "id": "44666262-2918-4dbd-a7f8-1e1a69d05b0c",
+      "name": "Dados Uazapi"
+    }
+  ],
+  "pinData": {
+    "A cada 11 min": [
+      {
+        "json": {
+          "timestamp": "2025-10-02T02:22:27.004-04:00",
+          "Readable date": "October 2nd 2025, 2:22:27 am",
+          "Readable time": "2:22:27 am",
+          "Day of week": "Thursday",
+          "Year": "2025",
+          "Month": "October",
+          "Day of month": "02",
+          "Hour": "02",
+          "Minute": "22",
+          "Second": "27",
+          "Timezone": "America/New_York (UTC-04:00)"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Filtro": {
+      "main": [
+        [
+          {
+            "node": "Remover duplicados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar p/ salvar": {
+      "main": [
+        [
+          {
+            "node": "Inserir msg na memória",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remover duplicados": {
+      "main": [
+        [
+          {
+            "node": "Juntar todos que receberam",
+            "type": "main",
+            "index": 3
+          },
+          {
+            "node": "Enviar mensagem4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Controle - fup": {
+      "main": [
+        [
+          {
+            "node": "Horário Comercial?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar - fup": {
+      "main": [
+        [
+          {
+            "node": "Filtro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Horário Comercial": {
+      "main": [
+        [
+          {
+            "node": "Dados Uazapi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar horário comercial": {
+      "main": [
+        [
+          {
+            "node": "Buscar - fup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Horário Comercial?": {
+      "main": [
+        [
+          {
+            "node": "Hoje é sabado?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verificar horário comercial",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verificar horário comercial",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hoje é sabado?": {
+      "main": [
+        [
+          {
+            "node": "Verificar horário comercial",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro1": {
+      "main": [
+        [
+          {
+            "node": "Remover duplicados1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar mensagem1": {
+      "main": [
+        [
+          {
+            "node": "Marcar fup - true1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Preparar p/ salvar1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar p/ salvar1": {
+      "main": [
+        [
+          {
+            "node": "Inserir msg na memória1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remover duplicados1": {
+      "main": [
+        [
+          {
+            "node": "Enviar mensagem1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Juntar todos que receberam",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Controle - fup1": {
+      "main": [
+        [
+          {
+            "node": "Horário Comercial?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar - fup1": {
+      "main": [
+        [
+          {
+            "node": "Filtro1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar horário comercial1": {
+      "main": [
+        [
+          {
+            "node": "Buscar - fup1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Horário Comercial?1": {
+      "main": [
+        [
+          {
+            "node": "Hoje é sabado?1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verificar horário comercial1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verificar horário comercial1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hoje é sabado?1": {
+      "main": [
+        [
+          {
+            "node": "Verificar horário comercial1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro2": {
+      "main": [
+        [
+          {
+            "node": "Remover duplicados2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar mensagem2": {
+      "main": [
+        [
+          {
+            "node": "Marcar fup - true2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Preparar p/ salvar2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar p/ salvar2": {
+      "main": [
+        [
+          {
+            "node": "Inserir msg na memória2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remover duplicados2": {
+      "main": [
+        [
+          {
+            "node": "Enviar mensagem2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Juntar todos que receberam",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Controle - fup2": {
+      "main": [
+        [
+          {
+            "node": "Horário Comercial?2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar - fup2": {
+      "main": [
+        [
+          {
+            "node": "Filtro2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marcar fup - true2": {
+      "main": [
+        [
+          {
+            "node": "JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar horário comercial2": {
+      "main": [
+        [
+          {
+            "node": "Buscar - fup2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Horário Comercial?2": {
+      "main": [
+        [
+          {
+            "node": "Hoje é sabado?2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verificar horário comercial2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verificar horário comercial2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hoje é sabado?2": {
+      "main": [
+        [
+          {
+            "node": "Verificar horário comercial2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro3": {
+      "main": [
+        [
+          {
+            "node": "Remover duplicados3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar p/ salvar3": {
+      "main": [
+        [
+          {
+            "node": "Inserir msg na memória3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remover duplicados3": {
+      "main": [
+        [
+          {
+            "node": "Enviar mensagem5",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Juntar todos que receberam",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Controle - fup3": {
+      "main": [
+        [
+          {
+            "node": "Horário Comercial?3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar - fup3": {
+      "main": [
+        [
+          {
+            "node": "Filtro3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar horário comercial3": {
+      "main": [
+        [
+          {
+            "node": "Buscar - fup3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Horário Comercial?3": {
+      "main": [
+        [
+          {
+            "node": "Hoje é sabado?3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verificar horário comercial3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verificar horário comercial3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hoje é sabado?3": {
+      "main": [
+        [
+          {
+            "node": "Verificar horário comercial3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "A cada 11 min": {
+      "main": [
+        [
+          {
+            "node": "Horário Comercial",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Juntar todos que receberam": {
+      "main": [
+        [
+          {
+            "node": "Concatenar1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar mensagem4": {
+      "main": [
+        [
+          {
+            "node": "Marcar fup - true",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Preparar p/ salvar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar mensagem5": {
+      "main": [
+        [
+          {
+            "node": "Marcar fup - true3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Preparar p/ salvar3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Concatenar1": {
+      "main": [
+        [
+          {
+            "node": "Salvar lista de telefones que receberam follow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Horário Comercial",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados Uazapi": {
+      "main": [
+        [
+          {
+            "node": "Controle - fup",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Controle - fup1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Controle - fup2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Controle - fup3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "46ef2333-3bc0-45e9-8380-daaf91173aa2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "W1msnd1vZWkpFSDM",
+  "tags": []
+}

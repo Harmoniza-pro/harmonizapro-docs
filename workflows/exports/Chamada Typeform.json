@@ -1,0 +1,1469 @@
+{
+  "name": "Chamada Typeform",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5a54b623-ebbe-4ece-9397-7e488e154e03",
+              "leftValue": "={{ $('Info organizadas').item.json.budget }}",
+              "rightValue": "6",
+              "operator": {
+                "type": "string",
+                "operation": "startsWith"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1360,
+        -368
+      ],
+      "id": "ee9d3cae-e9d0-4638-861f-c09707b5be5a",
+      "name": "Budget alto?"
+    },
+    {
+      "parameters": {
+        "tableId": "leads",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "nome",
+              "fieldValue": "={{ $('Info organizadas').item.json.Nome }}"
+            },
+            {
+              "fieldId": "created_at",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldId": "transferido",
+              "fieldValue": "false "
+            },
+            {
+              "fieldId": "instancia_id",
+              "fieldValue": "={{ $('Webhook').item.json.body.form_response.hidden.instancia_id }}"
+            },
+            {
+              "fieldId": "protocolo_id",
+              "fieldValue": "={{ $('Puxar backgroud').item.json.protocolo_id }}"
+            },
+            {
+              "fieldId": "clinica_id",
+              "fieldValue": "={{ $('Puxar backgroud').item.json.clinica_id }}"
+            },
+            {
+              "fieldId": "remotejid",
+              "fieldValue": "={{ $('Info organizadas').item.json.Telefone.trim() }}"
+            },
+            {
+              "fieldId": "idade",
+              "fieldValue": "={{ $('Info organizadas').item.json.Idade }}"
+            },
+            {
+              "fieldId": "incomodo",
+              "fieldValue": "={{ $('Info organizadas').item.json.incomodo }}"
+            },
+            {
+              "fieldId": "ja_fez",
+              "fieldValue": "={{ $('Info organizadas').item.json.ja_fez }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        -480
+      ],
+      "id": "f0e20856-196e-45a9-a143-0cebad998090",
+      "name": "Create lead",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d55638dc-d59a-4a4a-9c33-ab3bf3af0e31",
+              "name": "Nome",
+              "value": "={{ $json.body.form_response.answers[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "e9509940-8256-4618-b2f7-40b4b61f5f13",
+              "name": "Telefone",
+              "value": "={{ String($json.body.form_response.answers[5].phone_number)\n  .replace(/\\D/g,'')\n  .replace(/^55(\\d{2})9(?=\\d{8}$)/,'55$1')\n}}\n",
+              "type": "string"
+            },
+            {
+              "id": "179996c1-e94d-4203-bed4-149a19405bdd",
+              "name": "Idade",
+              "value": "={{ $json.body.form_response.answers[4].text }}",
+              "type": "string"
+            },
+            {
+              "id": "fc0a4317-56bb-4dd8-be60-64a32953b388",
+              "name": "incomodo",
+              "value": "={{ $json.body.form_response.answers[2].text }}",
+              "type": "string"
+            },
+            {
+              "id": "87285f55-1c76-4fa6-a265-7c0b017e0c54",
+              "name": "ja_fez",
+              "value": "={{ $json.body.form_response.answers[3].text }}",
+              "type": "string"
+            },
+            {
+              "id": "cbe2a283-c05e-4ad8-bfe6-fde5c17472aa",
+              "name": "budget",
+              "value": "={{ $json.body.form_response.answers[6].choice.label }}",
+              "type": "string"
+            },
+            {
+              "id": "f1dab485-4e75-4b8b-985c-c5b6f3e75e43",
+              "name": "sender",
+              "value": "={{ $json.body.form_response.answers[5].phone_number }}@s.whatsapp.net",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -336,
+        -272
+      ],
+      "id": "3e7069d5-a786-4ea3-a899-5b1c378ea7fb",
+      "name": "Info organizadas",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "typeform/hamoniza.pro",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -784,
+        -272
+      ],
+      "id": "05b04f56-8269-46c0-b276-162b8d4605ae",
+      "name": "Webhook",
+      "webhookId": "815c2223-4327-4430-afa9-7fb40f7c6682"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "instancias_whatsapp",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Webhook').item.json.body.form_response.hidden.instancia_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -272
+      ],
+      "id": "27fccffc-8dc8-4e33-ae34-35a51beac3ac",
+      "name": "Puxar backgroud",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "clinicas_com_atendentes",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Puxar backgroud').item.json.clinica_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1584,
+        -256
+      ],
+      "id": "05857eae-6f1a-4c1a-945c-8af5684a86d1",
+      "name": "Buscar Clinica",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "protocolos",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Puxar backgroud').item.json.protocolo_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1808,
+        -256
+      ],
+      "id": "18a18dc6-d27d-4f90-96e8-4f1891a38c71",
+      "name": "Buscar protocolo",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Você é um assistente interno. Gere um resumo curto e objetivo para handoff de atendimento humano.",
+        "options": {
+          "systemMessage": "=Gere um resumo em tópicos com base nos dados abaixo.\nFormato:\n\nLead:\n\nContato:\n\nClínica/Protocolo:\n\nQueixa principal:\n\nIdade:\n\nJá fez procedimentos:\n\nOrçamento:\n\nUrgência:\n\nObservações importantes:\n\nPróxima melhor pergunta para o atendente fazer:\n\nDados:\nNome: {{ $('Info organizadas').first().json.Nome }}\nTelefone: {{ $('Info organizadas').first().json.Telefone }}\nIdade: {{ $('Info organizadas').first().json.Idade }}\nIncômodo: {{ $('Info organizadas').first().json.incomodo }}\nJá fez: {{ $('Info organizadas').first().json.ja_fez }}\nBudget: {{ $('Info organizadas').first().json.budget }}\nClínica: {{ $('Buscar Clinica-handOff').item.json.dr_nome }}\nCidade: {{ $('Buscar Clinica-handOff').item.json.cidade }}\nProtocolo:{{ $json.nome }} e {{ $json.descricao }}\n\nREGRAS:\n- Texto simples (sem Markdown).\n- Não usar: **  *  _  #  ```  \\n literal.\n- Se algum dado vier vazio, preencher como “Não informado”.\n- Urgência: se não existir campo, usar “Não informada (confirmar no atendimento)”.\n- Como este é LEAD NOVO COM VALOR ALTO, as observações devem reforçar: atendimento prioritário, confirmar objetivo, prazo e disponibilidade.\n- A pergunta final deve ser objetiva e voltada a fechamento (objetivo + prazo/urgência + confirmação de orçamento).\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        2320,
+        -640
+      ],
+      "id": "109a32a2-13ac-42e8-8e2d-62b0319c1fae",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Create lead').item.json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "transferido",
+              "fieldValue": "=true"
+            },
+            {
+              "fieldId": "handoff_enviado",
+              "fieldValue": "true"
+            },
+            {
+              "fieldId": "handoff_at",
+              "fieldValue": "={{ new Date().toISOString() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1584,
+        -512
+      ],
+      "id": "e98c986b-7d60-453f-bf07-cb158dd2a29b",
+      "name": "Atualiza cliente",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "clinicas_com_atendentes",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Puxar backgroud').item.json.clinica_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1808,
+        -512
+      ],
+      "id": "d636814a-39e6-45d2-91c0-143ab92bcd41",
+      "name": "Buscar Clinica-handOff",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "protocolos",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Puxar backgroud').item.json.protocolo_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2080,
+        -512
+      ],
+      "id": "aec17d60-2582-4dde-9b40-e2d4f57b18a7",
+      "name": "Buscar protocolo-handOff",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "remotejid",
+              "keyValue": "={{ $('Info organizadas').item.json.sender.replace(/\\r?\\n/g,'').replace(/\\+/g,'').trim() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        80,
+        -272
+      ],
+      "id": "90b5847c-6d48-4ba3-9c53-4695757ffc18",
+      "name": "Buscar Usuario",
+      "alwaysOutputData": true,
+      "notesInFlow": false,
+      "executeOnce": false,
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Você é um assistente interno. Gere um resumo curto e objetivo para handoff de atendimento humano.",
+        "options": {
+          "systemMessage": "=Você é uma IA de Handoff para a Hunter (atendente) quando um lead já existente na base preenche o Typeform novamente.\nSua missão é gerar UMA única mensagem pronta para WhatsApp, clara e acionável, com os dados essenciais e a próxima melhor pergunta.\n\nREGRAS OBRIGATÓRIAS (WhatsApp):\n- Texto simples, sem Markdown.\n- Não usar: **  *  _  #  ```  []  ()  >  |  \\n (não escrever \\n literal).\n- Use apenas dois-pontos, hífen e quebras de linha reais.\n- Máximo 12 linhas.\n- Não inventar informações. Se faltar algo, escreva “Não informado”.\n- Não repetir campos.\n\nDADOS DISPONÍVEIS (use estes campos exatamente):\n- Hunter (nome): {{ $('Buscar Usuario').item.json.nome }}\n- Hunter (remotejid): {{ $('Buscar Usuario').item.json.remotejid }}\n- Clínica: {{ $('Buscar Clinica-handOff - cliente existente').item.json.nome }}\n- Lead (idade): {{ $('Info organizadas').item.json.Idade }}\n- Lead (incômodo): {{ $('Info organizadas').item.json.incomodo }}\n- Lead (já fez): {{ $('Info organizadas').item.json.ja_fez }}\n- Lead (orçamento): {{ $('Info organizadas').item.json.budget }}\n\nOBJETIVO:\n- Informar a Hunter que o lead já existe e preencheu novamente.\n- Dar contexto mínimo para ela atender rápido.\n- Sugerir 1 pergunta perfeita para identificar o que mudou desde o último contato.\n\nFORMATO DE SAÍDA (copie e preencha):\nHANDOFF – LEAD EXISTENTE (NOVO PREENCHIMENTO)\n\nHunter: {hunter_nome}\nremotejid: {hunter_remotejid}\n\nClínica: {clinica_nome}\nIdade: {idade}\nQueixa: {incomodo}\nJá fez procedimentos: {ja_fez}\nOrçamento: {budget}\n\nAtenção: Lead já cadastrado. Novo envio do Typeform. Validar o que mudou desde o último contato.\nPergunta sugerida: “Perfeito, só pra eu te direcionar certinho: o que mudou desde seu último contato — seu incômodo, seu objetivo ou o orçamento/urgência para fazer o procedimento?”\n\nGere apenas a mensagem final nesse formato, sem nenhum texto extra.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1920,
+        128
+      ],
+      "id": "32863e5a-95a4-4b75-ac89-68d5913bc875",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-20250514",
+          "cachedResultName": "Claude 4 Sonnet"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        1792,
+        336
+      ],
+      "id": "c5f8dbfa-ea6e-47e5-bd07-7ca2d8bbd395",
+      "name": "Anthropic Chat Model1",
+      "credentials": {
+        "anthropicApi": {
+          "id": "MGnJMTOF1Tb4Cpun",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "clinicas_com_atendentes",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Puxar backgroud').item.json.clinica_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        128
+      ],
+      "id": "fec318b5-60be-4cda-94bb-93fd0fab4b17",
+      "name": "Buscar Clinica-handOff - cliente existente",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "protocolos",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Puxar backgroud').item.json.protocolo_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1664,
+        128
+      ],
+      "id": "0cf99c65-86d9-4575-857e-971e8f76caca",
+      "name": "Buscar protocolo-handOff - cliente existente",
+      "credentials": {
+        "supabaseApi": {
+          "id": "PiFxP3sxtjSm7E8B",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Puxar backgroud').item.json.uazapi_server_url }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "token",
+              "value": "=32907eb7-00f6-466c-b182-04414090ee8d"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "=+55839824-5683"
+            },
+            {
+              "name": "text",
+              "value": "=\n{{ $('AI Agent1').item.json.output }}"
+            },
+            {
+              "name": "linkPreview",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2272,
+        128
+      ],
+      "id": "fe8d07e7-0edb-4f46-bdcc-d36738ab8f1e",
+      "name": "Enviar alerta - Hunter"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "lead_nome",
+              "value": "={{ $('Info organizadas').first().json.Nome || '' }}"
+            },
+            {
+              "key": "lead_telefone",
+              "value": "={{ $('Info organizadas').first().json.Telefone || '' }}"
+            },
+            {
+              "key": "lead_remotejid",
+              "value": "={{ $json.remotejid }}"
+            },
+            {
+              "key": "lead_id_supabase",
+              "value": "={{ $items('Buscar Usuario')?.[0]?.json?.id || '' }}"
+            },
+            {
+              "key": "clinica_dr",
+              "value": "={{ $('Puxar backgroud').item.json.clinica_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        320,
+        -272
+      ],
+      "id": "97cb5347-ff38-4b72-8f52-0dea243ebbed",
+      "name": "Execution Data"
+    },
+    {
+      "parameters": {
+        "jsCode": "const seen = new Set();\nconst out = [];\n\nfor (const item of items) {\n  const phone =\n    item.json.telefone_normalizado ||\n    item.json.Number ||\n    item.json.phone;\n\n  // se não tiver phone, deixa passar\n  if (!phone) { out.push(item); continue; }\n\n  // remove duplicados\n  if (seen.has(phone)) continue;\n\n  seen.add(phone);\n  out.push(item);\n}\n\nreturn out;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        -272
+      ],
+      "id": "ae475c53-7acd-422f-8434-9fa0f1440cd1",
+      "name": "Anti-duplicidade"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "89e4b450-d2c2-4a5f-9a05-9bfed577d160",
+              "leftValue": "={{ !!$items(\"Buscar Usuario\")?.[0]?.json?.id }}\n\n",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        784,
+        -272
+      ],
+      "id": "38d114cd-0f26-48fb-9f00-7e202e95628c",
+      "name": "Novo usuário?"
+    },
+    {
+      "parameters": {
+        "content": "# Notificar hunter que lead cadastrou novamente",
+        "height": 528,
+        "width": 1184,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        -16
+      ],
+      "id": "c24d798a-68d0-4175-8a7c-e17683ccdc68",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Puxar backgroud').item.json.uazapi_server_url }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "token",
+              "value": "=32907eb7-00f6-466c-b182-04414090ee8d"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "=+558398245683"
+            },
+            {
+              "name": "text",
+              "value": "=\n{{ $('AI Agent').item.json.output }}"
+            },
+            {
+              "name": "linkPreview",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2720,
+        -560
+      ],
+      "id": "9a3d4572-3264-424d-852f-529a5b7c7348",
+      "name": "Enviar alerta | Hunter"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Puxar backgroud').item.json.uazapi_server_url }}/send/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "token",
+              "value": "=32907eb7-00f6-466c-b182-04414090ee8d"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Info organizadas').item.json.Telefone }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2992,
+        -240
+      ],
+      "id": "70147417-3797-4763-8b48-a05fc27f0eaf",
+      "name": "Enviar abordagem"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2272,
+        -416
+      ],
+      "id": "25ccc4f4-7304-4e52-a590-b91244a2361e",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "5wqWWY0210p2Nt31",
+          "name": "ferramentas@harmoniza.pro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -576,
+        -272
+      ],
+      "id": "70e8f8ae-6f40-4c58-883c-4897b4dd6501",
+      "name": "Wait",
+      "webhookId": "849985d6-932d-4b3b-ac69-d26c699e2e40"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "25ea7987-f9be-4ec8-a605-10d1d250d732",
+              "name": "Mensage parte 1",
+              "value": "=Olá {{ $('Info organizadas').first().json.Nome?.split(' ')?.[0] || $('Info organizadas').first().json.Nome }}, tudo bem? Aqui é {{ $('Buscar Clinica').item.json.atendentes[0].nome }} a consultora de beleza da {{ $('Buscar Clinica').item.json.dr_nome }} Acabamos de receber seu cadastro no método {{ $json.nome }} , responsável por rejuvenescer milhares de mulheres em {{ $('Buscar Clinica').item.json.cidade }}",
+              "type": "string"
+            },
+            {
+              "id": "f3bbb557-1397-4326-bba1-f50e00ab0fbc",
+              "name": "Mensage parte 2",
+              "value": "Antes de explicar como funciona todo o protocolo e te passar uma média de valores, só preciso confirmar algumas informações, pode ser?",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2016,
+        -256
+      ],
+      "id": "fe87483b-f9a0-4b36-b6fd-de375968b09a",
+      "name": "Mensagens"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2672,
+        -256
+      ],
+      "id": "35d2ddab-e116-42b0-ba59-cf98d18b6f29",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Fim",
+      "typeVersion": 1,
+      "position": [
+        2928,
+        -400
+      ],
+      "id": "e5876764-479d-4f3b-aed2-0ce23b753fba"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\n\nconst m1 = $input.first().json['Mensage parte 1']\nconst m2 = $input.first().json['Mensage parte 2']\n\nreturn [m1, m2]\n  .filter((t) => typeof t === 'string' && t.trim() !== '')\n  .map((text) => ({ json: { text } }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2432,
+        -256
+      ],
+      "id": "d370011a-97e5-43d4-ad5c-ea7ca1883352",
+      "name": "Dividir Mensagem"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "webhooks.goldeletra.pro",
+            "user-agent": "Typeform Webhooks",
+            "content-length": "6761",
+            "accept-encoding": "gzip",
+            "content-type": "application/json",
+            "traceparent": "00-d61d4267bd81c7b25498ae36c2d44361-7788f2082ef194d4-01",
+            "x-forwarded-for": "18.210.136.162",
+            "x-forwarded-host": "webhooks.goldeletra.pro",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik_traefik.1",
+            "x-real-ip": "18.210.136.162"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "event_id": "01KHW0JV653GKEDJEDXMDRD1J6",
+            "event_type": "form_response",
+            "form_response": {
+              "form_id": "rUCqnNiQ",
+              "token": "ql3snktr5k6rl1sr45tql3snktn818xd",
+              "response_url": "https://admin.typeform.com/form/rUCqnNiQ/results?responseId=ql3snktr5k6rl1sr45tql3snktn818xd#responses",
+              "landed_at": "2026-02-19T22:32:54Z",
+              "submitted_at": "2026-02-19T22:33:29Z",
+              "hidden": {
+                "instancia_id": "rr"
+              },
+              "calculated": {
+                "score": 0
+              },
+              "variables": [
+                {
+                  "key": "counter_014be624_ce77_4cd9_beb6_be33a011d262",
+                  "type": "number",
+                  "number": 0
+                },
+                {
+                  "key": "score",
+                  "type": "number",
+                  "number": 0
+                },
+                {
+                  "key": "winning_outcome_id",
+                  "type": "outcome_id",
+                  "outcome_id": "YRcjJ6u7Z0L2"
+                }
+              ],
+              "outcome": {
+                "id": "YRcjJ6u7Z0L2",
+                "title": "Clique no botão abaixo e receba um presente na sua consulta. 😊"
+              },
+              "definition": {
+                "id": "rUCqnNiQ",
+                "title": "Dra. Renata Rezende test Harmoniza-IA ",
+                "fields": [
+                  {
+                    "id": "JqiIT2G5NyQC",
+                    "ref": "fa335b9e-ecc3-48c6-90d8-4a75abbb9b75",
+                    "type": "short_text",
+                    "title": "First name",
+                    "properties": {}
+                  },
+                  {
+                    "id": "AZxna1oaCjpO",
+                    "ref": "f5b8e621-751a-487f-9200-aceb4ca98a74",
+                    "type": "multiple_choice",
+                    "title": "Por que o *Protocolo RR* não é um procedimento qualquer",
+                    "properties": {},
+                    "choices": [
+                      {
+                        "id": "my5kPhHCmtmq",
+                        "ref": "e6cc6034-bcfc-4e96-a1fa-2cfa03a50bdf",
+                        "label": "Quero resultados como esse!"
+                      },
+                      {
+                        "id": "9n5UtOictcn1",
+                        "ref": "59a8c621-4849-4ef2-aabd-5b92b3af63aa",
+                        "label": "É isso que eu preciso!"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "PuoO2b6tuEOy",
+                    "ref": "0f804299-aa4f-41de-89bd-e48bce0950ba",
+                    "type": "long_text",
+                    "title": "{{field:fa335b9e-ecc3-48c6-90d8-4a75abbb9b75}}, o que mais te incomoda no seu rosto?",
+                    "properties": {}
+                  },
+                  {
+                    "id": "zmq8nyW7IDDR",
+                    "ref": "a504526d-4021-4efe-93b0-31060884645a",
+                    "type": "long_text",
+                    "title": "{{field:fa335b9e-ecc3-48c6-90d8-4a75abbb9b75}}, quais procedimento estético você já fez antes?",
+                    "properties": {}
+                  },
+                  {
+                    "id": "TiiaQKoaWGNP",
+                    "ref": "6efdec6c-05b9-4ed7-b1d0-885c2f86888a",
+                    "type": "long_text",
+                    "title": "{{field:fa335b9e-ecc3-48c6-90d8-4a75abbb9b75}}, quantos anos você tem?",
+                    "properties": {}
+                  },
+                  {
+                    "id": "cd5DstdRaLv0",
+                    "ref": "a8834aa8-3067-44e7-b36f-1010eedf1840",
+                    "type": "phone_number",
+                    "title": "Phone number",
+                    "properties": {}
+                  },
+                  {
+                    "id": "oTOSXIwy6wtP",
+                    "ref": "0612b43e-64df-4a15-b22a-c57e0d1f424e",
+                    "type": "multiple_choice",
+                    "title": "Quanto pretende investir",
+                    "properties": {},
+                    "choices": [
+                      {
+                        "id": "9yoq17iNGjz5",
+                        "ref": "fc31b14a-3b9a-4c60-8489-b633b6a12b1e",
+                        "label": "1000 - 2000"
+                      },
+                      {
+                        "id": "nU8Ot1VgLHlM",
+                        "ref": "d0e0fd15-18e7-42ea-bec8-2e36b855cdd7",
+                        "label": "2000 - 4000"
+                      },
+                      {
+                        "id": "K8OVC0FgRgX4",
+                        "ref": "abafe906-6632-475c-8f16-0cc3da72c3c0",
+                        "label": "4000 - 5000"
+                      },
+                      {
+                        "id": "eYHdRDUwoOdd",
+                        "ref": "4b2f4c15-e84a-4934-90aa-fa63d1ec0ab2",
+                        "label": "6000 - 10.000"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "zZ9sgAqylIht",
+                    "ref": "3df50bd4-3a47-4079-b3fb-bd871adc4efe",
+                    "type": "multiple_choice",
+                    "title": "Para prepararmos sua consulta, o investimento tem o valor único de R$200,00.\n \nPronta para o primeiro passo da sua transformação?",
+                    "properties": {},
+                    "choices": [
+                      {
+                        "id": "I3KIJh4Ynr7p",
+                        "ref": "61c7bfa6-fee9-454b-aa10-b7a34668abed",
+                        "label": "Sim, quero agendar uma consulta!"
+                      },
+                      {
+                        "id": "OoAreCApmmkB",
+                        "ref": "7e0a5c44-e2f1-40a5-8dbb-841ae6f19b8e",
+                        "label": "Não! Talvez o tempo me espere..."
+                      }
+                    ]
+                  }
+                ],
+                "outcome": {
+                  "variable": "winning_outcome_id",
+                  "choices": [
+                    {
+                      "id": "YRcjJ6u7Z0L2",
+                      "ref": "b9328bc1-d288-48db-840f-90017865618e",
+                      "title": "Clique no botão abaixo e receba um presente na sua consulta. 😊",
+                      "counter_variable": "counter_014be624_ce77_4cd9_beb6_be33a011d262",
+                      "thankyou_screen_ref": "439e42e2-71b0-48e2-ab67-dbb18cfedebe"
+                    }
+                  ]
+                },
+                "endings": [
+                  {
+                    "id": "8U8eb6rUiSa6",
+                    "ref": "439e42e2-71b0-48e2-ab67-dbb18cfedebe",
+                    "title": "Clique no botão abaixo e receba um presente na sua consulta. 😊",
+                    "type": "thankyou_screen",
+                    "properties": {
+                      "description": "Assista o vídeo e conheça mais sobre a experiência com a Dra. Renata Rezende!",
+                      "button_text": "Agendar Consulta Paga!",
+                      "show_button": true,
+                      "share_icons": false,
+                      "button_mode": "redirect",
+                      "redirect_url": "https://wa.me/5573998675539?text=Ol%C3%A1!%20Acabei%20de%20preencher%20o%20formul%C3%A1rio%20e%20quero%20prioridade%20no%20atendimento."
+                    },
+                    "attachment": {
+                      "type": "video",
+                      "href": "https://youtube.com/shorts/z01xLz9FxjY?feature=share"
+                    },
+                    "layout": {
+                      "type": "stack",
+                      "attachment": {
+                        "type": "video",
+                        "href": "https://youtube.com/shorts/z01xLz9FxjY?feature=share"
+                      },
+                      "viewport_overrides": {}
+                    }
+                  }
+                ],
+                "settings": {
+                  "partial_responses_to_all_integrations": false
+                }
+              },
+              "answers": [
+                {
+                  "type": "text",
+                  "text": "Pedro",
+                  "answer_url": "https://admin.typeform.com/form/rUCqnNiQ/results?responseId=ql3snktr5k6rl1sr45tql3snktn818xd&fieldId=JqiIT2G5NyQC#responses",
+                  "field": {
+                    "id": "JqiIT2G5NyQC",
+                    "type": "short_text",
+                    "ref": "fa335b9e-ecc3-48c6-90d8-4a75abbb9b75"
+                  }
+                },
+                {
+                  "type": "choice",
+                  "answer_url": "https://admin.typeform.com/form/rUCqnNiQ/results?responseId=ql3snktr5k6rl1sr45tql3snktn818xd&fieldId=AZxna1oaCjpO#responses",
+                  "choice": {
+                    "id": "my5kPhHCmtmq",
+                    "label": "Quero resultados como esse!",
+                    "ref": "e6cc6034-bcfc-4e96-a1fa-2cfa03a50bdf"
+                  },
+                  "field": {
+                    "id": "AZxna1oaCjpO",
+                    "type": "multiple_choice",
+                    "ref": "f5b8e621-751a-487f-9200-aceb4ca98a74"
+                  }
+                },
+                {
+                  "type": "text",
+                  "text": "Olheira",
+                  "answer_url": "https://admin.typeform.com/form/rUCqnNiQ/results?responseId=ql3snktr5k6rl1sr45tql3snktn818xd&fieldId=PuoO2b6tuEOy#responses",
+                  "field": {
+                    "id": "PuoO2b6tuEOy",
+                    "type": "long_text",
+                    "ref": "0f804299-aa4f-41de-89bd-e48bce0950ba"
+                  }
+                },
+                {
+                  "type": "text",
+                  "text": "Botox",
+                  "answer_url": "https://admin.typeform.com/form/rUCqnNiQ/results?responseId=ql3snktr5k6rl1sr45tql3snktn818xd&fieldId=zmq8nyW7IDDR#responses",
+                  "field": {
+                    "id": "zmq8nyW7IDDR",
+                    "type": "long_text",
+                    "ref": "a504526d-4021-4efe-93b0-31060884645a"
+                  }
+                },
+                {
+                  "type": "text",
+                  "text": "44",
+                  "answer_url": "https://admin.typeform.com/form/rUCqnNiQ/results?responseId=ql3snktr5k6rl1sr45tql3snktn818xd&fieldId=TiiaQKoaWGNP#responses",
+                  "field": {
+                    "id": "TiiaQKoaWGNP",
+                    "type": "long_text",
+                    "ref": "6efdec6c-05b9-4ed7-b1d0-885c2f86888a"
+                  }
+                },
+                {
+                  "type": "phone_number",
+                  "answer_url": "https://admin.typeform.com/form/rUCqnNiQ/results?responseId=ql3snktr5k6rl1sr45tql3snktn818xd&fieldId=cd5DstdRaLv0#responses",
+                  "phone_number": "+5583996618397",
+                  "field": {
+                    "id": "cd5DstdRaLv0",
+                    "type": "phone_number",
+                    "ref": "a8834aa8-3067-44e7-b36f-1010eedf1840"
+                  }
+                },
+                {
+                  "type": "choice",
+                  "answer_url": "https://admin.typeform.com/form/rUCqnNiQ/results?responseId=ql3snktr5k6rl1sr45tql3snktn818xd&fieldId=oTOSXIwy6wtP#responses",
+                  "choice": {
+                    "id": "K8OVC0FgRgX4",
+                    "label": "4000 - 5000",
+                    "ref": "abafe906-6632-475c-8f16-0cc3da72c3c0"
+                  },
+                  "field": {
+                    "id": "oTOSXIwy6wtP",
+                    "type": "multiple_choice",
+                    "ref": "0612b43e-64df-4a15-b22a-c57e0d1f424e"
+                  }
+                },
+                {
+                  "type": "choice",
+                  "answer_url": "https://admin.typeform.com/form/rUCqnNiQ/results?responseId=ql3snktr5k6rl1sr45tql3snktn818xd&fieldId=zZ9sgAqylIht#responses",
+                  "choice": {
+                    "id": "I3KIJh4Ynr7p",
+                    "label": "Sim, quero agendar uma consulta!",
+                    "ref": "61c7bfa6-fee9-454b-aa10-b7a34668abed"
+                  },
+                  "field": {
+                    "id": "zZ9sgAqylIht",
+                    "type": "multiple_choice",
+                    "ref": "3df50bd4-3a47-4079-b3fb-bd871adc4efe"
+                  }
+                }
+              ],
+              "ending": {
+                "id": "8U8eb6rUiSa6",
+                "ref": "439e42e2-71b0-48e2-ab67-dbb18cfedebe"
+              }
+            }
+          },
+          "webhookUrl": "https://webhooks.goldeletra.pro/webhook/typeform/hamoniza.pro",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Budget alto?": {
+      "main": [
+        [
+          {
+            "node": "Atualiza cliente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Buscar Clinica",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create lead": {
+      "main": [
+        [
+          {
+            "node": "Budget alto?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Info organizadas": {
+      "main": [
+        [
+          {
+            "node": "Puxar backgroud",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxar backgroud": {
+      "main": [
+        [
+          {
+            "node": "Buscar Usuario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Clinica": {
+      "main": [
+        [
+          {
+            "node": "Buscar protocolo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar protocolo": {
+      "main": [
+        [
+          {
+            "node": "Mensagens",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Enviar alerta | Hunter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualiza cliente": {
+      "main": [
+        [
+          {
+            "node": "Buscar Clinica-handOff",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Clinica-handOff": {
+      "main": [
+        [
+          {
+            "node": "Buscar protocolo-handOff",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar protocolo-handOff": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Usuario": {
+      "main": [
+        [
+          {
+            "node": "Execution Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Enviar alerta - Hunter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Clinica-handOff - cliente existente": {
+      "main": [
+        [
+          {
+            "node": "Buscar protocolo-handOff - cliente existente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar protocolo-handOff - cliente existente": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execution Data": {
+      "main": [
+        [
+          {
+            "node": "Anti-duplicidade",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anti-duplicidade": {
+      "main": [
+        [
+          {
+            "node": "Novo usuário?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Novo usuário?": {
+      "main": [
+        [
+          {
+            "node": "Create lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Buscar Clinica-handOff - cliente existente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar abordagem": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Info organizadas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensagens": {
+      "main": [
+        [
+          {
+            "node": "Dividir Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Fim",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar abordagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fim": {
+      "main": [
+        []
+      ]
+    },
+    "Dividir Mensagem": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "36aa760d-2966-4b1c-991d-b74f4dedd89c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc3c1297cfe97c5f2f51d1bbe7b780e8e785c95632e96874a8b2789f41a66456"
+  },
+  "id": "VPVYN9AzG8IGnKiR",
+  "tags": []
+}
