@@ -1,0 +1,60 @@
+site_name: HarmonizaPRO - Documentação
+site_description: Documentação dos workflows n8n, integrações e regras de handoff
+site_author: HarmonizaPRO
+
+theme:
+  name: material
+  language: pt
+  palette:
+    - scheme: default
+      primary: deep purple
+      accent: pink
+      toggle:
+        icon: material/brightness-7
+        name: Modo escuro
+    - scheme: slate
+      primary: deep purple
+      accent: pink
+      toggle:
+        icon: material/brightness-4
+        name: Modo claro
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - search.highlight
+    - content.code.copy
+
+nav:
+  - Início: index.md
+  - PRD:
+      - "PRD 001 - Agente de Qualificação IA": prd-001-agente-qualificacao.md
+  - Workflows:
+      - Índice de Workflows: workflows/index.md
+      - "Agente de IA (entrada principal)": workflows/agente-de-ia.md
+      - "Chamada Typeform": workflows/chamada-typeform.md
+      - "Tool Transferir (Handoff)": workflows/tool-transferir.md
+  - Playbooks:
+      - Índice: playbooks/index.md
+      - "Abordagem Inicial por Perfil": playbooks/abordagem-por-perfil.md
+      - "Respostas para Objeções": playbooks/respostas-objecoes.md
+  - Runbooks:
+      - Índice: runbooks/index.md
+      - "Webhook Fora do Ar": runbooks/webhook-fora.md
+      - "Handoff Falhando": runbooks/handoff-falhando.md
+  - Base de Conhecimento:
+      - "Clínicas e Protocolos": base-conhecimento-clinicas.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+  - md_in_html
+
+plugins:
+  - search:
+      lang: pt
