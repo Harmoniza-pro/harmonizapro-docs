@@ -54,6 +54,8 @@ nav:
       - "Chamada Typeform": workflows/chamada-typeform.md
       - "Tool Transferir (Handoff)": workflows/tool-transferir.md
       - "Fluxo Follow Ups": workflows/fluxo-follow-ups.md
+      - "⏱️ Métricas Diárias": workflows/metricas-diarias.md
+      - "💰 Monitoramento de Custos": workflows/monitoramento-custos.md
   - Playbooks:
       - Índice: playbooks/index.md
       - "Abordagem Inicial por Perfil": playbooks/abordagem-por-perfil.md
