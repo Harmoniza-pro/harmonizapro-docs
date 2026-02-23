@@ -1,0 +1,2640 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Central de documentação do sistema de qualificação de leads via WhatsApp com IA">
+      
+      
+        <meta name="author" content="HarmonizaPRO">
+      
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../chamada-typeform/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/fav.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+    
+    
+      
+        <title>Agente de IA (entrada principal) - HarmonizaPRO — Documentação</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/custom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#agente-de-ia" class="md-skip">
+          Ir para o conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href="../.." title="HarmonizaPRO — Documentação" class="md-header__button md-logo" aria-label="HarmonizaPRO — Documentação" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            HarmonizaPRO — Documentação
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Agente de IA (entrada principal)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Modo claro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Modo claro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Modo escuro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Modo escuro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando a pesquisa
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Abas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Início
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../prd-001-agente-qualificacao/" class="md-tabs__link">
+          
+  
+  
+  PRD
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  Workflows
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../playbooks/" class="md-tabs__link">
+          
+  
+  
+  Playbooks
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../runbooks/" class="md-tabs__link">
+          
+  
+  
+  Runbooks
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../base-conhecimento-clinicas/" class="md-tabs__link">
+          
+  
+  
+  Base de Conhecimento
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../operacao/dashboard/" class="md-tabs__link">
+          
+  
+  
+  Operação
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../equipe/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Equipe
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="HarmonizaPRO — Documentação" class="md-nav__button md-logo" aria-label="HarmonizaPRO — Documentação" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    HarmonizaPRO — Documentação
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PRD
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    PRD
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prd-001-agente-qualificacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PRD 001 — Agente de Qualificação IA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Workflows
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Índice de Workflows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agente de IA (entrada principal)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agente de IA (entrada principal)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Nesta página">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Nesta página
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objetivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objetivo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fluxo-completo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fluxo Completo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entrada-webhook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entrada (Webhook)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-1-organizacao-e-validacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 1 — Organização e Validação
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 1 — Organização e Validação">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#organizar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Organizar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buscar-usuario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Buscar Usuário
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buscar-clinica-protocolo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Buscar Clínica + Protocolo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cadastrado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cadastrado?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-2-avaliacao-da-mensagem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 2 — Avaliação da Mensagem
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 2 — Avaliação da Mensagem">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verificacao-de-transferencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verificação de Transferência
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enviado-pelo-usuario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enviado pelo Usuário?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-3-sistema-de-fila-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 3 — Sistema de Fila (Redis)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 3 — Sistema de Fila (Redis)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#como-funciona" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como funciona:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-4-processamento-de-midia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 4 — Processamento de Mídia
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 4 — Processamento de Mídia">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fluxo-de-midia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fluxo de mídia:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-5-agente-de-ia-cerebro" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 5 — Agente de IA (Cérebro)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 5 — Agente de IA (Cérebro)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modelo-principal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modelo Principal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prompt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prompt
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tools-ferramentas-do-agente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tools (Ferramentas do Agente)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#memoria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Memória
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agente-de-contingencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agente de Contingência
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agente-de-teste" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agente de Teste
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-6-formatacao-e-envio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 6 — Formatação e Envio
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 6 — Formatação e Envio">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#envio-via-uazapi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Envio via UaZapi
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pos-envio-salvar-na-memoria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pós-envio: Salvar na Memória
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tabelas-supabase-utilizadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tabelas Supabase Utilizadas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#credenciais" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Credenciais
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comandos-administrativos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comandos Administrativos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chamada-typeform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chamada Typeform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tool-transferir/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Transferir (Handoff)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fluxo-follow-ups/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fluxo Follow Ups
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Playbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Playbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../playbooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Índice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../playbooks/abordagem-por-perfil/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abordagem Inicial por Perfil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../playbooks/respostas-objecoes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Respostas para Objeções
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Runbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Índice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/webhook-fora/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Webhook Fora do Ar
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/handoff-falhando/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Handoff Falhando
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Base de Conhecimento
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Base de Conhecimento
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../base-conhecimento-clinicas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clínicas e Protocolos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operação
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operação
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operacao/dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📊 Dashboard de Métricas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operacao/custos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    💰 Custos por Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operacao/dependencias/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔗 Mapa de Dependências
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operacao/changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📋 Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../equipe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Equipe
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Nesta página">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Nesta página
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objetivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objetivo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fluxo-completo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fluxo Completo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entrada-webhook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entrada (Webhook)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-1-organizacao-e-validacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 1 — Organização e Validação
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 1 — Organização e Validação">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#organizar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Organizar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buscar-usuario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Buscar Usuário
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buscar-clinica-protocolo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Buscar Clínica + Protocolo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cadastrado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cadastrado?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-2-avaliacao-da-mensagem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 2 — Avaliação da Mensagem
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 2 — Avaliação da Mensagem">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verificacao-de-transferencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verificação de Transferência
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enviado-pelo-usuario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enviado pelo Usuário?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-3-sistema-de-fila-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 3 — Sistema de Fila (Redis)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 3 — Sistema de Fila (Redis)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#como-funciona" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como funciona:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-4-processamento-de-midia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 4 — Processamento de Mídia
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 4 — Processamento de Mídia">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fluxo-de-midia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fluxo de mídia:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-5-agente-de-ia-cerebro" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 5 — Agente de IA (Cérebro)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 5 — Agente de IA (Cérebro)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modelo-principal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modelo Principal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prompt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prompt
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tools-ferramentas-do-agente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tools (Ferramentas do Agente)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#memoria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Memória
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agente-de-contingencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agente de Contingência
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agente-de-teste" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agente de Teste
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-6-formatacao-e-envio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 6 — Formatação e Envio
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 6 — Formatação e Envio">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#envio-via-uazapi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Envio via UaZapi
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pos-envio-salvar-na-memoria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pós-envio: Salvar na Memória
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tabelas-supabase-utilizadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tabelas Supabase Utilizadas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#credenciais" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Credenciais
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comandos-administrativos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comandos Administrativos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="agente-de-ia">Agente de IA<a class="headerlink" href="#agente-de-ia" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>Workflow principal do sistema. Recebe mensagens do WhatsApp, processa com IA e responde ao lead de forma natural e humanizada.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Campo</th>
+<th style="text-align: left;">Valor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>ID</strong></td>
+<td style="text-align: left;"><code>8hdajgWAADbHorQF</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Status</strong></td>
+<td style="text-align: left;">✅ Ativo</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Trigger</strong></td>
+<td style="text-align: left;">Webhook POST <code>/harmonizapro</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Nós</strong></td>
+<td style="text-align: left;">92</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>IA Principal</strong></td>
+<td style="text-align: left;">Claude Sonnet 4 (fallback: GPT-5)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>IA Contingência</strong></td>
+<td style="text-align: left;">Claude Sonnet 4.5</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="objetivo">Objetivo<a class="headerlink" href="#objetivo" title="Permanent link">&para;</a></h2>
+<p>Receber toda mensagem enviada por um lead no WhatsApp, processar com inteligência artificial (incluindo texto, áudio, imagem, vídeo e documentos) e responder de forma natural, humanizada e estratégica — qualificando o lead e conduzindo-o ao agendamento.</p>
+<hr />
+<h2 id="fluxo-completo">Fluxo Completo<a class="headerlink" href="#fluxo-completo" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Webhook POST /harmonizapro
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    │
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    ▼
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>Organizar dados (instância, sender, servidor UaZapi)
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    │
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    ▼
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>Buscar Usuário (Supabase: leads)
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    │
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    ▼
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>Buscar Clínica + Protocolo (Supabase)
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    │
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    ▼
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>Cadastrado no Typeform?
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    ├── NÃO → Ignorar (lead não veio do funil)
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    │
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    └── SIM → Avaliar Mensagem
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>                ├── &quot;reset&quot;    → Deletar Memória + Resetar conversa
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>                ├── &quot;excluir&quot;  → Apagar contato + Memória
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>                ├── &quot;destrans&quot; → Destransferir lead
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>                │
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>                └── Mensagem normal → Verificar se está transferido
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>                                       ├── SIM → Não responder (Hunter cuida)
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>                                       │
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>                                       └── NÃO → Enviado pelo usuário?
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>                                                  ├── NÃO → Ignorar (msg do bot)
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>                                                  │
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>                                                  └── SIM → Registrar última msg
+<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>                                                             │
+<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>                                                             ▼
+<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>                                                    SISTEMA DE FILA (Redis)
+<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>                                                             │
+<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>                                                             ▼
+<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a>                                                    Processar com IA
+<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a>                                                             │
+<a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a>                                                             ▼
+<a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a>                                                    Formatar + Enviar resposta
+</code></pre></div>
+<hr />
+<h2 id="entrada-webhook">Entrada (Webhook)<a class="headerlink" href="#entrada-webhook" title="Permanent link">&para;</a></h2>
+<p>O webhook recebe um POST da UaZapi sempre que chega uma mensagem no WhatsApp da clínica.</p>
+<p><strong>Endpoint:</strong> <code>POST /harmonizapro</code></p>
+<p><strong>Payload esperado:</strong> Objeto com dados da mensagem (remetente, conteúdo, tipo de mídia, instância).</p>
+<hr />
+<h2 id="fase-1-organizacao-e-validacao">Fase 1 — Organização e Validação<a class="headerlink" href="#fase-1-organizacao-e-validacao" title="Permanent link">&para;</a></h2>
+<h3 id="organizar">Organizar<a class="headerlink" href="#organizar" title="Permanent link">&para;</a></h3>
+<p>Extrai do payload: <code>server_url</code> (UaZapi), <code>sender</code> (telefone do lead), dados da instância.</p>
+<h3 id="buscar-usuario">Buscar Usuário<a class="headerlink" href="#buscar-usuario" title="Permanent link">&para;</a></h3>
+<p>Consulta a tabela <code>leads</code> no Supabase pelo <code>remotejid</code> (telefone). Retorna dados do lead incluindo <code>clinica_id</code>, <code>instancia_id</code>, status de transferência e dados do Typeform.</p>
+<h3 id="buscar-clinica-protocolo">Buscar Clínica + Protocolo<a class="headerlink" href="#buscar-clinica-protocolo" title="Permanent link">&para;</a></h3>
+<p>Com o <code>clinica_id</code>, busca na tabela <code>clinicas_com_atendentes</code> e depois em <code>protocolos</code>. Esses dados alimentam o prompt do agente para personalizar a conversa conforme a clínica.</p>
+<h3 id="cadastrado">Cadastrado?<a class="headerlink" href="#cadastrado" title="Permanent link">&para;</a></h3>
+<p>Verifica se o lead veio do Typeform (Funil Anti-Curioso). Se não veio, o agente <strong>não responde</strong> — evita interagir com mensagens aleatórias.</p>
+<hr />
+<h2 id="fase-2-avaliacao-da-mensagem">Fase 2 — Avaliação da Mensagem<a class="headerlink" href="#fase-2-avaliacao-da-mensagem" title="Permanent link">&para;</a></h2>
+<p>O nó <strong>Avaliar Mensagem</strong> é um <code>switch</code> que avalia o conteúdo:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Comando</th>
+<th style="text-align: left;">Ação</th>
+<th style="text-align: left;">Resposta ao lead</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>reset</code></td>
+<td style="text-align: left;">Deleta memória da conversa (<code>n8n_chat_histories</code>)</td>
+<td style="text-align: left;">"Conversa redefinida ✅"</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>excluir</code></td>
+<td style="text-align: left;">Apaga lead + memória completamente</td>
+<td style="text-align: left;">"Contato excluído ✅"</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>destrans</code></td>
+<td style="text-align: left;">Remove flag de transferência</td>
+<td style="text-align: left;">"Lead destransferido ✅"</td>
+</tr>
+<tr>
+<td style="text-align: left;">Mensagem normal</td>
+<td style="text-align: left;">Segue para verificação de transferência</td>
+<td style="text-align: left;">—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="verificacao-de-transferencia">Verificação de Transferência<a class="headerlink" href="#verificacao-de-transferencia" title="Permanent link">&para;</a></h3>
+<p>Se o lead já foi transferido para a Hunter (<code>transferido = true</code>), o agente <strong>para de responder</strong>. A Hunter assume o controle da conversa.</p>
+<h3 id="enviado-pelo-usuario">Enviado pelo Usuário?<a class="headerlink" href="#enviado-pelo-usuario" title="Permanent link">&para;</a></h3>
+<p>Filtra mensagens enviadas pelo próprio bot (evita loop). Só processa mensagens reais do lead.</p>
+<hr />
+<h2 id="fase-3-sistema-de-fila-redis">Fase 3 — Sistema de Fila (Redis)<a class="headerlink" href="#fase-3-sistema-de-fila-redis" title="Permanent link">&para;</a></h2>
+<p>O workflow implementa uma fila inteligente com Redis para lidar com leads que enviam múltiplas mensagens seguidas (ex: "oi" + "tudo bem?" + áudio). Em vez de responder cada uma individualmente, o sistema agrupa tudo e responde de uma vez.</p>
+<h3 id="como-funciona">Como funciona:<a class="headerlink" href="#como-funciona" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Adicionar na fila</strong> — A mensagem é salva no Redis com chave única por lead</li>
+<li><strong>Espera inicial</strong> — Aguarda alguns segundos para capturar mensagens subsequentes</li>
+<li><strong>Puxar fila</strong> — Busca todas as mensagens acumuladas</li>
+<li><strong>Verifica fila:</strong><ul>
+<li>Se vazia → Ignora (já foi processada)</li>
+<li>Se tem mensagens → Limpa fila e processa tudo junto</li>
+<li>Se ainda está recebendo → Espera adicional e tenta de novo</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2 id="fase-4-processamento-de-midia">Fase 4 — Processamento de Mídia<a class="headerlink" href="#fase-4-processamento-de-midia" title="Permanent link">&para;</a></h2>
+<p>O agente aceita 4 tipos de mídia além de texto:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Tipo</th>
+<th style="text-align: left;">Processamento</th>
+<th style="text-align: left;">Tecnologia</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Texto</strong></td>
+<td style="text-align: left;">Direto para o agente</td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Áudio</strong></td>
+<td style="text-align: left;">Download → Transcrição</td>
+<td style="text-align: left;">OpenAI Whisper</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Imagem</strong></td>
+<td style="text-align: left;">Download → Análise visual</td>
+<td style="text-align: left;">OpenAI GPT-4o</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Vídeo</strong></td>
+<td style="text-align: left;">Download → Análise de conteúdo</td>
+<td style="text-align: left;">Google Gemini</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Documento</strong></td>
+<td style="text-align: left;">Download → Extração de texto</td>
+<td style="text-align: left;">Google Gemini</td>
+</tr>
+</tbody>
+</table>
+<h3 id="fluxo-de-midia">Fluxo de mídia:<a class="headerlink" href="#fluxo-de-midia" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Mensagem com mídia
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    │
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    ▼
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>Download via UaZapi (/message/download)
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    │
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    ▼
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>Converter em binário
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    │
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    ▼
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>Tipo de Mídia? (switch)
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    ├── audio → Whisper (transcrição)
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    ├── image → GPT-4o (&quot;descreva a imagem&quot;)
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>    ├── video → Gemini (&quot;analise o vídeo&quot;)
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>    └── document → Gemini (&quot;analise o documento&quot;)
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>    │
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>    ▼
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>Setar resultado como texto
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>    │
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>    ▼
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>Unir com mensagens de texto (Merge)
+<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>    │
+<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>    ▼
+<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>Concatenar tudo → Enviar ao Agente
+</code></pre></div>
+<hr />
+<h2 id="fase-5-agente-de-ia-cerebro">Fase 5 — Agente de IA (Cérebro)<a class="headerlink" href="#fase-5-agente-de-ia-cerebro" title="Permanent link">&para;</a></h2>
+<h3 id="modelo-principal">Modelo Principal<a class="headerlink" href="#modelo-principal" title="Permanent link">&para;</a></h3>
+<p><strong>Claude Sonnet 4</strong> (<code>claude-sonnet-4-20250514</code>) com fallback para <strong>GPT-5</strong> (<code>gpt-5</code>).</p>
+<h3 id="prompt">Prompt<a class="headerlink" href="#prompt" title="Permanent link">&para;</a></h3>
+<p>O prompt é montado dinamicamente com dados da clínica e protocolo, injetados pelo nó <strong>Prompt</strong> antes de chegar ao agente.</p>
+<h3 id="tools-ferramentas-do-agente">Tools (Ferramentas do Agente)<a class="headerlink" href="#tools-ferramentas-do-agente" title="Permanent link">&para;</a></h3>
+<p>O agente tem acesso a 4 ferramentas que pode chamar durante a conversa:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Tool</th>
+<th style="text-align: left;">Tipo</th>
+<th style="text-align: left;">Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>buscar_lead</code></td>
+<td style="text-align: left;">Supabase (<code>leads</code>)</td>
+<td style="text-align: left;">Consulta dados do lead (nome, telefone, budget, etc.)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>buscar_clinica</code></td>
+<td style="text-align: left;">Supabase (<code>clinicas_com_atendentes</code>)</td>
+<td style="text-align: left;">Busca dados da clínica (nome, endereço, Hunter)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>buscar_protocolo</code></td>
+<td style="text-align: left;">Supabase (<code>protocolos</code>)</td>
+<td style="text-align: left;">Busca protocolo da clínica (nome, descrição, preço)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>transferir</code></td>
+<td style="text-align: left;">HTTP Request</td>
+<td style="text-align: left;">Aciona o workflow <strong>Tool Transferir</strong> para handoff</td>
+</tr>
+</tbody>
+</table>
+<h3 id="memoria">Memória<a class="headerlink" href="#memoria" title="Permanent link">&para;</a></h3>
+<p>Usa <strong>Supabase (PostgreSQL)</strong> como memória persistente via <code>memoryPostgresChat</code>. A conversa inteira fica salva na tabela <code>n8n_chat_histories</code> indexada por <code>session_id</code> (telefone do lead).</p>
+<h3 id="agente-de-contingencia">Agente de Contingência<a class="headerlink" href="#agente-de-contingencia" title="Permanent link">&para;</a></h3>
+<p>Se o agente principal retorna rate limit (HTTP 429), o sistema:</p>
+<ol>
+<li>Detecta o erro no nó <strong>Rate limit</strong></li>
+<li>Espera 15 segundos</li>
+<li>Tenta novamente com o <strong>Agente Contingência</strong> (Claude Sonnet 4.5 <code>claude-sonnet-4-5-20250929</code>)</li>
+</ol>
+<p>Se o agente de contingência também falhar, repete o ciclo.</p>
+<h3 id="agente-de-teste">Agente de Teste<a class="headerlink" href="#agente-de-teste" title="Permanent link">&para;</a></h3>
+<p>Existe um caminho alternativo ativado pelo <strong>Chat Trigger</strong> interno do n8n para testes manuais. Usa <strong>Claude Sonnet 4.5</strong> com <strong>memória em buffer</strong> (não persiste).</p>
+<hr />
+<h2 id="fase-6-formatacao-e-envio">Fase 6 — Formatação e Envio<a class="headerlink" href="#fase-6-formatacao-e-envio" title="Permanent link">&para;</a></h2>
+<p>Depois que o agente gera a resposta, o texto passa por uma pipeline de formatação:</p>
+<ol>
+<li><strong>Normaliza <code>\n</code></strong> — Corrige quebras de linha escapadas</li>
+<li><strong>Remove <code>\</code> isoladas</strong> — Limpa caracteres de escape soltos</li>
+<li><strong>Quebra em mensagens</strong> — Se a resposta tem 2+ parágrafos, divide em mensagens separadas para parecer mais natural</li>
+<li><strong>Gerar itens</strong> — Cada parágrafo vira um item individual</li>
+<li><strong>Salvar resposta</strong> — Registra no execution data</li>
+</ol>
+<h3 id="envio-via-uazapi">Envio via UaZapi<a class="headerlink" href="#envio-via-uazapi" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>POST {server_url}/send/text
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Headers:
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  token: {token_da_instancia}
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Body:
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  number: {telefone_do_lead}
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  text: {mensagem}
+</code></pre></div>
+<p>O envio é feito em <strong>batch</strong> com <code>splitInBatches</code> — cada mensagem é enviada separadamente com um delay simulando digitação (<code>tempo random</code> + <code>espera</code>), para parecer mais humano.</p>
+<h3 id="pos-envio-salvar-na-memoria">Pós-envio: Salvar na Memória<a class="headerlink" href="#pos-envio-salvar-na-memoria" title="Permanent link">&para;</a></h3>
+<p>Após enviar a resposta, o sistema busca o registro na tabela <code>n8n_chat_histories</code> e injeta o <code>content</code> real da mensagem (que pode ter chegado como áudio/imagem convertido). Isso garante que a memória reflita o que realmente foi dito.</p>
+<hr />
+<h2 id="tabelas-supabase-utilizadas">Tabelas Supabase Utilizadas<a class="headerlink" href="#tabelas-supabase-utilizadas" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Tabela</th>
+<th style="text-align: left;">Operações</th>
+<th style="text-align: left;">Finalidade</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>leads</code></td>
+<td style="text-align: left;">get, update, delete</td>
+<td style="text-align: left;">Dados do lead, status de transferência, última mensagem</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>clinicas_com_atendentes</code></td>
+<td style="text-align: left;">get</td>
+<td style="text-align: left;">Dados da clínica, Hunter responsável</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>protocolos</code></td>
+<td style="text-align: left;">get</td>
+<td style="text-align: left;">Protocolo da clínica (nome, descrição, valor)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>n8n_chat_histories</code></td>
+<td style="text-align: left;">getAll, update, delete</td>
+<td style="text-align: left;">Memória da conversa com o lead</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>instancias_whatsapp</code></td>
+<td style="text-align: left;">get</td>
+<td style="text-align: left;">URL do servidor UaZapi, token</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="credenciais">Credenciais<a class="headerlink" href="#credenciais" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Serviço</th>
+<th style="text-align: left;">Credential</th>
+<th style="text-align: left;">Uso</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Supabase</td>
+<td style="text-align: left;"><code>ferramentas@harmoniza.pro</code></td>
+<td style="text-align: left;">Banco de dados</td>
+</tr>
+<tr>
+<td style="text-align: left;">Anthropic</td>
+<td style="text-align: left;"><code>ferramentas@harmoniza.pro</code></td>
+<td style="text-align: left;">Claude Sonnet 4 + 4.5</td>
+</tr>
+<tr>
+<td style="text-align: left;">OpenAI</td>
+<td style="text-align: left;"><code>ferramentas@harmoniza.pro</code></td>
+<td style="text-align: left;">GPT-5, Whisper, GPT-4o</td>
+</tr>
+<tr>
+<td style="text-align: left;">Google</td>
+<td style="text-align: left;"><code>ferramentas@harmoniza.pro</code></td>
+<td style="text-align: left;">Gemini (vídeo/docs)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Redis</td>
+<td style="text-align: left;"><code>ferramentas@harmoniza.pro</code></td>
+<td style="text-align: left;">Fila de mensagens</td>
+</tr>
+<tr>
+<td style="text-align: left;">PostgreSQL</td>
+<td style="text-align: left;"><code>ferramentas@harmoniza.pro (Agente IA)</code></td>
+<td style="text-align: left;">Memória do agente</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="comandos-administrativos">Comandos Administrativos<a class="headerlink" href="#comandos-administrativos" title="Permanent link">&para;</a></h2>
+<p>Enviados diretamente no WhatsApp para a instância:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Comando</th>
+<th style="text-align: left;">Efeito</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>reset</code></td>
+<td style="text-align: left;">Limpa memória da conversa e recomeça do zero</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>excluir</code></td>
+<td style="text-align: left;">Remove o lead e toda sua memória</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>destrans</code></td>
+<td style="text-align: left;">Remove flag de transferência (agente volta a responder)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Problema</th>
+<th style="text-align: left;">Causa provável</th>
+<th style="text-align: left;">Solução</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Agente não responde</td>
+<td style="text-align: left;">Lead não veio do Typeform</td>
+<td style="text-align: left;">Verificar se existe na tabela <code>leads</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Agente não responde</td>
+<td style="text-align: left;">Lead está transferido</td>
+<td style="text-align: left;">Enviar <code>destrans</code> para destravar</td>
+</tr>
+<tr>
+<td style="text-align: left;">Resposta cortada</td>
+<td style="text-align: left;">Output vazio do agente</td>
+<td style="text-align: left;">Verificar nó "Tem output?" — pode ser rate limit</td>
+</tr>
+<tr>
+<td style="text-align: left;">Rate limit constante</td>
+<td style="text-align: left;">Muitas requisições ao Claude</td>
+<td style="text-align: left;">Verificar se Agente Contingência está funcionando</td>
+</tr>
+<tr>
+<td style="text-align: left;">Áudio não processado</td>
+<td style="text-align: left;">Falha no download UaZapi</td>
+<td style="text-align: left;">Checar URL do servidor e token</td>
+</tr>
+<tr>
+<td style="text-align: left;">Memória inconsistente</td>
+<td style="text-align: left;">Mensagens de mídia sem content</td>
+<td style="text-align: left;">Verificar pipeline de "Inserir conteúdo"</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Voltar ao topo
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Rodapé" >
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Anterior: Índice de Workflows">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Anterior
+              </span>
+              <div class="md-ellipsis">
+                Índice de Workflows
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../chamada-typeform/" class="md-footer__link md-footer__link--next" aria-label="Próximo: Chamada Typeform">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Próximo
+              </span>
+              <div class="md-ellipsis">
+                Chamada Typeform
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.highlight", "search.suggest", "content.code.copy", "content.tabs.link", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "Mais 1 nesta p\u00e1gina", "search.result.more.other": "Mais # nesta p\u00e1gina", "search.result.none": "Nenhum resultado encontrado", "search.result.one": "1 resultado encontrado", "search.result.other": "# resultados encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

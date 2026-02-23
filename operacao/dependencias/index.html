@@ -1,0 +1,2139 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Central de documentação do sistema de qualificação de leads via WhatsApp com IA">
+      
+      
+        <meta name="author" content="HarmonizaPRO">
+      
+      
+      
+        <link rel="prev" href="../custos/">
+      
+      
+        <link rel="next" href="../changelog/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/fav.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+    
+    
+      
+        <title>🔗 Mapa de Dependências - HarmonizaPRO — Documentação</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/custom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#mapa-de-dependencias" class="md-skip">
+          Ir para o conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href="../.." title="HarmonizaPRO — Documentação" class="md-header__button md-logo" aria-label="HarmonizaPRO — Documentação" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            HarmonizaPRO — Documentação
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              🔗 Mapa de Dependências
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Modo claro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Modo claro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Modo escuro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Modo escuro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando a pesquisa
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Abas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Início
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../prd-001-agente-qualificacao/" class="md-tabs__link">
+          
+  
+  
+  PRD
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../workflows/" class="md-tabs__link">
+          
+  
+  
+  Workflows
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../playbooks/" class="md-tabs__link">
+          
+  
+  
+  Playbooks
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../runbooks/" class="md-tabs__link">
+          
+  
+  
+  Runbooks
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../base-conhecimento-clinicas/" class="md-tabs__link">
+          
+  
+  
+  Base de Conhecimento
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../dashboard/" class="md-tabs__link">
+          
+  
+  
+  Operação
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../equipe/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Equipe
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="HarmonizaPRO — Documentação" class="md-nav__button md-logo" aria-label="HarmonizaPRO — Documentação" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    HarmonizaPRO — Documentação
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PRD
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    PRD
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prd-001-agente-qualificacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PRD 001 — Agente de Qualificação IA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Workflows
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Índice de Workflows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflows/agente-de-ia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agente de IA (entrada principal)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflows/chamada-typeform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chamada Typeform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflows/tool-transferir/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Transferir (Handoff)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflows/fluxo-follow-ups/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fluxo Follow Ups
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Playbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Playbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../playbooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Índice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../playbooks/abordagem-por-perfil/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abordagem Inicial por Perfil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../playbooks/respostas-objecoes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Respostas para Objeções
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Runbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Índice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/webhook-fora/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Webhook Fora do Ar
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/handoff-falhando/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Handoff Falhando
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Base de Conhecimento
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Base de Conhecimento
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../base-conhecimento-clinicas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clínicas e Protocolos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operação
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operação
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📊 Dashboard de Métricas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../custos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    💰 Custos por Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔗 Mapa de Dependências
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔗 Mapa de Dependências
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Nesta página">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Nesta página
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#visao-geral-do-sistema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visão Geral do Sistema
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dependencias-por-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dependências por Workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dependências por Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agente-de-ia-o-mais-complexo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agente de IA — o mais complexo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chamada-typeform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Chamada Typeform
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tool-transferir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tool Transferir
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fluxo-follow-ups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fluxo Follow Ups
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matriz-de-dependencias" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Matriz de Dependências
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Matriz de Dependências">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#se-uma-api-cair" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Se uma API cair...
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#se-uma-tabela-supabase-for-comprometida" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Se uma tabela Supabase for comprometida...
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comunicacao-entre-workflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comunicação entre workflows
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#credenciais-compartilhadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Credenciais Compartilhadas
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📋 Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../equipe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Equipe
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Nesta página">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Nesta página
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#visao-geral-do-sistema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visão Geral do Sistema
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dependencias-por-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dependências por Workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dependências por Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agente-de-ia-o-mais-complexo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agente de IA — o mais complexo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chamada-typeform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Chamada Typeform
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tool-transferir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tool Transferir
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fluxo-follow-ups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fluxo Follow Ups
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matriz-de-dependencias" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Matriz de Dependências
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Matriz de Dependências">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#se-uma-api-cair" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Se uma API cair...
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#se-uma-tabela-supabase-for-comprometida" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Se uma tabela Supabase for comprometida...
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comunicacao-entre-workflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comunicação entre workflows
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#credenciais-compartilhadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Credenciais Compartilhadas
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="mapa-de-dependencias">Mapa de Dependências<a class="headerlink" href="#mapa-de-dependencias" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>Visão completa de como cada componente do sistema se conecta. Use estes diagramas para entender o impacto de qualquer mudança.</p>
+</blockquote>
+<hr />
+<h2 id="visao-geral-do-sistema">Visão Geral do Sistema<a class="headerlink" href="#visao-geral-do-sistema" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>graph TB
+    subgraph ENTRADA["🟢 Entrada de Leads"]
+        TF[Typeform&lt;br&gt;Funil Anti-Curioso]
+        WH[WhatsApp&lt;br&gt;Mensagem do lead]
+    end
+
+    subgraph N8N["⚙️ n8n — Orquestração"]
+        CT[Chamada Typeform&lt;br&gt;&lt;i&gt;VPVYN9AzG8IGnKiR&lt;/i&gt;]
+        AG[Agente de IA&lt;br&gt;&lt;i&gt;8hdajgWAADbHorQF&lt;/i&gt;]
+        TT[Tool Transferir&lt;br&gt;&lt;i&gt;Gt60I1KPG4ReJSIe&lt;/i&gt;]
+        FU[Fluxo Follow Ups&lt;br&gt;&lt;i&gt;W1msnd1vZWkpFSDM&lt;/i&gt;]
+    end
+
+    subgraph IA["🧠 Inteligência Artificial"]
+        CS4[Claude Sonnet 4&lt;br&gt;&lt;i&gt;Principal&lt;/i&gt;]
+        GPT5[GPT-5&lt;br&gt;&lt;i&gt;Fallback&lt;/i&gt;]
+        CS45[Claude Sonnet 4.5&lt;br&gt;&lt;i&gt;Contingência&lt;/i&gt;]
+        MINI[GPT-4o Mini&lt;br&gt;&lt;i&gt;Resumos&lt;/i&gt;]
+        WHISP[Whisper&lt;br&gt;&lt;i&gt;Áudio&lt;/i&gt;]
+        GPT4O[GPT-4o&lt;br&gt;&lt;i&gt;Imagens&lt;/i&gt;]
+        GEM[Gemini&lt;br&gt;&lt;i&gt;Vídeo/Docs&lt;/i&gt;]
+    end
+
+    subgraph DADOS["💾 Dados"]
+        SB[(Supabase&lt;br&gt;PostgreSQL)]
+        RD[(Redis&lt;br&gt;Fila)]
+    end
+
+    subgraph API["📡 APIs Externas"]
+        UA[UaZapi&lt;br&gt;WhatsApp API]
+    end
+
+    TF --&gt;|webhook POST| CT
+    WH --&gt;|via UaZapi| AG
+    CT --&gt;|cria lead + 1ª msg| SB
+    CT --&gt;|envia msg| UA
+    AG --&gt;|lê/escreve| SB
+    AG --&gt;|fila de msgs| RD
+    AG --&gt;|gera resposta| CS4
+    AG --&gt;|fallback| GPT5
+    AG --&gt;|rate limit| CS45
+    AG --&gt;|transcreve| WHISP
+    AG --&gt;|analisa img| GPT4O
+    AG --&gt;|analisa vid/doc| GEM
+    AG --&gt;|envia resposta| UA
+    AG --&gt;|tool transferir| TT
+    TT --&gt;|resume conversa| MINI
+    TT --&gt;|alerta Hunter| UA
+    TT --&gt;|marca transferido| SB
+    FU --&gt;|busca leads| SB
+    FU --&gt;|envia follow-up| UA
+    FU --&gt;|salva na memória| SB
+
+    style ENTRADA fill:#2E7D32,color:#fff
+    style N8N fill:#1565C0,color:#fff
+    style IA fill:#6A1B9A,color:#fff
+    style DADOS fill:#E65100,color:#fff
+    style API fill:#C8A24E,color:#1A1A1A</code></pre>
+<hr />
+<h2 id="dependencias-por-workflow">Dependências por Workflow<a class="headerlink" href="#dependencias-por-workflow" title="Permanent link">&para;</a></h2>
+<h3 id="agente-de-ia-o-mais-complexo">Agente de IA — o mais complexo<a class="headerlink" href="#agente-de-ia-o-mais-complexo" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>graph LR
+    subgraph TRIGGER["Trigger"]
+        W[Webhook POST&lt;br&gt;/harmonizapro]
+    end
+
+    subgraph SUPABASE["Supabase (5 tabelas)"]
+        T1[leads]
+        T2[clinicas_com_atendentes]
+        T3[protocolos]
+        T4[n8n_chat_histories]
+        T5[instancias_whatsapp]
+    end
+
+    subgraph REDIS["Redis"]
+        R1[Fila de mensagens]
+    end
+
+    subgraph MODELOS["Modelos IA"]
+        M1[Claude Sonnet 4]
+        M2[GPT-5]
+        M3[Claude Sonnet 4.5]
+        M4[Whisper]
+        M5[GPT-4o]
+        M6[Gemini]
+    end
+
+    subgraph TOOLS["Tools do Agente"]
+        TL1[buscar_lead]
+        TL2[buscar_clinica]
+        TL3[buscar_protocolo]
+        TL4[transferir]
+    end
+
+    subgraph SAIDA["Saída"]
+        UA[UaZapi /send/text]
+        HO[Tool Transferir&lt;br&gt;webhook]
+    end
+
+    W --&gt; T1
+    W --&gt; T2
+    W --&gt; T3
+    W --&gt; T5
+    W --&gt; R1
+    T1 --&gt; M1
+    M1 --&gt; UA
+    M2 --&gt; UA
+    M3 --&gt; UA
+    M4 --&gt; M1
+    M5 --&gt; M1
+    M6 --&gt; M1
+    TL1 --&gt; T1
+    TL2 --&gt; T2
+    TL3 --&gt; T3
+    TL4 --&gt; HO
+    M1 --&gt; T4
+
+    style TRIGGER fill:#2E7D32,color:#fff
+    style SUPABASE fill:#E65100,color:#fff
+    style REDIS fill:#B71C1C,color:#fff
+    style MODELOS fill:#6A1B9A,color:#fff
+    style TOOLS fill:#1565C0,color:#fff
+    style SAIDA fill:#C8A24E,color:#1A1A1A</code></pre>
+<hr />
+<h3 id="chamada-typeform">Chamada Typeform<a class="headerlink" href="#chamada-typeform" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>graph LR
+    TF[Typeform] --&gt;|POST| WH[Webhook&lt;br&gt;/typeform/hamoniza.pro]
+    WH --&gt; ORG[Organizar dados]
+    ORG --&gt; SB1[(instancias_whatsapp)]
+    ORG --&gt; SB2[(leads)]
+    SB2 --&gt;|novo?| CREATE[Criar lead]
+    SB2 --&gt;|existe| EXIST[Lead existente]
+    CREATE --&gt; BUDGET{Budget alto?}
+    BUDGET --&gt;|sim| HAND[Handoff direto]
+    BUDGET --&gt;|não| IA[IA gera 1ª msg]
+    EXIST --&gt; IA2[IA com contexto]
+    IA --&gt; UA[UaZapi /send/text]
+    IA2 --&gt; UA
+    HAND --&gt; UA
+    IA --&gt;|salva| SB3[(leads)]
+
+    style TF fill:#2E7D32,color:#fff
+    style BUDGET fill:#C8A24E,color:#1A1A1A</code></pre>
+<hr />
+<h3 id="tool-transferir">Tool Transferir<a class="headerlink" href="#tool-transferir" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>graph LR
+    AG[Agente de IA&lt;br&gt;tool: transferir] --&gt;|POST| WH[Webhook&lt;br&gt;/handoff-agenteia]
+    WH --&gt; SB1[(leads&lt;br&gt;remotejid → clinica_id)]
+    WH --&gt; FLAG[leads.transferido = true]
+    SB1 --&gt; SB2[(clinicas_com_atendentes&lt;br&gt;→ hunter)]
+    SB2 --&gt; SB3[(instancias_whatsapp&lt;br&gt;→ server_url)]
+    SB3 --&gt; SB4[(n8n_chat_histories&lt;br&gt;→ histórico)]
+    SB4 --&gt;|tem histórico| RESUMO[GPT-4o Mini&lt;br&gt;resumo 50 palavras]
+    SB4 --&gt;|sem histórico| SIMPLES[Handoff simples]
+    RESUMO --&gt; UA[UaZapi /send/text&lt;br&gt;→ Hunter]
+    SIMPLES --&gt; UA
+
+    style AG fill:#1565C0,color:#fff
+    style RESUMO fill:#6A1B9A,color:#fff
+    style UA fill:#C8A24E,color:#1A1A1A</code></pre>
+<hr />
+<h3 id="fluxo-follow-ups">Fluxo Follow Ups<a class="headerlink" href="#fluxo-follow-ups" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>graph TB
+    CRON[Schedule&lt;br&gt;a cada 11 min] --&gt; HC{Horário&lt;br&gt;comercial?}
+    HC --&gt;|não| STOP[Para]
+    HC --&gt;|sim| DADOS[Dados UaZapi]
+    DADOS --&gt; FUP1[Rodada 1]
+    DADOS --&gt; FUP2[Rodada 2]
+    DADOS --&gt; FUP3[Rodada 3]
+    DADOS --&gt; FUP4[Rodada 4]
+
+    FUP1 --&gt; BUSCA1[Buscar leads&lt;br&gt;elegíveis]
+    BUSCA1 --&gt; FILTRO1[Filtrar +&lt;br&gt;dedup]
+    FILTRO1 --&gt; ENVIO1[Enviar msg]
+    ENVIO1 --&gt; MARCA1[Marcar +&lt;br&gt;salvar memória]
+
+    FUP1 --&gt; MERGE[Juntar todos]
+    FUP2 --&gt; MERGE
+    FUP3 --&gt; MERGE
+    FUP4 --&gt; MERGE
+    MERGE --&gt; SAVE[Salvar lista&lt;br&gt;de enviados]
+
+    style CRON fill:#2E7D32,color:#fff
+    style HC fill:#C8A24E,color:#1A1A1A
+    style STOP fill:#B71C1C,color:#fff</code></pre>
+<hr />
+<h2 id="matriz-de-dependencias">Matriz de Dependências<a class="headerlink" href="#matriz-de-dependencias" title="Permanent link">&para;</a></h2>
+<p>Referência rápida: se algo quebrar, saiba o que é afetado.</p>
+<h3 id="se-uma-api-cair">Se uma API cair...<a class="headerlink" href="#se-uma-api-cair" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">API fora do ar</th>
+<th style="text-align: left;">Workflows afetados</th>
+<th style="text-align: left;">Impacto</th>
+<th style="text-align: left;">Severidade</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>UaZapi</strong></td>
+<td style="text-align: left;">Todos</td>
+<td style="text-align: left;">Nenhuma mensagem é enviada/recebida</td>
+<td style="text-align: left;">🔴 Crítico</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Supabase</strong></td>
+<td style="text-align: left;">Todos</td>
+<td style="text-align: left;">Sem dados de leads, clínicas, memória</td>
+<td style="text-align: left;">🔴 Crítico</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Redis</strong></td>
+<td style="text-align: left;">Agente de IA</td>
+<td style="text-align: left;">Fila de mensagens para de funcionar, respostas duplicadas</td>
+<td style="text-align: left;">🟡 Alto</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Anthropic (Claude)</strong></td>
+<td style="text-align: left;">Agente de IA</td>
+<td style="text-align: left;">IA principal cai, fallback para GPT-5</td>
+<td style="text-align: left;">🟡 Alto</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OpenAI</strong></td>
+<td style="text-align: left;">Agente de IA, Chamada Typeform, Tool Transferir</td>
+<td style="text-align: left;">GPT-5 fallback cai, Whisper para, resumos param</td>
+<td style="text-align: left;">🟡 Alto</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Google (Gemini)</strong></td>
+<td style="text-align: left;">Agente de IA</td>
+<td style="text-align: left;">Análise de vídeo e documentos para</td>
+<td style="text-align: left;">🟢 Médio</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Typeform</strong></td>
+<td style="text-align: left;">Chamada Typeform</td>
+<td style="text-align: left;">Novos leads não entram (mas existentes continuam)</td>
+<td style="text-align: left;">🟢 Médio</td>
+</tr>
+</tbody>
+</table>
+<h3 id="se-uma-tabela-supabase-for-comprometida">Se uma tabela Supabase for comprometida...<a class="headerlink" href="#se-uma-tabela-supabase-for-comprometida" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Tabela</th>
+<th style="text-align: left;">Leitura por</th>
+<th style="text-align: left;">Escrita por</th>
+<th style="text-align: left;">Se cair</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>leads</code></td>
+<td style="text-align: left;">Agente, Typeform, Transferir, Follow Ups</td>
+<td style="text-align: left;">Typeform, Agente, Transferir</td>
+<td style="text-align: left;">Nenhum workflow funciona</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>clinicas_com_atendentes</code></td>
+<td style="text-align: left;">Agente, Typeform, Transferir</td>
+<td style="text-align: left;">— (manual)</td>
+<td style="text-align: left;">Agente não sabe de qual clínica é o lead</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>protocolos</code></td>
+<td style="text-align: left;">Agente, Typeform</td>
+<td style="text-align: left;">— (manual)</td>
+<td style="text-align: left;">Agente perde personalização por clínica</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>n8n_chat_histories</code></td>
+<td style="text-align: left;">Agente, Transferir</td>
+<td style="text-align: left;">Agente, Follow Ups</td>
+<td style="text-align: left;">IA perde memória, handoff sem resumo</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>instancias_whatsapp</code></td>
+<td style="text-align: left;">Agente, Typeform, Transferir</td>
+<td style="text-align: left;">— (manual)</td>
+<td style="text-align: left;">Sem URL/token do WhatsApp</td>
+</tr>
+</tbody>
+</table>
+<h3 id="comunicacao-entre-workflows">Comunicação entre workflows<a class="headerlink" href="#comunicacao-entre-workflows" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">De</th>
+<th style="text-align: left;">Para</th>
+<th style="text-align: left;">Método</th>
+<th style="text-align: left;">Dado trafegado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Chamada Typeform</td>
+<td style="text-align: left;">Agente de IA</td>
+<td style="text-align: left;">Indireto (lead criado no Supabase)</td>
+<td style="text-align: left;"><code>clinica_id</code>, <code>instancia_id</code>, dados do Typeform</td>
+</tr>
+<tr>
+<td style="text-align: left;">Agente de IA</td>
+<td style="text-align: left;">Tool Transferir</td>
+<td style="text-align: left;">HTTP POST webhook</td>
+<td style="text-align: left;"><code>telefone</code>, <code>motivo</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Tool Transferir</td>
+<td style="text-align: left;">Agente de IA</td>
+<td style="text-align: left;">Indireto (<code>leads.transferido = true</code>)</td>
+<td style="text-align: left;">Flag que para o agente</td>
+</tr>
+<tr>
+<td style="text-align: left;">Fluxo Follow Ups</td>
+<td style="text-align: left;">Agente de IA</td>
+<td style="text-align: left;">Indireto (msg salva em <code>n8n_chat_histories</code>)</td>
+<td style="text-align: left;">Contexto de follow-up na memória</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="credenciais-compartilhadas">Credenciais Compartilhadas<a class="headerlink" href="#credenciais-compartilhadas" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Credential</th>
+<th style="text-align: left;">Serviço</th>
+<th style="text-align: left;">Usada em</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>ferramentas@harmoniza.pro</code> (Supabase)</td>
+<td style="text-align: left;">Supabase</td>
+<td style="text-align: left;">Todos os 4 workflows</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ferramentas@harmoniza.pro</code> (Anthropic)</td>
+<td style="text-align: left;">Claude API</td>
+<td style="text-align: left;">Agente de IA, Chamada Typeform</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ferramentas@harmoniza.pro</code> (OpenAI)</td>
+<td style="text-align: left;">OpenAI API</td>
+<td style="text-align: left;">Agente de IA, Chamada Typeform, Tool Transferir</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ferramentas@harmoniza.pro</code> (Google)</td>
+<td style="text-align: left;">Gemini API</td>
+<td style="text-align: left;">Agente de IA</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ferramentas@harmoniza.pro</code> (Redis)</td>
+<td style="text-align: left;">Redis</td>
+<td style="text-align: left;">Agente de IA</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ferramentas@harmoniza.pro (Agente IA)</code> (Postgres)</td>
+<td style="text-align: left;">PostgreSQL direto</td>
+<td style="text-align: left;">Agente de IA (memória)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Ponto único de falha</p>
+<p>Todas as credenciais estão sob <code>ferramentas@harmoniza.pro</code>. Se essa conta for comprometida ou expirar, <strong>todos os workflows param</strong>. Considere separar credenciais por serviço ou ter backup.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Voltar ao topo
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Rodapé" >
+        
+          
+          <a href="../custos/" class="md-footer__link md-footer__link--prev" aria-label="Anterior: 💰 Custos por Workflow">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Anterior
+              </span>
+              <div class="md-ellipsis">
+                💰 Custos por Workflow
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../changelog/" class="md-footer__link md-footer__link--next" aria-label="Próximo: 📋 Changelog">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Próximo
+              </span>
+              <div class="md-ellipsis">
+                📋 Changelog
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.highlight", "search.suggest", "content.code.copy", "content.tabs.link", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "Mais 1 nesta p\u00e1gina", "search.result.more.other": "Mais # nesta p\u00e1gina", "search.result.none": "Nenhum resultado encontrado", "search.result.one": "1 resultado encontrado", "search.result.other": "# resultados encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

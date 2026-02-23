@@ -1,0 +1,2392 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Central de documentação do sistema de qualificação de leads via WhatsApp com IA">
+      
+      
+        <meta name="author" content="HarmonizaPRO">
+      
+      
+      
+        <link rel="prev" href="../agente-de-ia/">
+      
+      
+        <link rel="next" href="../tool-transferir/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/fav.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+    
+    
+      
+        <title>Chamada Typeform - HarmonizaPRO — Documentação</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/custom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chamada-typeform" class="md-skip">
+          Ir para o conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href="../.." title="HarmonizaPRO — Documentação" class="md-header__button md-logo" aria-label="HarmonizaPRO — Documentação" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            HarmonizaPRO — Documentação
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chamada Typeform
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Modo claro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Modo claro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Modo escuro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Modo escuro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando a pesquisa
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Abas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Início
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../prd-001-agente-qualificacao/" class="md-tabs__link">
+          
+  
+  
+  PRD
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  Workflows
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../playbooks/" class="md-tabs__link">
+          
+  
+  
+  Playbooks
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../runbooks/" class="md-tabs__link">
+          
+  
+  
+  Runbooks
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../base-conhecimento-clinicas/" class="md-tabs__link">
+          
+  
+  
+  Base de Conhecimento
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../operacao/dashboard/" class="md-tabs__link">
+          
+  
+  
+  Operação
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../equipe/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Equipe
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="HarmonizaPRO — Documentação" class="md-nav__button md-logo" aria-label="HarmonizaPRO — Documentação" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    HarmonizaPRO — Documentação
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PRD
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    PRD
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prd-001-agente-qualificacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PRD 001 — Agente de Qualificação IA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Workflows
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Índice de Workflows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agente-de-ia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agente de IA (entrada principal)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chamada Typeform
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chamada Typeform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Nesta página">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Nesta página
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objetivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objetivo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fluxo-completo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fluxo Completo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entrada-webhook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entrada (Webhook)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-1-organizacao-dos-dados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 1 — Organização dos Dados
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 1 — Organização dos Dados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#wait" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wait
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#info-organizadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Info Organizadas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#puxar-background" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Puxar Background
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-2-verificacao-de-duplicidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 2 — Verificação de Duplicidade
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 2 — Verificação de Duplicidade">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#buscar-usuario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Buscar Usuário
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#anti-duplicidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Anti-duplicidade
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#novo-usuario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Novo Usuário?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-3-avaliacao-de-budget" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 3 — Avaliação de Budget
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 3 — Avaliação de Budget">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#budget-alto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Budget Alto?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-4-geracao-da-primeira-mensagem-com-ia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 4 — Geração da Primeira Mensagem com IA
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 4 — Geração da Primeira Mensagem com IA">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#para-budget-normal-agente-principal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Para budget normal (Agente principal)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#para-budget-alto-handoff-direto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Para budget alto (Handoff direto)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#para-lead-existente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Para lead existente
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-5-envio-da-mensagem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 5 — Envio da Mensagem
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 5 — Envio da Mensagem">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dividir-mensagem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dividir Mensagem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#envio-em-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Envio em Loop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alerta-para-hunter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alerta para Hunter
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tabelas-supabase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tabelas Supabase
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#credenciais" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Credenciais
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#regras-de-negocio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regras de Negócio
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tool-transferir/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Transferir (Handoff)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fluxo-follow-ups/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fluxo Follow Ups
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Playbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Playbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../playbooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Índice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../playbooks/abordagem-por-perfil/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abordagem Inicial por Perfil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../playbooks/respostas-objecoes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Respostas para Objeções
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Runbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Índice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/webhook-fora/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Webhook Fora do Ar
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/handoff-falhando/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Handoff Falhando
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Base de Conhecimento
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Base de Conhecimento
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../base-conhecimento-clinicas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clínicas e Protocolos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operação
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operação
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operacao/dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📊 Dashboard de Métricas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operacao/custos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    💰 Custos por Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operacao/dependencias/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔗 Mapa de Dependências
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operacao/changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📋 Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../equipe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Equipe
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Nesta página">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Nesta página
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objetivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objetivo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fluxo-completo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fluxo Completo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entrada-webhook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entrada (Webhook)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-1-organizacao-dos-dados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 1 — Organização dos Dados
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 1 — Organização dos Dados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#wait" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wait
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#info-organizadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Info Organizadas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#puxar-background" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Puxar Background
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-2-verificacao-de-duplicidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 2 — Verificação de Duplicidade
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 2 — Verificação de Duplicidade">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#buscar-usuario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Buscar Usuário
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#anti-duplicidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Anti-duplicidade
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#novo-usuario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Novo Usuário?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-3-avaliacao-de-budget" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 3 — Avaliação de Budget
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 3 — Avaliação de Budget">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#budget-alto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Budget Alto?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-4-geracao-da-primeira-mensagem-com-ia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 4 — Geração da Primeira Mensagem com IA
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 4 — Geração da Primeira Mensagem com IA">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#para-budget-normal-agente-principal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Para budget normal (Agente principal)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#para-budget-alto-handoff-direto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Para budget alto (Handoff direto)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#para-lead-existente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Para lead existente
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-5-envio-da-mensagem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 5 — Envio da Mensagem
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 5 — Envio da Mensagem">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dividir-mensagem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dividir Mensagem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#envio-em-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Envio em Loop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alerta-para-hunter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alerta para Hunter
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tabelas-supabase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tabelas Supabase
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#credenciais" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Credenciais
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#regras-de-negocio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regras de Negócio
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="chamada-typeform">Chamada Typeform<a class="headerlink" href="#chamada-typeform" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>Workflow de entrada de leads. Recebe submissões do Typeform (Funil Anti-Curioso), registra o lead no Supabase e envia a primeira mensagem via WhatsApp.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Campo</th>
+<th style="text-align: left;">Valor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>ID</strong></td>
+<td style="text-align: left;"><code>VPVYN9AzG8IGnKiR</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Status</strong></td>
+<td style="text-align: left;">✅ Ativo</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Trigger</strong></td>
+<td style="text-align: left;">Webhook POST <code>/typeform/hamoniza.pro</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Nós</strong></td>
+<td style="text-align: left;">29</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="objetivo">Objetivo<a class="headerlink" href="#objetivo" title="Permanent link">&para;</a></h2>
+<p>Capturar leads que preencheram o formulário Typeform (Funil Anti-Curioso), registrar no banco de dados, e enviar a primeira abordagem no WhatsApp em menos de 2 minutos. Leads com budget alto são encaminhados diretamente para a Hunter.</p>
+<hr />
+<h2 id="fluxo-completo">Fluxo Completo<a class="headerlink" href="#fluxo-completo" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Typeform (submissão do formulário)
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    │
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    ▼
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>Webhook POST /typeform/hamoniza.pro
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    │
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    ▼
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>Wait (pequeno delay)
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    │
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    ▼
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>Organizar informações (nome, telefone, budget, clínica)
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    │
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    ▼
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>Puxar dados UaZapi (instância WhatsApp)
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    │
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    ▼
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>Buscar Usuário (já existe na base?)
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>    │
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>    ▼
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>Anti-duplicidade (evitar reprocessamento)
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>    │
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>    ▼
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>Novo usuário?
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>    ├── SIM → Criar lead no Supabase
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>    │         │
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>    │         ▼
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>    │    Budget alto?
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>    │    ├── SIM → Atualizar lead + Buscar clínica/protocolo
+<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>    │    │         │
+<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>    │    │         ▼
+<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>    │    │    IA gera msg de handoff direto
+<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>    │    │         │
+<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>    │    │         ▼
+<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a>    │    │    Enviar alerta para Hunter
+<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a>    │    │
+<a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a>    │    └── NÃO → Buscar clínica/protocolo
+<a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a>    │              │
+<a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a>    │              ▼
+<a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a>    │         IA gera primeira mensagem personalizada
+<a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a>    │              │
+<a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a>    │              ▼
+<a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a>    │         Dividir mensagem + Enviar via WhatsApp
+<a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a>    │              │
+<a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a>    │              ▼
+<a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a>    │         Enviar alerta para Hunter
+<a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a>    │
+<a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a>    └── NÃO (lead já existe) → Buscar clínica/protocolo
+<a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a>                                │
+<a id="__codelineno-0-48" name="__codelineno-0-48" href="#__codelineno-0-48"></a>                                ▼
+<a id="__codelineno-0-49" name="__codelineno-0-49" href="#__codelineno-0-49"></a>                           IA gera msg considerando histórico
+<a id="__codelineno-0-50" name="__codelineno-0-50" href="#__codelineno-0-50"></a>                                │
+<a id="__codelineno-0-51" name="__codelineno-0-51" href="#__codelineno-0-51"></a>                                ▼
+<a id="__codelineno-0-52" name="__codelineno-0-52" href="#__codelineno-0-52"></a>                           Enviar alerta para Hunter
+</code></pre></div>
+<hr />
+<h2 id="entrada-webhook">Entrada (Webhook)<a class="headerlink" href="#entrada-webhook" title="Permanent link">&para;</a></h2>
+<p><strong>Endpoint:</strong> <code>POST /typeform/hamoniza.pro</code></p>
+<p>Recebe o payload do Typeform contendo as respostas do formulário Anti-Curioso.</p>
+<hr />
+<h2 id="fase-1-organizacao-dos-dados">Fase 1 — Organização dos Dados<a class="headerlink" href="#fase-1-organizacao-dos-dados" title="Permanent link">&para;</a></h2>
+<h3 id="wait">Wait<a class="headerlink" href="#wait" title="Permanent link">&para;</a></h3>
+<p>Pequeno delay após receber o webhook para garantir que os dados estejam completos.</p>
+<h3 id="info-organizadas">Info Organizadas<a class="headerlink" href="#info-organizadas" title="Permanent link">&para;</a></h3>
+<p>Extrai e padroniza os campos do Typeform: nome, telefone, faixa de budget, clínica de origem, respostas relevantes.</p>
+<h3 id="puxar-background">Puxar Background<a class="headerlink" href="#puxar-background" title="Permanent link">&para;</a></h3>
+<p>Busca na tabela <code>instancias_whatsapp</code> os dados da instância UaZapi da clínica (URL do servidor, token). Necessário para enviar mensagens via WhatsApp.</p>
+<hr />
+<h2 id="fase-2-verificacao-de-duplicidade">Fase 2 — Verificação de Duplicidade<a class="headerlink" href="#fase-2-verificacao-de-duplicidade" title="Permanent link">&para;</a></h2>
+<h3 id="buscar-usuario">Buscar Usuário<a class="headerlink" href="#buscar-usuario" title="Permanent link">&para;</a></h3>
+<p>Consulta a tabela <code>leads</code> pelo telefone do lead. Verifica se já existe cadastro.</p>
+<h3 id="anti-duplicidade">Anti-duplicidade<a class="headerlink" href="#anti-duplicidade" title="Permanent link">&para;</a></h3>
+<p>Nó <code>code</code> que previne reprocessamento — se o mesmo formulário for enviado duas vezes, não cria lead duplicado.</p>
+<h3 id="novo-usuario">Novo Usuário?<a class="headerlink" href="#novo-usuario" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Resultado</th>
+<th style="text-align: left;">Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Lead novo</td>
+<td style="text-align: left;">Cria registro → Avalia budget → Envia msg</td>
+</tr>
+<tr>
+<td style="text-align: left;">Lead existente</td>
+<td style="text-align: left;">Busca dados atuais → Gera msg com contexto → Alerta Hunter</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="fase-3-avaliacao-de-budget">Fase 3 — Avaliação de Budget<a class="headerlink" href="#fase-3-avaliacao-de-budget" title="Permanent link">&para;</a></h2>
+<h3 id="budget-alto">Budget Alto?<a class="headerlink" href="#budget-alto" title="Permanent link">&para;</a></h3>
+<p>Se o lead informou budget alto no Typeform, ele é considerado <strong>prioridade</strong> e vai direto para a Hunter.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Budget</th>
+<th style="text-align: left;">Ação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Alto</strong></td>
+<td style="text-align: left;">Atualiza lead no Supabase + IA gera mensagem de encaminhamento + Alerta direto para Hunter</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Normal/Baixo</strong></td>
+<td style="text-align: left;">IA gera primeira abordagem personalizada + Lead entra no fluxo normal do Agente</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="fase-4-geracao-da-primeira-mensagem-com-ia">Fase 4 — Geração da Primeira Mensagem com IA<a class="headerlink" href="#fase-4-geracao-da-primeira-mensagem-com-ia" title="Permanent link">&para;</a></h2>
+<h3 id="para-budget-normal-agente-principal">Para budget normal (Agente principal)<a class="headerlink" href="#para-budget-normal-agente-principal" title="Permanent link">&para;</a></h3>
+<p>O nó <strong>AI Agent</strong> usa <strong>OpenAI</strong> para gerar a primeira mensagem de abordagem.</p>
+<p>Antes de gerar, busca:</p>
+<ul>
+<li><strong>Clínica</strong> (<code>clinicas_com_atendentes</code>) — nome, posicionamento</li>
+<li><strong>Protocolo</strong> (<code>protocolos</code>) — nome do protocolo, descrição</li>
+</ul>
+<p>Isso permite que a mensagem seja <strong>personalizada</strong> por clínica.</p>
+<h3 id="para-budget-alto-handoff-direto">Para budget alto (Handoff direto)<a class="headerlink" href="#para-budget-alto-handoff-direto" title="Permanent link">&para;</a></h3>
+<p>O nó <strong>AI Agent1</strong> usa <strong>Anthropic (Claude)</strong> para gerar uma mensagem de handoff que a Hunter recebe junto com os dados do lead.</p>
+<h3 id="para-lead-existente">Para lead existente<a class="headerlink" href="#para-lead-existente" title="Permanent link">&para;</a></h3>
+<p>Quando o lead já existe, o sistema busca a clínica e protocolo e gera uma mensagem considerando que é um retorno.</p>
+<hr />
+<h2 id="fase-5-envio-da-mensagem">Fase 5 — Envio da Mensagem<a class="headerlink" href="#fase-5-envio-da-mensagem" title="Permanent link">&para;</a></h2>
+<h3 id="dividir-mensagem">Dividir Mensagem<a class="headerlink" href="#dividir-mensagem" title="Permanent link">&para;</a></h3>
+<p>O nó <code>code</code> <strong>Dividir Mensagem</strong> quebra a resposta da IA em múltiplas mensagens se necessário, para parecer mais natural no WhatsApp.</p>
+<h3 id="envio-em-loop">Envio em Loop<a class="headerlink" href="#envio-em-loop" title="Permanent link">&para;</a></h3>
+<p>O <code>splitInBatches</code> (Loop Over Items) envia cada mensagem individualmente via UaZapi:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>POST {server_url}/send/text
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Headers:
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  token: {token}
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>Body:
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  number: {telefone_do_lead}
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  text: {mensagem}
+</code></pre></div>
+<h3 id="alerta-para-hunter">Alerta para Hunter<a class="headerlink" href="#alerta-para-hunter" title="Permanent link">&para;</a></h3>
+<p>Independente do budget, a Hunter sempre recebe um alerta via WhatsApp com os dados do novo lead:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>POST {server_url}/send/text
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Body:
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  number: {telefone_hunter}
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  text: &quot;🚨 Novo lead: {nome} - {telefone} - Budget: {budget}&quot;
+</code></pre></div>
+<hr />
+<h2 id="tabelas-supabase">Tabelas Supabase<a class="headerlink" href="#tabelas-supabase" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Tabela</th>
+<th style="text-align: left;">Operação</th>
+<th style="text-align: left;">Finalidade</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>leads</code></td>
+<td style="text-align: left;">create, get, update</td>
+<td style="text-align: left;">Cadastro e consulta de leads</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>instancias_whatsapp</code></td>
+<td style="text-align: left;">get</td>
+<td style="text-align: left;">Dados do servidor UaZapi</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>clinicas_com_atendentes</code></td>
+<td style="text-align: left;">get</td>
+<td style="text-align: left;">Dados da clínica e Hunter</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>protocolos</code></td>
+<td style="text-align: left;">get</td>
+<td style="text-align: left;">Protocolo da clínica</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="credenciais">Credenciais<a class="headerlink" href="#credenciais" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Serviço</th>
+<th style="text-align: left;">Credential</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Supabase</td>
+<td style="text-align: left;"><code>ferramentas@harmoniza.pro</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">OpenAI</td>
+<td style="text-align: left;"><code>ferramentas@harmoniza.pro</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Anthropic</td>
+<td style="text-align: left;"><code>ferramentas@harmoniza.pro</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="regras-de-negocio">Regras de Negócio<a class="headerlink" href="#regras-de-negocio" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Tempo de resposta</strong> — A primeira mensagem deve chegar em menos de 2 minutos após o formulário ser preenchido</li>
+<li><strong>Anti-duplicidade</strong> — Um lead que preencher o formulário duas vezes não é recadastrado</li>
+<li><strong>Budget alto</strong> — Lead com budget alto pula a qualificação e vai direto para Hunter</li>
+<li><strong>Personalização</strong> — Toda mensagem é gerada com contexto da clínica e protocolo específicos</li>
+<li><strong>Alerta obrigatório</strong> — Hunter sempre recebe notificação de novo lead, independente do budget</li>
+</ol>
+<hr />
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Problema</th>
+<th style="text-align: left;">Causa provável</th>
+<th style="text-align: left;">Solução</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Lead não recebe mensagem</td>
+<td style="text-align: left;">Webhook do Typeform não está apontando</td>
+<td style="text-align: left;">Verificar URL no Typeform: <code>.../webhook/typeform/hamoniza.pro</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Lead duplicado</td>
+<td style="text-align: left;">Anti-duplicidade falhou</td>
+<td style="text-align: left;">Checar nó "Anti-duplicidade" e lógica de verificação</td>
+</tr>
+<tr>
+<td style="text-align: left;">Mensagem genérica</td>
+<td style="text-align: left;">Clínica/protocolo não encontrados</td>
+<td style="text-align: left;">Verificar se <code>clinica_id</code> está correto no lead</td>
+</tr>
+<tr>
+<td style="text-align: left;">Hunter não recebe alerta</td>
+<td style="text-align: left;">Telefone da Hunter errado</td>
+<td style="text-align: left;">Checar tabela <code>clinicas_com_atendentes</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Demora &gt; 2min</td>
+<td style="text-align: left;">Wait muito longo ou fila no n8n</td>
+<td style="text-align: left;">Verificar execuções pendentes no n8n</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Voltar ao topo
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Rodapé" >
+        
+          
+          <a href="../agente-de-ia/" class="md-footer__link md-footer__link--prev" aria-label="Anterior: Agente de IA (entrada principal)">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Anterior
+              </span>
+              <div class="md-ellipsis">
+                Agente de IA (entrada principal)
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../tool-transferir/" class="md-footer__link md-footer__link--next" aria-label="Próximo: Tool Transferir (Handoff)">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Próximo
+              </span>
+              <div class="md-ellipsis">
+                Tool Transferir (Handoff)
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.highlight", "search.suggest", "content.code.copy", "content.tabs.link", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "Mais 1 nesta p\u00e1gina", "search.result.more.other": "Mais # nesta p\u00e1gina", "search.result.none": "Nenhum resultado encontrado", "search.result.one": "1 resultado encontrado", "search.result.other": "# resultados encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

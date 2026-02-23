@@ -1,0 +1,2982 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Central de documentação do sistema de qualificação de leads via WhatsApp com IA">
+      
+      
+        <meta name="author" content="HarmonizaPRO">
+      
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../workflows/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/fav.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+    
+    
+      
+        <title>PRD 001 — Agente de Qualificação IA - HarmonizaPRO — Documentação</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#prd-001-agente-de-qualificacao-ia" class="md-skip">
+          Ir para o conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href=".." title="HarmonizaPRO — Documentação" class="md-header__button md-logo" aria-label="HarmonizaPRO — Documentação" data-md-component="logo">
+      
+  <img src="../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            HarmonizaPRO — Documentação
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              PRD 001 — Agente de Qualificação IA
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Modo claro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Modo claro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Modo escuro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Modo escuro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando a pesquisa
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Abas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Início
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  
+  PRD
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../workflows/" class="md-tabs__link">
+          
+  
+  
+  Workflows
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../playbooks/" class="md-tabs__link">
+          
+  
+  
+  Playbooks
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../runbooks/" class="md-tabs__link">
+          
+  
+  
+  Runbooks
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../base-conhecimento-clinicas/" class="md-tabs__link">
+          
+  
+  
+  Base de Conhecimento
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../operacao/dashboard/" class="md-tabs__link">
+          
+  
+  
+  Operação
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../equipe/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Equipe
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="HarmonizaPRO — Documentação" class="md-nav__button md-logo" aria-label="HarmonizaPRO — Documentação" data-md-component="logo">
+      
+  <img src="../assets/logo.png" alt="logo">
+
+    </a>
+    HarmonizaPRO — Documentação
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PRD
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    PRD
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PRD 001 — Agente de Qualificação IA
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PRD 001 — Agente de Qualificação IA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Nesta página">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Nesta página
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#checklist-inicial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checklist Inicial
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-problema-dor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Problema / Dor
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-objetivo-resultado-esperado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Objetivo &amp; Resultado Esperado
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-escopo-da-solucao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Escopo da Solução
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Escopo da Solução">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#o-que-deve-fazer-must-have" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que DEVE fazer (Must Have)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="O que DEVE fazer (Must Have)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#iniciar-conversa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Iniciar conversa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#qualificar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Qualificar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#handoff-para-hunter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Handoff para Hunter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#follow-up-automatico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Follow-up automático
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limitacoes-do-agente-regras-rigidas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitações do agente (regras rígidas)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#o-que-seria-bom-fazer-nice-to-have" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que SERIA BOM fazer (Nice to Have)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#o-que-nao-esta-no-escopo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que NÃO está no escopo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-usuarios-personas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Usuários &amp; Personas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Usuários &amp; Personas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#jornada-do-lead-responde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Jornada do Lead (responde)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jornada-do-lead-nao-responde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Jornada do Lead (não responde)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-integracoes-dependencias" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Integrações &amp; Dependências
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Integrações &amp; Dependências">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dados-de-entrada-do-formulario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dados de entrada (do formulário)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dados-da-clinica-base-de-conhecimento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dados da clínica (base de conhecimento)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-regras-de-negocio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Regras de Negócio
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Regras de Negócio">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#criterios-de-qualificacao-quando-passa-pra-hunter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Critérios de qualificação (quando passa pra Hunter)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#definicao-de-engajamento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Definição de "engajamento"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#regras-de-follow-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regras de follow-up
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#regras-de-resposta-do-agente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regras de resposta do agente
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#regras-de-handoff" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regras de handoff
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-interface-experiencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Interface &amp; Experiência
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-requisitos-tecnicos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Requisitos Técnicos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-cronograma-entregas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Cronograma &amp; Entregas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-riscos-consideracoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Riscos &amp; Considerações
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-materiais-de-apoio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Materiais de Apoio
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11. Materiais de Apoio">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#template-documento-da-clinica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template — Documento da Clínica
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-exemplo-de-conversa-ideal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Exemplo de Conversa Ideal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-aprovacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Aprovação
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#anexo-fluxo-visual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Anexo: Fluxo Visual
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Workflows
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Índice de Workflows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/agente-de-ia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agente de IA (entrada principal)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/chamada-typeform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chamada Typeform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/tool-transferir/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Transferir (Handoff)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/fluxo-follow-ups/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fluxo Follow Ups
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Playbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Playbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../playbooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Índice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../playbooks/abordagem-por-perfil/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abordagem Inicial por Perfil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../playbooks/respostas-objecoes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Respostas para Objeções
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Runbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../runbooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Índice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../runbooks/webhook-fora/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Webhook Fora do Ar
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../runbooks/handoff-falhando/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Handoff Falhando
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Base de Conhecimento
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Base de Conhecimento
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../base-conhecimento-clinicas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clínicas e Protocolos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operação
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operação
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operacao/dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📊 Dashboard de Métricas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operacao/custos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    💰 Custos por Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operacao/dependencias/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔗 Mapa de Dependências
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operacao/changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📋 Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../equipe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Equipe
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Nesta página">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Nesta página
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#checklist-inicial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checklist Inicial
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-problema-dor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Problema / Dor
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-objetivo-resultado-esperado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Objetivo &amp; Resultado Esperado
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-escopo-da-solucao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Escopo da Solução
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Escopo da Solução">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#o-que-deve-fazer-must-have" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que DEVE fazer (Must Have)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="O que DEVE fazer (Must Have)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#iniciar-conversa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Iniciar conversa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#qualificar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Qualificar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#handoff-para-hunter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Handoff para Hunter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#follow-up-automatico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Follow-up automático
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limitacoes-do-agente-regras-rigidas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitações do agente (regras rígidas)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#o-que-seria-bom-fazer-nice-to-have" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que SERIA BOM fazer (Nice to Have)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#o-que-nao-esta-no-escopo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que NÃO está no escopo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-usuarios-personas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Usuários &amp; Personas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Usuários &amp; Personas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#jornada-do-lead-responde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Jornada do Lead (responde)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jornada-do-lead-nao-responde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Jornada do Lead (não responde)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-integracoes-dependencias" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Integrações &amp; Dependências
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Integrações &amp; Dependências">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dados-de-entrada-do-formulario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dados de entrada (do formulário)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dados-da-clinica-base-de-conhecimento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dados da clínica (base de conhecimento)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-regras-de-negocio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Regras de Negócio
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Regras de Negócio">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#criterios-de-qualificacao-quando-passa-pra-hunter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Critérios de qualificação (quando passa pra Hunter)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#definicao-de-engajamento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Definição de "engajamento"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#regras-de-follow-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regras de follow-up
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#regras-de-resposta-do-agente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regras de resposta do agente
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#regras-de-handoff" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regras de handoff
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-interface-experiencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Interface &amp; Experiência
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-requisitos-tecnicos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Requisitos Técnicos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-cronograma-entregas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Cronograma &amp; Entregas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-riscos-consideracoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Riscos &amp; Considerações
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-materiais-de-apoio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Materiais de Apoio
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11. Materiais de Apoio">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#template-documento-da-clinica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template — Documento da Clínica
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-exemplo-de-conversa-ideal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Exemplo de Conversa Ideal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-aprovacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Aprovação
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#anexo-fluxo-visual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Anexo: Fluxo Visual
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="prd-001-agente-de-qualificacao-ia">PRD 001 — Agente de Qualificação IA<a class="headerlink" href="#prd-001-agente-de-qualificacao-ia" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p><strong>Data de solicitação:</strong> 2 de fevereiro de 2026<br />
+<strong>Departamento beneficiado:</strong> Hunters<br />
+<strong>Prioridade:</strong> 🟠 Alta<br />
+<strong>Solicitado por:</strong> Luciano Alberti<br />
+<strong>Versão:</strong> 1.0</p>
+</blockquote>
+<hr />
+<h2 id="checklist-inicial">Checklist Inicial<a class="headerlink" href="#checklist-inicial" title="Permanent link">&para;</a></h2>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Levantar históricos de abordagens que tiveram sucesso (exemplos ligando resposta do formulário e abordagem inicial)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Deixar base de dados/cliente protocolo 100% redonda</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Playbook SDRs</li>
+</ul>
+<hr />
+<h2 id="1-problema-dor">1. Problema / Dor<a class="headerlink" href="#1-problema-dor" title="Permanent link">&para;</a></h2>
+<p><strong>Qual problema estamos resolvendo?</strong></p>
+<p>Hunters perdem tempo iniciando conversa com leads que não são oportunidades reais. Muitos leads preenchem formulário mas não respondem, não têm budget, ou são apenas curiosos. A Hunter deveria entrar só quando o lead já está aquecido e qualificado.</p>
+<p><strong>Contexto atual:</strong></p>
+<ul>
+<li>Lead preenche formulário</li>
+<li>Hunter entra em contato manualmente</li>
+<li>Hunter gasta tempo com leads frios/curiosos</li>
+<li>Leads quentes às vezes demoram pra receber atenção porque Hunter está ocupada com leads ruins</li>
+<li>Não há filtro automático entre "curioso" e "oportunidade"</li>
+</ul>
+<p><strong>Impacto:</strong></p>
+<ul>
+<li>Hunters sobrecarregadas com volume de leads não qualificados</li>
+<li>Leads quentes podem esfriar esperando</li>
+<li>Tempo de venda desperdiçado em qualificação básica</li>
+<li>Escala limitada pelo número de Hunters</li>
+</ul>
+<hr />
+<h2 id="2-objetivo-resultado-esperado">2. Objetivo &amp; Resultado Esperado<a class="headerlink" href="#2-objetivo-resultado-esperado" title="Permanent link">&para;</a></h2>
+<p><strong>Objetivo principal:</strong></p>
+<p>Criar um agente de IA que inicia a conversa com cada lead, qualifica, aquece, e entrega para a Hunter apenas os leads que são de fato uma oportunidade — prontos para agendar.</p>
+<p><strong>O agente deve:</strong></p>
+<ol>
+<li>Iniciar relacionamento de forma acolhedora</li>
+<li>Descobrir contexto e dores do lead</li>
+<li>Apresentar o protocolo (elevar nível de consciência)</li>
+<li>Confirmar se faz sentido para o lead</li>
+<li>Passar para Hunter quando lead estiver qualificado</li>
+</ol>
+<p><strong>Métricas de sucesso:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Métrica</th>
+<th>Antes</th>
+<th>Meta Depois</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>% de leads que Hunter atende que viram oportunidade</td>
+<td>X%</td>
+<td>&gt; 70%</td>
+</tr>
+<tr>
+<td>Tempo da Hunter por lead qualificado</td>
+<td>X min</td>
+<td>Reduzir 50%</td>
+</tr>
+<tr>
+<td>Tempo entre form preenchido e primeiro contato</td>
+<td>X min</td>
+<td>&lt; 2 min</td>
+</tr>
+<tr>
+<td>Leads que não respondem filtrados automaticamente</td>
+<td>0%</td>
+<td>100%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Valor estimado:</strong></p>
+<ul>
+<li>Hunter foca só em leads quentes → mais agendamentos</li>
+<li>Resposta instantânea 24/7 → menos leads esfriando</li>
+<li>Escala sem contratar mais Hunters</li>
+</ul>
+<hr />
+<h2 id="3-escopo-da-solucao">3. Escopo da Solução<a class="headerlink" href="#3-escopo-da-solucao" title="Permanent link">&para;</a></h2>
+<h3 id="o-que-deve-fazer-must-have">O que DEVE fazer (Must Have)<a class="headerlink" href="#o-que-deve-fazer-must-have" title="Permanent link">&para;</a></h3>
+<h4 id="iniciar-conversa">Iniciar conversa<a class="headerlink" href="#iniciar-conversa" title="Permanent link">&para;</a></h4>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Lead preenche typeform → Agente inicia conversa no WhatsApp em &lt; 2 min</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Mensagem inicial personalizada com dados do formulário</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Tom acolhedor, se passa por humano</li>
+</ul>
+<h4 id="qualificar">Qualificar<a class="headerlink" href="#qualificar" title="Permanent link">&para;</a></h4>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Fazer perguntas para descobrir contexto e dores</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Entender se lead já se frustrou com outros procedimentos</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Coletar insumos para apresentar o protocolo</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Apresentar o protocolo (elevar nível de consciência)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Confirmar se faz sentido para o lead</li>
+</ul>
+<h4 id="handoff-para-hunter">Handoff para Hunter<a class="headerlink" href="#handoff-para-hunter" title="Permanent link">&para;</a></h4>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Lead respondeu 3+ mensagens com engajamento → passa pra Hunter</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Lead demonstrou interesse em agendar → passa pra Hunter</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Lead marcou budget alto no form → Hunter entra direto</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Lead fez pergunta que agente não sabe → passa pra Hunter</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Handoff invisível (lead não percebe troca)</li>
+</ul>
+<h4 id="follow-up-automatico">Follow-up automático<a class="headerlink" href="#follow-up-automatico" title="Permanent link">&para;</a></h4>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Lead não respondeu → 5 follow-ups cadenciados ao longo de 7 dias</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Lead respondeu em qualquer momento → cadência para e agente retoma conversa</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Após 7 dias sem resposta → move para nutrição (integra com PRD 3)</li>
+</ul>
+<h4 id="limitacoes-do-agente-regras-rigidas">Limitações do agente (regras rígidas)<a class="headerlink" href="#limitacoes-do-agente-regras-rigidas" title="Permanent link">&para;</a></h4>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> NÃO pode prometer desconto ou condição especial</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> NÃO pode agendar consulta (só Hunter agenda)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> NÃO pode passar preço</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> NÃO pode falar de procedimentos fora do protocolo</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Se lead perguntar de outro procedimento → direciona para o protocolo</li>
+</ul>
+<h3 id="o-que-seria-bom-fazer-nice-to-have">O que SERIA BOM fazer (Nice to Have)<a class="headerlink" href="#o-que-seria-bom-fazer-nice-to-have" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Dashboard de performance do agente (% qualificação, tempo médio, etc)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> A/B test de diferentes abordagens de mensagem inicial</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Análise de sentimento para detectar lead irritado → passa pra Hunter</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Resumo automático da conversa para Hunter quando faz handoff</li>
+</ul>
+<h3 id="o-que-nao-esta-no-escopo">O que NÃO está no escopo<a class="headerlink" href="#o-que-nao-esta-no-escopo" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Agendar consulta (entra no PRD 2)</li>
+<li>Atualizar ClickUp (entra no PRD 3)</li>
+<li>Enviar áudio (apenas texto)</li>
+<li>Atender leads de canais diferentes do formulário Anti-Curioso</li>
+</ul>
+<hr />
+<h2 id="4-usuarios-personas">4. Usuários &amp; Personas<a class="headerlink" href="#4-usuarios-personas" title="Permanent link">&para;</a></h2>
+<p><strong>Quem interage com o sistema:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Usuário</th>
+<th>Função</th>
+<th>Interação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lead</td>
+<td>Potencial cliente</td>
+<td>Conversa com agente no WhatsApp</td>
+</tr>
+<tr>
+<td>Hunter</td>
+<td>Vendas</td>
+<td>Recebe lead qualificado, assume conversa</td>
+</tr>
+<tr>
+<td>Gestão</td>
+<td>Acompanhamento</td>
+<td>Monitora performance do agente</td>
+</tr>
+</tbody>
+</table>
+<h3 id="jornada-do-lead-responde">Jornada do Lead (responde)<a class="headerlink" href="#jornada-do-lead-responde" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>1. Preenche formulário (Anti-Curioso)
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>   ↓
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>2. Recebe msg do agente em &lt; 2 min (WhatsApp)
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>   ↓
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>3. Agente faz perguntas, descobre dores
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>   ↓
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>4. Agente apresenta protocolo
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>   ↓
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>5. Lead engaja / demonstra interesse
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>   ↓
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>6. Hunter assume (lead não percebe)
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>   ↓
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>7. Hunter agenda consulta
+</code></pre></div>
+<h3 id="jornada-do-lead-nao-responde">Jornada do Lead (não responde)<a class="headerlink" href="#jornada-do-lead-nao-responde" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>1. Preenche formulário
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>   ↓
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>2. Recebe msg do agente
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>   ↓
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>3. Não responde
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>   ↓
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>4. Follow-up 1 (após X horas)
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>   ↓
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>5. Follow-up 2, 3, 4, 5 (ao longo de 7 dias)
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>   ↓
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>6. Ainda não respondeu → Nutrição (PRD 3)
+</code></pre></div>
+<hr />
+<h2 id="5-integracoes-dependencias">5. Integrações &amp; Dependências<a class="headerlink" href="#5-integracoes-dependencias" title="Permanent link">&para;</a></h2>
+<p><strong>Sistemas que precisam conversar:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Sistema</th>
+<th>Função</th>
+<th>Tipo</th>
+<th>Acesso</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Typeform</td>
+<td>Trigger de entrada</td>
+<td>Webhook</td>
+<td>[ ] Verificar</td>
+</tr>
+<tr>
+<td>n8n</td>
+<td>Orquestração do agente</td>
+<td>Workflow</td>
+<td>[ ] Configurar</td>
+</tr>
+<tr>
+<td>LLM (Claude)</td>
+<td>Cérebro do agente</td>
+<td>API</td>
+<td>[ ] Definir</td>
+</tr>
+<tr>
+<td>WhatsApp (UaZapi)</td>
+<td>Canal de conversa</td>
+<td>API</td>
+<td>[ ] Verificar</td>
+</tr>
+<tr>
+<td>ClickUp</td>
+<td>Atualizar status (via PRD 3)</td>
+<td>API</td>
+<td>[ ] Integrar</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dados-de-entrada-do-formulario">Dados de entrada (do formulário)<a class="headerlink" href="#dados-de-entrada-do-formulario" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Uso pelo agente</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nome</td>
+<td>Personalizar conversa</td>
+</tr>
+<tr>
+<td>Protocolo</td>
+<td>Saber sobre o que falar</td>
+</tr>
+<tr>
+<td>Procedimento que já fez</td>
+<td>Contexto para conversa</td>
+</tr>
+<tr>
+<td>Quanto está disposto a investir</td>
+<td>Critério de qualificação (budget alto = Hunter direto)</td>
+</tr>
+<tr>
+<td>O que mais incomoda no rosto</td>
+<td>Dor principal para explorar</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dados-da-clinica-base-de-conhecimento">Dados da clínica (base de conhecimento)<a class="headerlink" href="#dados-da-clinica-base-de-conhecimento" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Informação</th>
+<th>Necessário para</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nome do(a) Dr(a)</td>
+<td>Personalizar, gerar confiança</td>
+</tr>
+<tr>
+<td>Nome do protocolo</td>
+<td>Apresentar corretamente</td>
+</tr>
+<tr>
+<td>Informações do protocolo</td>
+<td>Responder perguntas, elevar consciência</td>
+</tr>
+<tr>
+<td>Público-alvo do protocolo</td>
+<td>Qualificar se lead é fit</td>
+</tr>
+<tr>
+<td>Dores que resolve</td>
+<td>Conectar com dores do lead</td>
+</tr>
+<tr>
+<td>Casos de sucesso</td>
+<td>Gerar prova social</td>
+</tr>
+<tr>
+<td>Localização</td>
+<td>Informar se perguntarem</td>
+</tr>
+<tr>
+<td>Formação do Dr(a)</td>
+<td>Gerar autoridade</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">AÇÃO NECESSÁRIA</p>
+<p>Criar documento estruturado com essas informações para cada clínica.</p>
+</div>
+<hr />
+<h2 id="6-regras-de-negocio">6. Regras de Negócio<a class="headerlink" href="#6-regras-de-negocio" title="Permanent link">&para;</a></h2>
+<h3 id="criterios-de-qualificacao-quando-passa-pra-hunter">Critérios de qualificação (quando passa pra Hunter)<a class="headerlink" href="#criterios-de-qualificacao-quando-passa-pra-hunter" title="Permanent link">&para;</a></h3>
+<p><strong>PASSA PRA HUNTER SE:</strong></p>
+<ul>
+<li>Lead marcou budget ALTO no formulário (entra direto, sem agente)</li>
+<li>Lead respondeu 3+ mensagens COM engajamento</li>
+<li>Lead demonstrou interesse explícito em agendar</li>
+<li>Lead fez pergunta que agente não sabe responder</li>
+<li>Lead pediu pra falar com humano</li>
+</ul>
+<p><strong>NÃO PASSA (continua com agente ou vai pra nutrição):</strong></p>
+<ul>
+<li>Lead não responde</li>
+<li>Lead responde mas sem engajamento (respostas monossilábicas)</li>
+<li>Lead diz que não tem interesse agora</li>
+</ul>
+<h3 id="definicao-de-engajamento">Definição de "engajamento"<a class="headerlink" href="#definicao-de-engajamento" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Resposta com mais de 5 palavras</li>
+<li>Fez pergunta de volta</li>
+<li>Demonstrou curiosidade sobre o protocolo</li>
+<li>Compartilhou informação pessoal (dor, desejo, frustração)</li>
+</ul>
+<h3 id="regras-de-follow-up">Regras de follow-up<a class="headerlink" href="#regras-de-follow-up" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Follow-up</th>
+<th>Quando</th>
+<th>Tom</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#1</td>
+<td>X horas após msg inicial</td>
+<td>Lembrete leve</td>
+</tr>
+<tr>
+<td>#2</td>
+<td>X horas após #1</td>
+<td>Reforço de valor</td>
+</tr>
+<tr>
+<td>#3</td>
+<td>X horas após #2</td>
+<td>Urgência suave</td>
+</tr>
+<tr>
+<td>#4</td>
+<td>X horas após #3</td>
+<td>Última tentativa</td>
+</tr>
+<tr>
+<td>#5</td>
+<td>X horas após #4</td>
+<td>Despedida aberta</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition info">
+<p class="admonition-title">A definir</p>
+<p>Definir intervalos exatos de cada follow-up.</p>
+</div>
+<h3 id="regras-de-resposta-do-agente">Regras de resposta do agente<a class="headerlink" href="#regras-de-resposta-do-agente" title="Permanent link">&para;</a></h3>
+<p><strong>SE lead pergunta preço:</strong></p>
+<blockquote>
+<p>"O investimento varia de acordo com o seu caso específico. Na consulta, o Dr(a) [nome] vai avaliar e passar todos os detalhes. Posso te ajudar a entender melhor como funciona o protocolo?"</p>
+</blockquote>
+<p><strong>SE lead pergunta de outro procedimento:</strong></p>
+<blockquote>
+<p>"Aqui na clínica o foco é o [nome do protocolo], que é um tratamento completo que [benefício principal]. Muitas pessoas que procuravam [procedimento que lead perguntou] acabaram tendo resultados ainda melhores com o protocolo. Quer que eu te explique como funciona?"</p>
+</blockquote>
+<p><strong>SE lead pede desconto:</strong></p>
+<blockquote>
+<p>"Entendo! O valor do protocolo reflete toda a experiência e resultado que você vai ter. Na consulta, você vai entender exatamente o que está incluso. Posso te contar mais sobre o que faz o protocolo ser tão especial?"</p>
+</blockquote>
+<p><strong>SE lead pergunta algo que agente não sabe:</strong></p>
+<blockquote>
+<p>→ HANDOFF IMEDIATO PARA HUNTER</p>
+</blockquote>
+<h3 id="regras-de-handoff">Regras de handoff<a class="headerlink" href="#regras-de-handoff" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Hunter recebe notificação no WhatsApp (futuramente terá um front end)</li>
+<li>Hunter recebe resumo da conversa até o momento</li>
+<li>Hunter assume no mesmo número de WhatsApp</li>
+<li>Lead NÃO pode perceber que houve troca</li>
+<li>Transição deve ser seamless</li>
+</ul>
+<hr />
+<h2 id="7-interface-experiencia">7. Interface &amp; Experiência<a class="headerlink" href="#7-interface-experiencia" title="Permanent link">&para;</a></h2>
+<p><strong>Para o Lead:</strong></p>
+<ul>
+<li>Conversa normal no WhatsApp</li>
+<li>Não sabe que está falando com IA</li>
+<li>Tom acolhedor e humano</li>
+<li>Apenas texto (sem áudio)</li>
+</ul>
+<p><strong>Para a Hunter:</strong></p>
+<ul>
+<li>Recebe notificação de lead qualificado</li>
+<li>Vê resumo da conversa (CRM ClickUp PRD 003)</li>
+<li>Assume conversa no mesmo número</li>
+<li>Continua de onde agente parou</li>
+</ul>
+<p><strong>Para Gestão:</strong></p>
+<ul>
+<li>Dashboard de performance (nice to have)</li>
+<li>Logs de conversas para auditoria</li>
+<li>Métricas de qualificação</li>
+</ul>
+<hr />
+<h2 id="8-requisitos-tecnicos">8. Requisitos Técnicos<a class="headerlink" href="#8-requisitos-tecnicos" title="Permanent link">&para;</a></h2>
+<p><strong>Plataforma:</strong></p>
+<ul>
+<li>n8n para orquestração</li>
+<li>LLM para geração de respostas (Claude)</li>
+</ul>
+<p><strong>Performance:</strong></p>
+<ul>
+<li>Tempo de resposta do agente: &lt; 90 segundos (mais humano; se lead responde na hora, agente responde na hora também para manter fluxo natural de conversa)</li>
+<li>Disponibilidade: 24/7</li>
+<li>Capacidade: múltiplas conversas simultâneas</li>
+</ul>
+<p><strong>Segurança:</strong></p>
+<ul>
+<li>Dados de leads armazenados de forma segura</li>
+<li>Logs de conversa para auditoria</li>
+<li>Controle de acesso às configurações do agente</li>
+</ul>
+<p><strong>Monitoramento:</strong></p>
+<ul>
+<li>Alertas se agente parar de funcionar</li>
+<li>Alertas se tempo de resposta aumentar</li>
+<li>Log de erros e exceções</li>
+</ul>
+<hr />
+<h2 id="9-cronograma-entregas">9. Cronograma &amp; Entregas<a class="headerlink" href="#9-cronograma-entregas" title="Permanent link">&para;</a></h2>
+<p><strong>Fases sugeridas:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Fase</th>
+<th>Entrega</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fase 0</td>
+<td>Base de conhecimento</td>
+<td>Documento estruturado de cada clínica</td>
+</tr>
+<tr>
+<td>MVP</td>
+<td>Agente básico</td>
+<td>Inicia conversa + faz perguntas + handoff manual</td>
+</tr>
+<tr>
+<td>V2</td>
+<td>Follow-ups</td>
+<td>Cadência automática de 5 msgs em 7 dias</td>
+</tr>
+<tr>
+<td>V3</td>
+<td>Handoff inteligente</td>
+<td>Critérios automáticos de qualificação</td>
+</tr>
+<tr>
+<td>V4</td>
+<td>Integração PRD 3</td>
+<td>Atualiza ClickUp automaticamente</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Dependências:</strong></p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Documento de cada clínica preenchido (Fase 0)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Acesso à API do WhatsApp</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> n8n configurado</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> LLM escolhido e com acesso</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Exemplo de conversa ideal (para treinar tom do agente)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Definição dos intervalos de follow-up</li>
+</ul>
+<hr />
+<h2 id="10-riscos-consideracoes">10. Riscos &amp; Considerações<a class="headerlink" href="#10-riscos-consideracoes" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Risco</th>
+<th>Probabilidade</th>
+<th>Impacto</th>
+<th>Mitigação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Agente responde algo errado</td>
+<td>Média</td>
+<td>Alto</td>
+<td>Regras rígidas + fallback pra Hunter</td>
+</tr>
+<tr>
+<td>Lead percebe que é IA</td>
+<td>Média</td>
+<td>Médio</td>
+<td>Tom humano, respostas naturais, não responder instantaneamente</td>
+</tr>
+<tr>
+<td>Agente trava/para de funcionar</td>
+<td>Baixa</td>
+<td>Alto</td>
+<td>Monitoramento + alertas + fallback manual</td>
+</tr>
+<tr>
+<td>Lead reclama de demora</td>
+<td>Baixa</td>
+<td>Médio</td>
+<td>Tempo de resposta &lt; 30s</td>
+</tr>
+<tr>
+<td>Handoff não funciona</td>
+<td>Média</td>
+<td>Alto</td>
+<td>Testar exaustivamente antes de lançar</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Pontos de atenção:</strong></p>
+<ul>
+<li>Agente mal configurado pode queimar lead — testar muito antes de ir pro ar</li>
+<li>Primeira versão deve ser conservadora (passa pra Hunter na dúvida)</li>
+<li>Monitorar primeiras conversas manualmente para ajustar</li>
+</ul>
+<hr />
+<h2 id="11-materiais-de-apoio">11. Materiais de Apoio<a class="headerlink" href="#11-materiais-de-apoio" title="Permanent link">&para;</a></h2>
+<p><strong>Para o dev começar, preciso que você forneça:</strong></p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Acesso ao n8n (ou onde vai rodar)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Definição de qual LLM usar (GPT-4, Claude, etc)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Acesso à API do WhatsApp</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Documento estruturado de cada clínica (criar antes de começar)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Intervalos exatos dos 5 follow-ups</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Definição de onde Hunter recebe notificação de handoff</li>
+</ul>
+<h3 id="template-documento-da-clinica">Template — Documento da Clínica<a class="headerlink" href="#template-documento-da-clinica" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>CLÍNICA: [Nome]
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>DR(A): [Nome completo]
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>FORMAÇÃO: [Formação e credenciais]
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>LOCALIZAÇÃO: [Endereço]
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>PROTOCOLO: [Nome do protocolo]
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>O QUE É: [Descrição em 2-3 frases]
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>PÚBLICO-ALVO: [Quem é o cliente ideal]
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>DORES QUE RESOLVE: [Lista de dores]
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>DIFERENCIAIS: [O que torna único]
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>CASOS DE SUCESSO: [Exemplos/resultados]
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>PALAVRAS-CHAVE PARA USAR: [Tom de voz, termos específicos]
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>O QUE NÃO FALAR: [Termos proibidos, promessas que não pode fazer]
+</code></pre></div>
+<hr />
+<h2 id="12-exemplo-de-conversa-ideal">12. Exemplo de Conversa Ideal<a class="headerlink" href="#12-exemplo-de-conversa-ideal" title="Permanent link">&para;</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">A PREENCHER</p>
+<p>Inserir aqui um exemplo de conversa ideal do agente com um lead, do início até o handoff para Hunter. Isso vai servir como referência de tom, ritmo e abordagem.</p>
+</div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>[AGENTE]:
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>[LEAD]:
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>[AGENTE]:
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>[LEAD]:
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>[AGENTE]:
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>[LEAD]:
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>[AGENTE]:
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>→ [HANDOFF PARA HUNTER]
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>[HUNTER]:
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>[LEAD]:
+</code></pre></div>
+<hr />
+<h2 id="13-aprovacao">13. Aprovação<a class="headerlink" href="#13-aprovacao" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Papel</th>
+<th>Nome</th>
+<th>Status</th>
+<th>Data</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Solicitante</td>
+<td></td>
+<td>[ ] Aprovado</td>
+<td></td>
+</tr>
+<tr>
+<td>Gestor</td>
+<td></td>
+<td>[ ] Aprovado</td>
+<td></td>
+</tr>
+<tr>
+<td>Dev</td>
+<td></td>
+<td>[ ] Viável [ ] Dúvidas</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="anexo-fluxo-visual">Anexo: Fluxo Visual<a class="headerlink" href="#anexo-fluxo-visual" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>┌─────────────────────────────────────────────────────────────────┐
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>│                    FORMULÁRIO PREENCHIDO                         │
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>│  (Nome, Protocolo, Budget, Dores, Procedimentos anteriores)     │
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>└─────────────────────────────┬───────────────────────────────────┘
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>                              │
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>                              ▼
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>                    ┌───────────────────┐
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>                    │  Budget = ALTO?   │
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>                    └─────────┬─────────┘
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>                              │
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>                  ┌───────────┴───────────┐
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>                  │                       │
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>                 SIM                     NÃO
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>                  │                       │
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>                  ▼                       ▼
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>    ┌───────────────────┐   ┌───────────────────┐
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>    │   HUNTER DIRETO   │   │  AGENTE IA INICIA │
+<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>    │   (sem agente)    │   │     (&lt; 2 min)     │
+<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>    └───────────────────┘   └─────────┬─────────┘
+<a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a>                                      │
+<a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a>                                      ▼
+<a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a>                            ┌───────────────────┐
+<a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a>                            │  Lead respondeu?  │
+<a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a>                            └─────────┬─────────┘
+<a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a>                                      │
+<a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a>                          ┌───────────┴───────────┐
+<a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a>                          │                       │
+<a id="__codelineno-4-28" name="__codelineno-4-28" href="#__codelineno-4-28"></a>                         SIM                     NÃO
+<a id="__codelineno-4-29" name="__codelineno-4-29" href="#__codelineno-4-29"></a>                          │                       │
+<a id="__codelineno-4-30" name="__codelineno-4-30" href="#__codelineno-4-30"></a>                          ▼                       ▼
+<a id="__codelineno-4-31" name="__codelineno-4-31" href="#__codelineno-4-31"></a>            ┌───────────────────┐   ┌───────────────────┐
+<a id="__codelineno-4-32" name="__codelineno-4-32" href="#__codelineno-4-32"></a>            │   QUALIFICAÇÃO    │   │    FOLLOW-UP      │
+<a id="__codelineno-4-33" name="__codelineno-4-33" href="#__codelineno-4-33"></a>            │ • Descobre dores  │   │ • 5 msgs em 7 dias│
+<a id="__codelineno-4-34" name="__codelineno-4-34" href="#__codelineno-4-34"></a>            │ • Apresenta proto │   │ • Cadenciado      │
+<a id="__codelineno-4-35" name="__codelineno-4-35" href="#__codelineno-4-35"></a>            │ • Confirma fit    │   └─────────┬─────────┘
+<a id="__codelineno-4-36" name="__codelineno-4-36" href="#__codelineno-4-36"></a>            └─────────┬─────────┘             │
+<a id="__codelineno-4-37" name="__codelineno-4-37" href="#__codelineno-4-37"></a>                      │                       ▼
+<a id="__codelineno-4-38" name="__codelineno-4-38" href="#__codelineno-4-38"></a>                      ▼               ┌───────────────────┐
+<a id="__codelineno-4-39" name="__codelineno-4-39" href="#__codelineno-4-39"></a>            ┌───────────────────┐     │ Respondeu após    │
+<a id="__codelineno-4-40" name="__codelineno-4-40" href="#__codelineno-4-40"></a>            │   QUALIFICADO?   │     │   follow-up?      │
+<a id="__codelineno-4-41" name="__codelineno-4-41" href="#__codelineno-4-41"></a>            │ • 3+ msgs engaj. │     └─────────┬─────────┘
+<a id="__codelineno-4-42" name="__codelineno-4-42" href="#__codelineno-4-42"></a>            │ • Interesse agend│               │
+<a id="__codelineno-4-43" name="__codelineno-4-43" href="#__codelineno-4-43"></a>            │ • Pergunta s/resp│       ┌───────┴───────┐
+<a id="__codelineno-4-44" name="__codelineno-4-44" href="#__codelineno-4-44"></a>            └─────────┬─────────┘      │               │
+<a id="__codelineno-4-45" name="__codelineno-4-45" href="#__codelineno-4-45"></a>                      │               SIM             NÃO
+<a id="__codelineno-4-46" name="__codelineno-4-46" href="#__codelineno-4-46"></a>              ┌───────┴───────┐        │               │
+<a id="__codelineno-4-47" name="__codelineno-4-47" href="#__codelineno-4-47"></a>              │               │        │               ▼
+<a id="__codelineno-4-48" name="__codelineno-4-48" href="#__codelineno-4-48"></a>             SIM             NÃO       │     ┌───────────────────┐
+<a id="__codelineno-4-49" name="__codelineno-4-49" href="#__codelineno-4-49"></a>              │               │        │     │   → NUTRIÇÃO      │
+<a id="__codelineno-4-50" name="__codelineno-4-50" href="#__codelineno-4-50"></a>              ▼               ▼        │     │     (PRD 3)       │
+<a id="__codelineno-4-51" name="__codelineno-4-51" href="#__codelineno-4-51"></a>┌───────────────────┐ ┌──────────────┐│     └───────────────────┘
+<a id="__codelineno-4-52" name="__codelineno-4-52" href="#__codelineno-4-52"></a>│ HANDOFF → HUNTER  │ │ Continua com ││
+<a id="__codelineno-4-53" name="__codelineno-4-53" href="#__codelineno-4-53"></a>│ • Notificação     │ │   agente     │◄┘
+<a id="__codelineno-4-54" name="__codelineno-4-54" href="#__codelineno-4-54"></a>│ • Resumo conversa │ └──────────────┘
+<a id="__codelineno-4-55" name="__codelineno-4-55" href="#__codelineno-4-55"></a>│ • Lead não percebe│
+<a id="__codelineno-4-56" name="__codelineno-4-56" href="#__codelineno-4-56"></a>└───────────────────┘
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Voltar ao topo
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Rodapé" >
+        
+          
+          <a href=".." class="md-footer__link md-footer__link--prev" aria-label="Anterior: Início">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Anterior
+              </span>
+              <div class="md-ellipsis">
+                Início
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../workflows/" class="md-footer__link md-footer__link--next" aria-label="Próximo: Índice de Workflows">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Próximo
+              </span>
+              <div class="md-ellipsis">
+                Índice de Workflows
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.highlight", "search.suggest", "content.code.copy", "content.tabs.link", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "Mais 1 nesta p\u00e1gina", "search.result.more.other": "Mais # nesta p\u00e1gina", "search.result.none": "Nenhum resultado encontrado", "search.result.one": "1 resultado encontrado", "search.result.other": "# resultados encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
