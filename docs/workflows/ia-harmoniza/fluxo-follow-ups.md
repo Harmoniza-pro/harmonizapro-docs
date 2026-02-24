@@ -173,7 +173,7 @@ O nó **Dados Uazapi** fornece os dados da instância WhatsApp para todas as 4 r
 ## Status Atual
 
 !!! warning "Workflow inativo"
-    Este workflow está **desativado** no n8n (`active: false`). Precisa ser ativado manualmente quando estiver pronto para produção. Pode ser testado usando o trigger manual "When clicking 'Execute workflow'".
+    Este workflow está **desativado** no n8n (`active: true`). Precisa ser ativado manualmente quando estiver pronto para produção. Pode ser testado usando o trigger manual "When clicking 'Execute workflow'".
 
 ---
 
