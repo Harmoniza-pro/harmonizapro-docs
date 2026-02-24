@@ -42,11 +42,16 @@ theme:
     - content.code.copy
     - content.tabs.link
     - toc.follow
+    - content.action.edit
+    - content.tooltips
+    - search.share
+    - header.autohide
 
 
 nav:
   - Início: index.md
   - PRD: prd.md
+  - Painel: painel.md
   - Workflows:
       - "🏗️ Visão Geral": workflows/index.md
       - 🤖 IA Harmoniza:
