@@ -5,7 +5,7 @@
 | Campo | Valor |
 |:------|:------|
 | **ID** | `W1msnd1vZWkpFSDM` |
-| **Status** | ⚠️ Inativo (em desenvolvimento) |
+| **Status** | ✅ Ativo |
 | **Trigger** | Schedule — a cada 11 minutos |
 | **Nós** | 65 |
 | **Trigger alternativo** | Manual (botão "Execute workflow") |
