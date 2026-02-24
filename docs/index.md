@@ -10,23 +10,23 @@ A HarmonizaPRO opera **41+ workflows n8n** organizados em 7 departamentos. Junto
 
 ```
                           ┌─────────────────────────────┐
-                          │      CAPTAÇÃO DE LEADS       │
-                          │  Typeform · Calendly · Meta  │
+                          │      CAPTAÇÃO DE LEADS      │
+                          │  Typeform · Calendly · Meta │
                           └──────────────┬──────────────┘
                                          │
               ┌──────────────────────────┼──────────────────────────┐
               ▼                          ▼                          ▼
    ┌─────────────────┐       ┌─────────────────┐       ┌─────────────────┐
-   │  🤖 IA Harmoniza │       │  💼 Comercial    │       │  📍 Tracking     │
-   │  Agente WhatsApp │       │  Pipedrive CRM   │       │  Facebook CAPI   │
-   │  Claude + GPT    │       │  Distribuição     │       │  Pixel Events    │
+   │ 🤖 IA Harmoniza │       │  💼 Comercial  │        │  📍 Tracking    │
+   │  Agente WhatsApp│       │  Pipedrive CRM  │        │  Facebook CAPI  │
+   │  Claude + GPT   │      │  Distribuição    │       │  Pixel Events   │
    └────────┬────────┘       └────────┬────────┘       └─────────────────┘
             │                         │
             ▼                         ▼
    ┌─────────────────┐       ┌─────────────────┐       ┌─────────────────┐
-   │  🎯 Hunters      │       │  ⚙️ Operação     │       │  📝 Formulários  │
-   │  CRM ClickUp     │       │  Meta Ads         │       │  Sync ClickUp    │
-   │  Ganho / Perda    │       │  Dados Clientes   │       │  → PostgreSQL    │
+   │  🎯 Hunters     │       │  ⚙️ Operação    │      │  📝 Formulários │
+   │  CRM ClickUp    │       │  Meta Ads        │      │  Sync ClickUp    │
+   │  Ganho / Perda  │       │ Dados Clientes   │      │  → PostgreSQL    │
    └─────────────────┘       └─────────────────┘       └─────────────────┘
 ```
 
